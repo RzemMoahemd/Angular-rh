@@ -1,0 +1,98 @@
+<div class="employee-container">
+
+  <button mat-icon-button class="top-left-icon" (click)="goToList()" aria-label="Retour">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  
+  
+  
+  <h2 class="title">
+    <mat-icon class="colored-icon">event</mat-icon>
+    <span>Demander un congé</span>
+  </h2>
+  
+
+  <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="form-container">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>ID Employé</mat-label>
+        <input
+          matInput
+          formControlName="employeId"
+          required
+          type="number"
+          placeholder="Ex. 101" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerDebut"
+          formControlName="dateDebut"
+          required
+          placeholder="Sélectionnez une date" />
+        <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDebut></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFin"
+          formControlName="dateFin"
+          required
+          placeholder="Sélectionnez une date" />
+        <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFin></mat-datepicker>
+        <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('dateOrder')">
+          La date de fin doit être postérieure à la date de début
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Motif</mat-label>
+        <mat-select formControlName="motif" required>
+          <mat-option value="maladie">Maladie</mat-option>
+          <mat-option value="personnel">Personnel</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Statut</mat-label>
+        <mat-select formControlName="statut" required [panelClass]="'statut-panel'">
+          <mat-option value="en attente">
+            <span class="status-badge yellow">🕒 En attente</span>
+          </mat-option>
+          <mat-option value="approuvé">
+            <span class="status-badge green">✅ Approuvé</span>
+          </mat-option>
+          <mat-option value="rejeté">
+            <span class="status-badge red">❌ Rejeté</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Commentaire du manager</mat-label>
+        <textarea matInput formControlName="commentaireManager" placeholder="Optionnel..."></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!leaveForm.valid || loading">
+        <ng-container *ngIf="loading; else normalText">
+          <mat-spinner diameter="20" strokeWidth="3"></mat-spinner>
+        </ng-container>
+        <ng-template #normalText>
+          {{ isEditMode ? 'Modifier' : 'Demander' }}
+        </ng-template>
+      </button>
+    </div>
+  </form>
+</div>

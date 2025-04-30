@@ -1,0 +1,57 @@
+<div class="employee-container">
+  <h2 class="title">👥 Liste des employés</h2>
+
+  <!-- <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. John Doe" #input>
+  </mat-form-field> -->
+
+  <div class="table-wrapper mat-elevation-z3">
+    <table mat-table [dataSource]="dataSource" matSort class="custom-table">
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+        <td mat-cell *matCellDef="let e">{{ e.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
+        <td mat-cell *matCellDef="let e">{{ e.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let e">{{ e.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Poste</th>
+        <td mat-cell *matCellDef="let e">{{ e.position }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let e">
+          <a mat-icon-button color="primary" [routerLink]="['/employee', e.id, 'edit']">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button mat-icon-button color="warn" (click)="deleteEmployee(e.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">Aucun résultat pour "{{input.value}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </div>
+
+  <div class="add-button">
+    <a mat-raised-button color="accent" routerLink="/employee/new">➕ Ajouter un employé</a>
+  </div>
+</div>

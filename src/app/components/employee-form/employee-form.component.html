@@ -1,0 +1,69 @@
+<div class="employee-container">
+
+  <!-- Bouton retour -->
+<button mat-fab color="primary" class="top-left-icon" (click)="goBack()">
+  <mat-icon>arrow_back</mat-icon>
+</button>
+
+  <h2 class="title">
+    <mat-icon class="colored-icon">person_add</mat-icon>
+    <span>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un employé</span>
+  </h2>
+
+  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-container">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Prénom</mat-label>
+        <input matInput formControlName="firstName" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="lastName" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required type="email">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Numéro de téléphone</mat-label>
+        <input matInput formControlName="phoneNumber" required type="tel">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date d'embauche</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="hireDate" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Poste</mat-label>
+        <input matInput formControlName="position" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>ID du département</mat-label>
+        <input matInput formControlName="departmentId" required type="number">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>ID de l'utilisateur</mat-label>
+        <input matInput formControlName="userId" required type="number">
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!employeeForm.valid || loading">
+        <ng-container *ngIf="loading; else normalText">
+          <mat-spinner diameter="20" strokeWidth="3"></mat-spinner>
+        </ng-container>
+        <ng-template #normalText>
+          {{ isEditMode ? 'Modifier' : 'Ajouter' }}
+        </ng-template>
+      </button>
+    </div>
+  </form>
+</div>
