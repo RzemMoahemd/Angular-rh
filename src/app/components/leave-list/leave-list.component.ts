@@ -5,12 +5,9 @@ import { MatSort } from "@angular/material/sort"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Leave } from "../../models/leave"
 import { LeaveService } from "../../services/leave.service"
-import {
-  trigger,
-  transition,
-  style,
-  animate
-} from '@angular/animations'
+import { EmployeeService } from "../../services/employee.service"
+import { Employee } from "../../models/employee"
+import { trigger, transition, style, animate } from '@angular/animations'
 import { SearchService } from "../../services/search.service"
 
 @Component({
@@ -27,20 +24,23 @@ import { SearchService } from "../../services/search.service"
   ]
 })
 export class LeaveListComponent implements OnInit {
-  displayedColumns: string[] = ["employeId", "dateDebut", "dateFin", "motif", "statut", "actions"]
-  dataSource: MatTableDataSource<Leave> = new MatTableDataSource<Leave>()
+  displayedColumns: string[] = ["employeFullName", "dateDebut", "dateFin", "motif", "statut", "actions"]
+  dataSource: MatTableDataSource<Leave & { employeFullName?: string }> = new MatTableDataSource()
 
   @ViewChild(MatPaginator) paginator!: MatPaginator
   @ViewChild(MatSort) sort!: MatSort
 
+  employeeMap = new Map<number, string>()
+
   constructor(
     private leaveService: LeaveService,
+    private employeeService: EmployeeService,
     private snackBar: MatSnackBar,
     private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
-    this.loadLeaves()
+    this.loadEmployeesAndLeaves()
     this.searchService.searchTerm$.subscribe(search => {
       this.applyGlobalFilter(search)
     })
@@ -51,13 +51,27 @@ export class LeaveListComponent implements OnInit {
     this.dataSource.sort = this.sort
   }
 
+  // 🔥 Charger employés + congés
+  loadEmployeesAndLeaves(): void {
+    this.employeeService.getEmployees().subscribe(employees => {
+      employees.forEach(emp => {
+        this.employeeMap.set(emp.id!, `${emp.firstName} ${emp.lastName}`)
+      })
+
+      this.loadLeaves()
+    })
+  }
+
   loadLeaves(): void {
     this.leaveService.getLeaves().subscribe({
-      next: (data) => this.dataSource.data = data,
-      error: (err) => {
-        console.error("Error fetching leaves", err)
-        this.showErrorMessage("Erreur lors du chargement des congés")
-      }
+      next: (data) => {
+        // ➡️ Ajouter full name
+        data.forEach(l => {
+          l["employeFullName"] = this.employeeMap.get(l.employeId) ?? "Employé inconnu"
+        })
+        this.dataSource.data = data
+      },
+      error: () => this.showErrorMessage("Erreur lors du chargement des congés")
     })
   }
 
@@ -67,10 +81,7 @@ export class LeaveListComponent implements OnInit {
         this.dataSource.data = this.dataSource.data.filter((leave) => leave.id !== id)
         this.showSuccessMessage("Congé supprimé avec succès")
       },
-      error: (err) => {
-        console.error("Error deleting leave", err)
-        this.showErrorMessage("Erreur lors de la suppression du congé")
-      }
+      error: () => this.showErrorMessage("Erreur lors de la suppression du congé")
     })
   }
 
@@ -80,16 +91,25 @@ export class LeaveListComponent implements OnInit {
   }
 
   private showSuccessMessage(message: string): void {
-    this.snackBar.open(message, "Fermer", {
-      duration: 3000,
-      panelClass: ["success-snackbar"],
-    })
+    this.snackBar.open(message, "Fermer", { duration: 3000, panelClass: ["success-snackbar"] })
   }
 
   private showErrorMessage(message: string): void {
-    this.snackBar.open(message, "Fermer", {
-      duration: 3000,
-      panelClass: ["error-snackbar"],
-    })
+    this.snackBar.open(message, "Fermer", { duration: 3000, panelClass: ["error-snackbar"] })
   }
+
+  updateStatus(leave: Leave, status: string): void {
+    const updatedLeave = { ...leave, statut: status };
+  
+    this.leaveService.updateLeave(leave.id!, updatedLeave).subscribe({
+      next: () => {
+        leave.statut = status;
+        this.showSuccessMessage(`Congé ${status}`);
+      },
+      error: () => {
+        this.showErrorMessage("Erreur lors de la mise à jour du statut");
+      }
+    });
+  }
+  
 }

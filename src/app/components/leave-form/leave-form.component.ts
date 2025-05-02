@@ -6,6 +6,10 @@ import { Leave } from "../../models/leave"
 import { LeaveService } from "../../services/leave.service"
 import { Observable } from "rxjs"
 
+import { EmployeeService } from '../../services/employee.service'
+import { Employee } from '../../models/employee'
+
+
 @Component({
   selector: "app-leave-form",
   templateUrl: "./leave-form.component.html",
@@ -17,12 +21,15 @@ export class LeaveFormComponent implements OnInit {
   leaveId?: number
   loading = false
 
+  employees: Employee[] = [] 
+
   constructor(
     private fb: FormBuilder,
     private leaveService: LeaveService,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private employeeService: EmployeeService,
   ) {
     this.leaveForm = this.fb.group({
       employeId: ["", Validators.required],
@@ -46,6 +53,11 @@ export class LeaveFormComponent implements OnInit {
     // ✅ Écoute des 2 champs pour vérifier la validité
     this.leaveForm.get("dateDebut")?.valueChanges.subscribe(() => this.validateDates())
     this.leaveForm.get("dateFin")?.valueChanges.subscribe(() => this.validateDates())
+
+    this.employeeService.getEmployees().subscribe({
+      next: (data) => this.employees = data,
+      error: () => console.error("Erreur lors du chargement des employés")
+    })
   }
 
   validateDates(): void {
@@ -85,7 +97,7 @@ export class LeaveFormComponent implements OnInit {
         this.showSuccessMessage(msg)
 
         setTimeout(() => {
-          this.router.navigate(["/leaves"])
+          this.router.navigate(["/admin/leaves"])
         }, 1000)
       },
       error: () => {
@@ -121,7 +133,7 @@ export class LeaveFormComponent implements OnInit {
   }
 
   goToList(): void {
-    this.router.navigate(["/leaves"]);
+    this.router.navigate(["/admin/leaves"]);
   }
 
   

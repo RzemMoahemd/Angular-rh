@@ -1,0 +1,186 @@
+<div class="main-content">
+    <div class="container-fluid">
+  
+      <!-- STAT CARDS -->
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <mat-card class="mat-elevation-z2 stat-card purple">
+            <mat-card-content>
+              <h5><mat-icon>group</mat-icon> Employés</h5>
+              <h3>{{ totalEmployees }}</h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="col-lg-3 col-md-6">
+          <mat-card class="mat-elevation-z2 stat-card green">
+            <mat-card-content>
+              <h5><mat-icon>person_add</mat-icon> Nouveaux</h5>
+              <h3>{{ newEmployeesThisMonth }}</h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="col-lg-3 col-md-6">
+          <mat-card class="mat-elevation-z2 stat-card blue">
+            <mat-card-content>
+              <h5><mat-icon>calendar_month</mat-icon> Congés</h5>
+              <h3>{{ totalLeaves }}</h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="col-lg-3 col-md-6">
+          <mat-card class="mat-elevation-z2 stat-card red">
+            <mat-card-content>
+              <h5><mat-icon>hourglass_top</mat-icon> En attente</h5>
+              <h3>{{ leavesPending }}</h3>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- CHARTS -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <mat-card class="mat-elevation-z2 chart-card">
+            <mat-card-header><h4>Statut des congés</h4></mat-card-header>
+            <mat-card-content>
+              <canvas id="leaveStatusChart"></canvas>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="col-md-6">
+          <mat-card class="mat-elevation-z2 chart-card">
+            <mat-card-header><h4>Congés par mois</h4></mat-card-header>
+            <mat-card-content>
+              <canvas id="leavesPerMonthChart"></canvas>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- CONGÉS À APPROUVER -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <mat-card class="table-card">
+            <mat-card-header>
+              <h4 class="mat-title">Congés à approuver</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Employé</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let leave of leavesToApprove">
+                    <td>{{ getEmployeeName(leave.employeId) }}</td>
+                    <td>{{ leave.dateDebut | date }}</td>
+                    <td>{{ leave.dateFin | date }}</td>
+                    <td>
+                      <button mat-icon-button color="primary" (click)="approveLeave(leave, 'approuvé')"><mat-icon>check</mat-icon></button>
+                      <button mat-icon-button color="warn" (click)="approveLeave(leave, 'rejeté')"><mat-icon>close</mat-icon></button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="leavesToApprove.length === 0">
+                    <td colspan="4" class="text-center">Aucun congé en attente</td>
+                  </tr>
+                </tbody>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- DÉPARTS EN CONGÉ CETTE SEMAINE / PROCHAINE -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <mat-card class="table-card">
+            <mat-card-header>
+              <h4 class="mat-title">Départs en congé</h4>
+              <mat-button-toggle-group [value]="showNextWeek" (change)="toggleWeek($event.value)">
+                <mat-button-toggle [value]="false">Cette semaine</mat-button-toggle>
+                <mat-button-toggle [value]="true">Semaine prochaine</mat-button-toggle>
+              </mat-button-toggle-group>
+            </mat-card-header>
+            <mat-card-content>
+              <div *ngIf="(showNextWeek ? nextWeekLeaves.length > 0 : thisWeekLeaves.length > 0); else noLeaves">
+                <div *ngFor="let leave of showNextWeek ? nextWeekLeaves : thisWeekLeaves" class="next-leave-info">
+                  <div class="info-item"><span class="label">👤 Employé :</span><span class="badge">{{ getEmployeeName(leave.employeId) }}</span></div>
+                  <div class="info-item"><span class="label">📅 Début :</span><span class="badge">{{ leave.dateDebut | date:'fullDate' }}</span></div>
+                  <div class="info-item"><span class="label">🏁 Fin :</span><span class="badge">{{ leave.dateFin | date:'fullDate' }}</span></div>
+                </div>
+              </div>
+              <ng-template #noLeaves>
+                <p class="text-center">Aucun départ prévu.</p>
+              </ng-template>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- 📅 CALENDRIER RAPIDE DES CONGÉS (avec dateClass) -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <mat-card class="table-card">
+            <mat-card-header>
+              <h4 class="mat-title">📅 Calendrier rapide des congés</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-calendar (selectedChange)="onDateSelected($event)" [dateClass]="highlightLeaves"></mat-calendar>
+              <div *ngIf="selectedLeaves.length > 0; else noSelectedLeaves" class="selected-leave-info mt-3">
+                <h5>En congé ce jour :</h5>
+                <ul>
+                  <li *ngFor="let leave of selectedLeaves">
+                    {{ getEmployeeName(leave.employeId) }} (du {{ leave.dateDebut | date:'shortDate' }} au {{ leave.dateFin | date:'shortDate' }})
+                  </li>
+                </ul>
+              </div>
+              <ng-template #noSelectedLeaves>
+                <p class="text-center">Aucun congé ce jour.</p>
+              </ng-template>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- Derniers employés et congés demandés -->
+      <div class="row">
+        <div class="col-md-6">
+          <mat-card class="table-card">
+            <mat-card-header>
+              <h4 class="mat-title">Derniers employés</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="table table-hover">
+                <thead><tr><th>Nom</th><th>Poste</th></tr></thead>
+                <tbody><tr *ngFor="let emp of lastEmployees"><td>{{ emp.firstName }} {{ emp.lastName }}</td><td>{{ emp.position }}</td></tr></tbody>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="col-md-6">
+          <mat-card class="table-card">
+            <mat-card-header>
+              <h4 class="mat-title">Derniers congés demandés</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="table table-hover">
+                <thead><tr><th>Employé</th><th>Début</th><th>Statut</th></tr></thead>
+                <tbody><tr *ngFor="let leave of lastLeaves"><td>{{ leave.employeName ?? 'Inconnu' }}</td><td>{{ leave.dateDebut | date }}</td><td>{{ leave.statut }}</td></tr></tbody>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  

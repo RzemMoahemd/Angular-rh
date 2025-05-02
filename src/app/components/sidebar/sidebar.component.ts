@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { KeycloakService } from 'app/services/keycloak/keycloak.service';
 
 declare const $: any;
+
 declare interface RouteInfo {
-    path: string;
-    title: string;
-    icon: string;
-    class: string;
+  path: string;
+  title: string;
+  icon: string;
+  class: string;
 }
-export const ROUTES: RouteInfo[] = [
+
+export const ALL_ROUTES: RouteInfo[] = [
   { path: 'employees', title: 'Gestion Employés', icon: 'group', class: '' },
-  { path: 'leaves', title: 'Gestion Congés', icon: 'event', class: '' }
+  { path: 'leaves', title: 'Gestion Congés', icon: 'event', class: '' },
+  { path: 'dahsboard', title: 'dashboard', icon: 'event', class: '' }
 ];
 
 
@@ -19,17 +23,20 @@ export const ROUTES: RouteInfo[] = [
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-  menuItems: any[];
+  menuItems: RouteInfo[] = [];
 
-  constructor() { }
+  constructor(private kc: KeycloakService) {}
 
   ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
+    const role = this.kc.getUserRole();
+    if (role === 'admin') {
+      this.menuItems = ALL_ROUTES.filter(r => r.path === 'employees' || r.path === 'dahsboard'  || r.path === 'leaves');
+    } else if (role === 'user') {
+      this.menuItems = ALL_ROUTES.filter(r => r.path === 'leaves');
+    }
   }
+
   isMobileMenu() {
-      if ($(window).width() > 991) {
-          return false;
-      }
-      return true;
-  };
+    return $(window).width() <= 991;
+  }
 }

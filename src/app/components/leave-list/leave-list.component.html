@@ -4,10 +4,13 @@
   <div class="table-wrapper mat-elevation-z3" @fadeIn>
     <table mat-table [dataSource]="dataSource" matSort class="custom-table">
 
-      <ng-container matColumnDef="employeId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Employé</th>
-        <td mat-cell *matCellDef="let l">{{ l.employeId }}</td>
+      <!-- Remplace employeId par employeFullName -->
+
+      <ng-container matColumnDef="employeFullName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Employé</th>
+        <td mat-cell *matCellDef="let l">{{ l.employeFullName }}</td>
       </ng-container>
+
 
       <ng-container matColumnDef="dateDebut">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Début</th>
@@ -29,17 +32,45 @@
         <td mat-cell *matCellDef="let l">{{ l.statut }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="actions">
+      <!-- <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let l">
-          <a mat-icon-button color="primary" [routerLink]="['/leave', l.id, 'edit']">
+          <a mat-icon-button color="primary" [routerLink]="['/admin/leave', l.id, 'edit']">
             <mat-icon>edit</mat-icon>
           </a>
           <button mat-icon-button color="warn" (click)="deleteLeave(l.id)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
+      </ng-container> -->
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let l">
+      
+          <!-- Si en attente -->
+          <ng-container *ngIf="l.statut === 'en attente'; else statusIcon">
+            <button mat-icon-button color="primary" (click)="updateStatus(l, 'approuvé')" matTooltip="Approuver">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="updateStatus(l, 'rejeté')" matTooltip="Rejeter">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </ng-container>
+      
+          <!-- Si approuvé ou rejeté -->
+          <ng-template #statusIcon>
+            <mat-icon [ngClass]="{
+              'green-icon': l.statut === 'approuvé',
+              'red-icon': l.statut === 'rejeté'
+            }">
+              {{ l.statut === 'approuvé' ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </ng-template>
+      
+        </td>
       </ng-container>
+      
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -52,6 +83,6 @@
   </div>
 
   <div class="add-button">
-    <a mat-raised-button color="accent" routerLink="/leave/new">➕ Demander un congé</a>
+    <a mat-raised-button color="accent" routerLink="/admin/leave/new">➕ Demander un congé</a>
   </div>
 </div>

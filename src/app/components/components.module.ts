@@ -11,6 +11,7 @@ import { EmployeeFormComponent } from './employee-form/employee-form.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { LeaveFormComponent } from './leave-form/leave-form.component';
 import { LeaveListComponent } from './leave-list/leave-list.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 // Modules Angular Material
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,6 +28,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 @NgModule({
@@ -47,7 +51,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatNativeDateModule,
     MatOptionModule,
     MatGridListModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatButtonToggleModule
   ],
   declarations: [
     FooterComponent,
@@ -56,7 +63,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     EmployeeFormComponent,
     EmployeeListComponent,
     LeaveFormComponent,
-    LeaveListComponent
+    LeaveListComponent,
+    DashboardComponent
   ],
   exports: [
     FooterComponent,
@@ -65,7 +73,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     EmployeeFormComponent,
     EmployeeListComponent,
     LeaveFormComponent,
-    LeaveListComponent
+    LeaveListComponent,
+    DashboardComponent
   ]
 })
 export class ComponentsModule { }

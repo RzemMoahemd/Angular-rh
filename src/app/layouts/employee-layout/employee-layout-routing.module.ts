@@ -17,7 +17,9 @@ const routes: Routes = [
     { path: 'leave/new', component: LeaveFormComponent, canActivate: [authGuard] },
     { path: 'leave/:id/edit', component: LeaveFormComponent, canActivate: [authGuard] },
     { path: 'login', component: LoginComponent },
-    { path: '', redirectTo: 'employees', pathMatch: 'full' }
+    //{ path: '', component: LeaveListComponent, canActivate: [authGuard] }
+    { path: '', redirectTo: 'leaves', pathMatch: 'full', canActivate: [authGuard] }
+
 ];
 
 @NgModule({

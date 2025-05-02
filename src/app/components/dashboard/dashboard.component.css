@@ -1,0 +1,96 @@
+.stat-card {
+    padding: 16px;
+    text-align: center;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.purple { background-color: #8e24aa; }
+.green { background-color: #43a047; }
+.blue { background-color: #1e88e5; }
+.red { background-color: #e53935; }
+
+.row { margin-left: -10px; margin-right: -10px; }
+.row > [class*="col-"] { padding-left: 10px; padding-right: 10px; margin-bottom: 20px; }
+
+.chart-card, .table-card {
+    padding: 10px;
+}
+
+.table-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.table-card:hover { transform: translateY(-2px); }
+
+.table-card mat-card-content, .selected-leave-info {
+    padding: 16px;
+}
+
+.text-center {
+    text-align: center;
+    color: #555;
+}
+
+.next-leave-info {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px 0;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.next-leave-info .info-item {
+    display: flex;
+    align-items: center;
+}
+
+.next-leave-info .label {
+    font-weight: bold;
+    color: #333;
+}
+
+.badge {
+    background-color: #e0f7fa;
+    color: #00796b;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: bold;
+}
+
+.selected-leave-info {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.selected-leave-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.selected-leave-info li {
+    margin-bottom: 6px;
+}
+
+mat-calendar {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+mat-button-toggle-group {
+    margin-left: auto;
+}
+
+.leave-day {
+    background-color: #81c784;
+    color: white;
+    border-radius: 50%;
+  }
+  

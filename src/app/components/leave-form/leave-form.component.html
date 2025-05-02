@@ -14,7 +14,7 @@
 
   <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="form-container">
     <div class="form-grid">
-      <mat-form-field appearance="outline">
+      <!-- <mat-form-field appearance="outline">
         <mat-label>ID Employé</mat-label>
         <input
           matInput
@@ -22,7 +22,17 @@
           required
           type="number"
           placeholder="Ex. 101" />
+      </mat-form-field> -->
+
+      <mat-form-field appearance="outline">
+        <mat-label>Employé</mat-label>
+        <mat-select formControlName="employeId" required>
+          <mat-option *ngFor="let emp of employees" [value]="emp.id">
+            {{ emp.firstName }} {{ emp.lastName }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
+      
 
       <mat-form-field appearance="outline">
         <mat-label>Date de début</mat-label>

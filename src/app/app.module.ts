@@ -47,9 +47,10 @@ import { MatOptionModule } from "@angular/material/core";
 
 
 
-export function kcFactory(kcService: KeycloakService) {
-  return () => kcService.init();
+export function initializeKeycloak(kc: KeycloakService): () => Promise<boolean> {
+  return () => kc.init();
 }
+
 
 @NgModule({
   declarations: [
@@ -92,7 +93,7 @@ export function kcFactory(kcService: KeycloakService) {
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: kcFactory,
+      useFactory: initializeKeycloak,
       deps: [KeycloakService],
       multi: true
     },

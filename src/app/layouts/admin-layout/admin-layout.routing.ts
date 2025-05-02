@@ -7,16 +7,19 @@ import { LeaveFormComponent } from 'app/components/leave-form/leave-form.compone
 import { LoginComponent } from 'app/components/login/login.component';
 import { authGuard } from 'app/services/guard/auth.guard';
 import { adminGuard } from 'app/services/guard/admin.guard';
+import { DashboardComponent } from 'app/components/dashboard/dashboard.component';
 
 
 export const AdminLayoutRoutes: Routes = [
-  { path: 'employees', component: EmployeeListComponent, canActivate: [authGuard] },
-  { path: 'employee/new', component: EmployeeFormComponent, canActivate: [authGuard] },
-  { path: 'employee/:id/edit', component: EmployeeFormComponent, canActivate: [authGuard] },
+  { path: 'employees', component: EmployeeListComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'employee/new', component: EmployeeFormComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'employee/:id/edit', component: EmployeeFormComponent, canActivate: [authGuard, adminGuard] },
   { path: 'leaves', component: LeaveListComponent, canActivate: [authGuard] },
   { path: 'leave/new', component: LeaveFormComponent, canActivate: [authGuard] },
   { path: 'leave/:id/edit', component: LeaveFormComponent, canActivate: [authGuard] },
+  { path: 'dahsboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'employees', pathMatch: 'full' }
+  { path: '', redirectTo: 'employees', pathMatch: 'full', canActivate: [authGuard] }
+  // { path: '', component: LeaveListComponent, canActivate: [authGuard] }
 ];
 

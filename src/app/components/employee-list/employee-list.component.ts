@@ -14,7 +14,7 @@ import { SearchService } from '../../services/search.service';
   styleUrls: ["./employee-list.component.css"],
 })
 export class EmployeeListComponent implements OnInit {
-  displayedColumns: string[] = ["lastName", "firstName", "email", "position", "actions"]
+  displayedColumns: string[] = ["lastName", "firstName", "email", "phoneNumber", "hireDate", "position", "actions"];
   dataSource: MatTableDataSource<Employee>
 
   @ViewChild(MatPaginator) paginator!: MatPaginator

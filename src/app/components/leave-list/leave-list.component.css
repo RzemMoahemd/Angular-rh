@@ -45,4 +45,13 @@
       opacity: 1;
     }
   }
+
+  .green-icon {
+    color: green;
+  }
+  
+  .red-icon {
+    color: red;
+  }
+  
   

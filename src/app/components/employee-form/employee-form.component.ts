@@ -31,8 +31,8 @@ export class EmployeeFormComponent implements OnInit {
       phoneNumber: ["", Validators.required],
       hireDate: ["", Validators.required],
       position: ["", Validators.required],
-      departmentId: ["", Validators.required],
-      userId: ["", Validators.required]
+      // departmentId: ["", Validators.required],
+      // userId: ["", Validators.required]
     })
   }
 
@@ -73,7 +73,7 @@ export class EmployeeFormComponent implements OnInit {
 
         // ✅ attendre 1s pour voir le spinner avant navigation
         setTimeout(() => {
-          this.router.navigate(["/employees"])
+          this.router.navigate(["/admin/employees"])
         }, 1000)
       },
       error: () => {
@@ -99,7 +99,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/employees']);
+    this.router.navigate(['/admin/employees']);
   }
   
 }
