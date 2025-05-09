@@ -1,0 +1,342 @@
+.leave-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #3f51b5;
+}
+
+.loading-spinner, .error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.balances-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.balance-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.balance-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+  color: #555;
+}
+
+.balance-days {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 4px;
+}
+
+.balance-detail {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Onglets */
+.tab-buttons {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-buttons button {
+  padding: 8px 16px;
+  margin-right: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  position: relative;
+  bottom: -1px;
+}
+
+.tab-buttons button.active {
+  color: #3f51b5;
+  font-weight: 500;
+  border-bottom: 2px solid #3f51b5;
+}
+
+/* Section Mes demandes */
+.requests-section {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.requests-section h2 {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.request-card {
+  margin-bottom: 16px;
+}
+
+.request-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.request-dates {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.request-days {
+  color: #777;
+}
+
+.request-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request-status {
+  font-weight: 500;
+  text-transform: capitalize;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+}
+
+.request-submitted {
+  color: #777;
+  font-size: 13px;
+}
+
+.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-pending {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Section Historique */
+.history-section {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-section h2 {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.total-days {
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+.year {
+  color: #666;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Graphique en barres */
+.bar-chart-container {
+  margin: 24px 0;
+}
+
+.bar-chart {
+  position: relative;
+  height: 250px;
+  display: flex;
+}
+
+.chart-lines {
+  width: 40px;
+  display: flex;
+  flex-direction: column-reverse;
+  padding-top: 20px;
+}
+
+.chart-line {
+  flex: 1;
+  position: relative;
+  border-top: 1px solid #e0e0e0;
+}
+
+.chart-line-label {
+  position: absolute;
+  left: 0;
+  top: -10px;
+  font-size: 12px;
+  color: #666;
+}
+
+.bars-container {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 15px;
+}
+
+.bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+
+.bar {
+  width: 30px;
+  background-color: #3f51b5;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+  position: relative;
+  min-height: 2px;
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+.month-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+/* Liste des congés approuvés */
+.approved-leave-item {
+  margin: 12px 0;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.leave-dates {
+  font-weight: 500;
+  color: #333;
+}
+
+.leave-days {
+  color: #666;
+  font-size: 13px;
+  margin-left: 8px;
+}
+
+.leave-motif {
+  color: #555;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.filter-button {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button[mat-raised-button] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .balances-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .leave-container {
+    padding: 16px;
+  }
+  
+  .requests-section, .history-section {
+    padding: 16px;
+  }
+
+  .bar-chart {
+    height: 200px;
+  }
+
+  .chart-lines {
+    width: 30px;
+  }
+
+  .bar {
+    width: 20px;
+  }
+
+  .month-label {
+    font-size: 10px;
+  }
+}

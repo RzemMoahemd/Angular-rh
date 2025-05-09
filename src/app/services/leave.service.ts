@@ -33,6 +33,9 @@ export class LeaveService {
   updateLeaveStatus(id: number, statut: string) {
     return this.http.patch<void>(`${this.apiUrl}/${id}/status`, { statut });
   }
+  getLeavesByEmployee(employeeId: number): Observable<Leave[]> {
+    return this.http.get<Leave[]>(`${this.apiUrl}/employee/${employeeId}`);
+  }
   
   
   

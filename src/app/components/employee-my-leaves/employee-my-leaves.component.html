@@ -1,0 +1,132 @@
+<div class="leave-container">
+  <div class="header">
+    <h1 class="title">
+      <mat-icon>beach_access</mat-icon>
+      Mes congés
+    </h1>
+    <button mat-raised-button color="primary" (click)="openLeaveRequestDialog()">
+      <mat-icon>add</mat-icon>
+      Nouvelle demande
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+    <button mat-button color="warn" (click)="loadEmployeeData()">Réessayer</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage" class="content">
+    <!-- Section Soldes de congés -->
+    <div class="balances-section">
+      <div *ngFor="let balance of leaveBalances" class="balance-card">
+        <h3>{{ balance.type }}</h3>
+        <div *ngIf="balance.type === 'Maladie' || balance.type === 'Congés sans solde'" 
+             class="balance-days">
+          {{ balance.used }} jours
+        </div>
+        <div *ngIf="balance.type !== 'Maladie' && balance.type !== 'Congés sans solde'" 
+             class="balance-days">
+          {{ balance.remaining }} jours
+        </div>
+        <div *ngIf="balance.type !== 'Maladie' && balance.type !== 'Congés sans solde'" 
+             class="balance-detail">
+          ({{ balance.used }}/{{ balance.total }} jours utilisés)
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <div class="tab-buttons">
+      <button mat-button 
+              [class.active]="activeTab === 'requests'" 
+              (click)="activeTab = 'requests'">
+        Mes demandes
+      </button>
+      <button mat-button 
+              [class.active]="activeTab === 'history'" 
+              (click)="activeTab = 'history'">
+        Historique
+      </button>
+    </div>
+
+    <!-- Contenu Mes demandes (tous les congés) -->
+    <div *ngIf="activeTab === 'requests'" class="requests-section">
+      <h2>Demandes de congés</h2>
+      <p class="subtitle">Vos demandes de congés et leur statut</p>
+
+      <div *ngFor="let leave of allLeaves; let last = last" class="request-card">
+        <h3>{{ leave.motif }}</h3>
+        <div class="request-dates">
+          {{ leave.dateDebut | date:'dd/MM/yyyy' }} - {{ leave.dateFin | date:'dd/MM/yyyy' }}
+          <span class="request-days">({{ calculateDays(leave.dateDebut, leave.dateFin) }} jours)</span>
+        </div>
+        <div class="request-footer">
+          <span class="request-status" [ngClass]="getStatusClass(leave.statut)">
+            {{ leave.statut }}
+          </span>
+          <span *ngIf="leave.createdAt" class="request-submitted">
+            Soumis le {{ leave.createdAt | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </div>
+    </div>
+
+    <!-- Contenu Historique (uniquement les approuvés) -->
+    <div *ngIf="activeTab === 'history'" class="history-section">
+      <h2>Historique des absences</h2>
+      <p class="subtitle">Récapitulatif de vos absences approuvées sur l'année</p>
+
+      <div class="total-days">
+        <strong>Total des jours pris:</strong> {{ calculateTotalDaysTaken() }}
+        <div class="year">Année {{ currentYear }}</div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Graphique en barres -->
+      <div class="bar-chart-container">
+        <div class="bar-chart">
+          <div class="chart-lines">
+            <div *ngFor="let tick of [0, 1, 2, 3, 4, 5]" class="chart-line">
+              <span class="chart-line-label">{{ getMaxDays() - tick }}</span>
+              <div class="chart-line-horizontal"></div>
+            </div>
+          </div>
+          
+          <div class="bars-container">
+            <div *ngFor="let month of months; let i = index" class="bar-wrapper">
+              <div class="bar" [style.height]="getMonthBarHeight(daysPerMonth[i])">
+                <span class="bar-value">{{ daysPerMonth[i] }}</span>
+              </div>
+              <div class="month-label">{{ month }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Liste des congés approuvés -->
+      <div *ngFor="let leave of approvedLeaves" class="approved-leave-item">
+        <div class="leave-dates">
+          {{ leave.dateDebut | date:'dd/MM/yyyy' }} - {{ leave.dateFin | date:'dd/MM/yyyy' }}
+          <span class="leave-days">({{ calculateDays(leave.dateDebut, leave.dateFin) }} jours)</span>
+        </div>
+        <div class="leave-motif">{{ leave.motif }}</div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <button mat-stroked-button class="filter-button">
+        <mat-icon>filter_alt</mat-icon>
+        Filtrer
+      </button>
+    </div>
+  </div>
+</div>

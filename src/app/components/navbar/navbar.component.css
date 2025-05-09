@@ -1,0 +1,92 @@
+.navbar.navbar-absolute {
+    /* Modifier la couleur de fond */
+    background: #f8f9fa !important; /* Gris clair identique au main-container */
+    /* Supprimer les coins arrondis existants */
+    border-radius: 0 !important;
+    
+    /* Conserver le reste */
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    height: 70px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #dee2e6;
+    z-index: 1030;
+}
+
+.navbar.navbar-absolute.form-open {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    height: 60px;
+}
+
+.navbar-brand {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #2c3e50;
+    letter-spacing: -0.5px;
+    transition: opacity 0.3s ease;
+}
+
+.navbar-toggler {
+    width: 34px;
+    height: 34px;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+.input-group.no-border {
+    max-width: 500px;
+    transition: all 0.3s ease;
+}
+
+.input-group.no-border .form-control {
+    font-size: 0.95rem;
+    padding: 0 15px;
+    height: 38px;
+}
+
+.input-group.no-border .btn {
+    width: 38px;
+    height: 38px;
+}
+
+.nav-link {
+    padding: 0 12px;
+    transition: color 0.3s ease;
+}
+
+.nav-link i.material-icons {
+    font-size: 26px;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+/* Styles spécifiques pour les formulaires */
+.form-open .navbar-brand {
+    opacity: 0.8;
+}
+
+.form-open .input-group.no-border {
+    background: rgba(245, 247, 250, 0.9);
+}
+
+.form-open .nav-link {
+    color: rgba(44, 62, 80, 0.7);
+}
+
+@media (max-width: 991px) {
+    .navbar.navbar-absolute {
+        left: 0;
+        padding: 0 15px;
+    }
+    
+    .main-content-container {
+        margin-top: 60px;
+    }
+}

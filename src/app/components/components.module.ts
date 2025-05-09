@@ -31,6 +31,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { EmployeeMyLeavesComponent } from './employee-my-leaves/employee-my-leaves.component';
+import { EmployeeRequestLeaveComponent } from './employee-request-leave/employee-request-leave.component';
+import { EmployeeDashboardComponent } from './employee-dashboard/employee-dashboard.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 
 @NgModule({
@@ -54,7 +59,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatCardModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatDialogModule
   ],
   declarations: [
     FooterComponent,
@@ -64,7 +70,10 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     EmployeeListComponent,
     LeaveFormComponent,
     LeaveListComponent,
-    DashboardComponent
+    DashboardComponent,
+    EmployeeMyLeavesComponent,
+    EmployeeRequestLeaveComponent,
+    EmployeeDashboardComponent
   ],
   exports: [
     FooterComponent,

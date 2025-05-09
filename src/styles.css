@@ -1,0 +1,9 @@
+body.form-page .main-panel {
+    filter: blur(1px);
+    transition: filter 0.3s ease;
+}
+
+/* Assurez-vous que le contenu est en dessous de la navbar */
+.main-panel {
+    margin-top: 60px;
+}

@@ -21,8 +21,6 @@ export class EmployeeLayoutComponent implements OnInit{
       const isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
 
       if (isWindows && !document.getElementsByTagName('body')[0].classList.contains('sidebar-mini')) {
-          // if we are on windows OS we activate the perfectScrollbar function
-
           document.getElementsByTagName('body')[0].classList.add('perfect-scrollbar-on');
       } else {
           document.getElementsByTagName('body')[0].classList.remove('perfect-scrollbar-off');
@@ -59,16 +57,13 @@ export class EmployeeLayoutComponent implements OnInit{
       let $sidebar_responsive = $('body > .navbar-collapse');
       let $sidebar_img_container = $sidebar.find('.sidebar-background');
 
-
       if(window_width > 767){
           if($('.fixed-plugin .dropdown').hasClass('show-dropdown')){
               $('.fixed-plugin .dropdown').addClass('open');
           }
-
       }
 
       $('.fixed-plugin a').click(function(event){
-        // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
           if($(this).hasClass('switch-trigger')){
               if(event.stopPropagation){
                   event.stopPropagation();
@@ -81,7 +76,6 @@ export class EmployeeLayoutComponent implements OnInit{
 
       $('.fixed-plugin .badge').click(function(){
           let $full_page_background = $('.full-page-background');
-
 
           $(this).siblings().removeClass('active');
           $(this).addClass('active');
@@ -103,7 +97,6 @@ export class EmployeeLayoutComponent implements OnInit{
           $(this).parent('li').siblings().removeClass('active');
           $(this).parent('li').addClass('active');
 
-
           var new_image = $(this).find("img").attr('src');
 
           if($sidebar_img_container.length !=0 ){
@@ -114,7 +107,6 @@ export class EmployeeLayoutComponent implements OnInit{
           }
 
           if($full_page_background.length != 0){
-
               $full_page_background.fadeOut('fast', function(){
                  $full_page_background.css('background-image','url("' + new_image + '")');
                  $full_page_background.fadeIn('fast');
@@ -153,5 +145,4 @@ export class EmployeeLayoutComponent implements OnInit{
       }
       return bool;
   }
-
 }
