@@ -1,11 +1,17 @@
-import { Component, type OnInit, ViewChild } from "@angular/core"
-import { MatTableDataSource } from "@angular/material/table"
-import { MatPaginator } from "@angular/material/paginator"
-import { MatSort } from "@angular/material/sort"
-import { MatSnackBar } from "@angular/material/snack-bar"
-import type { Employee } from "../../models/employee"
-import { EmployeeService } from "../../services/employee.service"
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { FormControl } from '@angular/forms';
+import { Employee } from "../../models/employee";
+import { EmployeeService } from "../../services/employee.service";
 import { SearchService } from '../../services/search.service';
+import { DepartmentService } from '../../services/department.service';
+import { Department } from '../../models/department';
+import { forkJoin } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { EmployeeFormComponent } from "../employee-form/employee-form.component";
 
 
 @Component({
@@ -13,47 +19,117 @@ import { SearchService } from '../../services/search.service';
   templateUrl: "./employee-list.component.html",
   styleUrls: ["./employee-list.component.css"],
 })
-export class EmployeeListComponent implements OnInit {
-  displayedColumns: string[] = ["lastName", "firstName", "email", "phoneNumber", "hireDate", "position", "actions"];
-  dataSource: MatTableDataSource<Employee>
+export class EmployeeListComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ["employee", "phoneNumber", "position", "department", "hireDate", "status", "actions"];
+  dataSource: MatTableDataSource<Employee>;
+  departments: Department[] = [];
+  statuses = ['Tous', 'Actif', 'Inactif'];
+  
+  departmentFilter = new FormControl('Tous');
+  statusFilter = new FormControl('Tous');
+  searchControl = new FormControl('');
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator
-  @ViewChild(MatSort) sort!: MatSort
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private employeeService: EmployeeService,
+    public dialog: MatDialog,
+    public employeeService: EmployeeService,
+    private departmentService: DepartmentService,
     private snackBar: MatSnackBar,
-    private searchService: SearchService
+    public searchService: SearchService
   ) {
-    this.dataSource = new MatTableDataSource<Employee>([])
+    this.dataSource = new MatTableDataSource<Employee>([]);
+    this.dataSource.filterPredicate = this.customFilterPredicate();
   }
 
   ngOnInit(): void {
-    console.log("EmployeeListComponent chargé"); 
-    this.loadEmployees()
+    this.loadData();
+    
+    this.departmentFilter.valueChanges.subscribe(() => this.applyFilters());
+    this.statusFilter.valueChanges.subscribe(() => this.applyFilters());
+    this.searchControl.valueChanges.subscribe(() => this.applyFilters());
 
     this.searchService.searchTerm$.subscribe(term => {
-      this.applySearchFilterFromNavbar(term);
+      this.searchControl.setValue(term);
+      this.applyFilters();
     });
   }
 
-  
+  openEmployeeDialog(employee?: Employee): void {
+  const dialogRef = this.dialog.open(EmployeeFormComponent, {
+    width: '600px',
+    data: { employee }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result === 'success') {
+      this.loadData();
+    }
+  });
+}
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator
-    this.dataSource.sort = this.sort
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  loadEmployees(): void {
-    this.employeeService.getEmployees().subscribe(
-      (data) => {
-        this.dataSource.data = data
+  private loadData(): void {
+    forkJoin([
+      this.employeeService.getEmployees(),
+      this.departmentService.getAllDepartments()
+    ]).subscribe({
+      next: ([employees, departments]) => {
+        this.departments = departments;
+        this.dataSource.data = employees.map(employee => ({
+          ...employee,
+          departmentName: this.getDepartmentName(employee.departmentId)
+        }));
+        this.dataSource.paginator = this.paginator;
       },
-      (error) => {
-        console.error("Error fetching employees", error)
-        this.showErrorMessage("Erreur lors du chargement des employés")
-      },
-    )
+      error: (error) => {
+        console.error("Error loading data", error);
+        this.showErrorMessage("Erreur lors du chargement des données");
+      }
+    });
+  }
+
+  getDepartmentName(departmentId: number): string {
+    const department = this.departments.find(d => d.id === departmentId);
+    return department?.name || 'Non assigné';
+  }
+
+  private customFilterPredicate() {
+  return (data: Employee, filter: string): boolean => {
+    const filterObject = JSON.parse(filter);
+    const searchMatch = data.firstName.toLowerCase().includes(filterObject.search) ||
+                       data.lastName.toLowerCase().includes(filterObject.search) ||
+                       data.email.toLowerCase().includes(filterObject.search) ||
+                       data.phoneNumber.toString().includes(filterObject.search);
+    
+    // Le reste reste inchangé...
+    const departmentMatch = filterObject.department === 'Tous' || 
+                          this.getDepartmentName(data.departmentId) === filterObject.department;
+    
+    const statusMatch = filterObject.status === 'Tous' || 
+                      data.status === filterObject.status;
+
+    return searchMatch && departmentMatch && statusMatch;
+  };
+}
+
+  applyFilters() {
+    const filterValue = {
+      search: this.searchControl.value?.trim().toLowerCase() || '',
+      department: this.departmentFilter.value,
+      status: this.statusFilter.value
+    };
+    
+    this.dataSource.filter = JSON.stringify(filterValue);
+    
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   deleteEmployee(id: number): void {
@@ -69,15 +145,6 @@ export class EmployeeListComponent implements OnInit {
     )
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-    this.dataSource.filter = filterValue.trim().toLowerCase()
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage()
-    }
-  }
-
   private showSuccessMessage(message: string): void {
     this.snackBar.open(message, "Fermer", {
       duration: 3000,
@@ -91,13 +158,4 @@ export class EmployeeListComponent implements OnInit {
       panelClass: ["error-snackbar"],
     })
   }
-
-  applySearchFilterFromNavbar(value: string) {
-    this.dataSource.filter = value.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-  
 }
-

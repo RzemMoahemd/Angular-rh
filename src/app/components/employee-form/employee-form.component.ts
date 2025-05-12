@@ -1,28 +1,35 @@
-import { Component, OnInit } from "@angular/core"
-import { FormBuilder, FormGroup, Validators } from "@angular/forms"
-import { ActivatedRoute, Router } from "@angular/router"
-import { MatSnackBar } from "@angular/material/snack-bar"
-import { Employee } from "../../models/employee"
-import { EmployeeService } from "../../services/employee.service"
-import { Observable } from "rxjs"
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Employee } from '../../models/employee';
+import { EmployeeService } from '../../services/employee.service';
+import { DepartmentService } from '../../services/department.service';
+import { Department } from '../../models/department';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+
+
 
 @Component({
-  selector: "app-employee-form",
-  templateUrl: "./employee-form.component.html",
-  styleUrls: ["./employee-form.component.css"]
+  selector: 'app-employee-form',
+  templateUrl: './employee-form.component.html',
+  styleUrls: ['./employee-form.component.css']
 })
-export class EmployeeFormComponent implements OnInit {
-  employeeForm: FormGroup
-  isEditMode = false
-  employeeId?: number
-  loading = false // ✅ nécessaire pour gérer l'état du spinner
+export class EmployeeFormComponent {
+  employeeForm: FormGroup;
+  loading = false;
+  departments: Department[] = [];
+  statuses = ['Actif', 'Inactif'];
+  isEditMode = false;
+  employeeId?: number;
 
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private snackBar: MatSnackBar
+    private departmentService: DepartmentService,
+    private snackBar: MatSnackBar,
+    public dialogRef: MatDialogRef<EmployeeFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { employee?: Employee }
   ) {
     this.employeeForm = this.fb.group({
       firstName: ["", Validators.required],
@@ -31,75 +38,67 @@ export class EmployeeFormComponent implements OnInit {
       phoneNumber: ["", Validators.required],
       hireDate: ["", Validators.required],
       position: ["", Validators.required],
-      // departmentId: ["", Validators.required],
-      // userId: ["", Validators.required]
-    })
+      departmentId: ["", Validators.required],
+      status: ["", Validators.required]
+    });
+
+    if (this.data?.employee) {
+      this.isEditMode = true;
+      this.employeeId = this.data.employee.id;
+      this.employeeForm.patchValue(this.data.employee);
+    }
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      if (params["id"]) {
-        this.isEditMode = true
-        this.employeeId = +params["id"]
-        this.loadEmployee()
-      }
-    })
+    this.loadDepartments();
   }
 
-  loadEmployee(): void {
-    this.employeeService.getEmployee(this.employeeId!).subscribe({
-      next: emp => this.employeeForm.patchValue(emp),
-      error: () => this.showErrorMessage("Erreur lors du chargement de l'employé")
-    })
+  loadDepartments(): void {
+    this.departmentService.getAllDepartments().subscribe({
+      next: (departments) => this.departments = departments,
+      error: () => this.showErrorMessage("Erreur de chargement des départements")
+    });
   }
 
   onSubmit(): void {
-    if (this.employeeForm.invalid) return
+    if (this.employeeForm.invalid) return;
 
-    this.loading = true
-    const employee: Employee = this.employeeForm.value
-    let request$: Observable<any>
+    this.loading = true;
+    const employee: Employee = this.employeeForm.value;
+    
+    // Correction avec type assertion
+    const operation$ = (this.isEditMode 
+      ? this.employeeService.updateEmployee(this.employeeId!, employee)
+      : this.employeeService.createEmployee(employee)) as Observable<unknown>;
 
-    if (this.isEditMode) {
-      request$ = this.employeeService.updateEmployee(this.employeeId!, employee)
-    } else {
-      request$ = this.employeeService.createEmployee(employee)
-    }
-
-    request$.subscribe({
+    operation$.subscribe({
       next: () => {
-        const msg = this.isEditMode ? "Employé modifié avec succès" : "Employé ajouté"
-        this.showSuccessMessage(msg)
-
-        // ✅ attendre 1s pour voir le spinner avant navigation
-        setTimeout(() => {
-          this.router.navigate(["/admin/employees"])
-        }, 1000)
+        this.dialogRef.close('success');
+        this.showSuccessMessage(this.isEditMode ? "Employé modifié" : "Employé créé");
+        this.loading = false;
       },
       error: () => {
-        const msg = this.isEditMode ? "Erreur de modification" : "Erreur de création"
-        this.showErrorMessage(msg)
-        this.loading = false
+        this.showErrorMessage("Erreur lors de l'opération");
+        this.loading = false;
       }
-    })
+    });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 
   private showSuccessMessage(message: string): void {
     this.snackBar.open(message, "Fermer", {
       duration: 3000,
       panelClass: ["success-snackbar"]
-    })
+    });
   }
 
   private showErrorMessage(message: string): void {
     this.snackBar.open(message, "Fermer", {
       duration: 3000,
       panelClass: ["error-snackbar"]
-    })
+    });
   }
-
-  goBack(): void {
-    this.router.navigate(['/admin/employees']);
-  }
-  
 }

@@ -1,69 +1,91 @@
-<div class="employee-container">
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon class="title-icon">badge</mat-icon>
+      {{ isEditMode ? 'Modifier employé' : 'Nouvel employé' }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-  <!-- Bouton retour -->
-<button mat-fab color="primary" class="top-left-icon" (click)="goBack()">
-  <mat-icon>arrow_back</mat-icon>
-</button>
+  <mat-dialog-content>
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="rh-form">
+      <div class="form-section">
+        <h3 class="section-title">Informations de base</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Prénom *</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
 
-  <h2 class="title">
-    <mat-icon class="colored-icon">person_add</mat-icon>
-    <span>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un employé</span>
-  </h2>
+          <mat-form-field appearance="outline">
+            <mat-label>Nom *</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+        </div>
 
-  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-container">
-    <div class="form-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Prénom</mat-label>
-        <input matInput formControlName="firstName" required>
-      </mat-form-field>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Email *</mat-label>
+            <input matInput formControlName="email" type="email">
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Nom</mat-label>
-        <input matInput formControlName="lastName" required>
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Téléphone *</mat-label>
+            <input matInput formControlName="phoneNumber" type="tel">
+          </mat-form-field>
+        </div>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" required type="email">
-      </mat-form-field>
+      <div class="form-section">
+        <h3 class="section-title">Informations professionnelles</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Date d'embauche *</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="hireDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Numéro de téléphone</mat-label>
-        <input matInput formControlName="phoneNumber" required type="tel">
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Poste *</mat-label>
+            <input matInput formControlName="position">
+          </mat-form-field>
+        </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Date d'embauche</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="hireDate" required>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Département *</mat-label>
+            <mat-select formControlName="departmentId">
+              <mat-option *ngFor="let department of departments" [value]="department.id">
+                {{ department.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Poste</mat-label>
-        <input matInput formControlName="position" required>
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Statut *</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of statuses" [value]="status">
+                {{ status }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
 
-      <!-- <mat-form-field appearance="outline">
-        <mat-label>ID du département</mat-label>
-        <input matInput formControlName="departmentId" required type="number">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>ID de l'utilisateur</mat-label>
-        <input matInput formControlName="userId" required type="number">
-      </mat-form-field> -->
-    </div>
-
-    <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!employeeForm.valid || loading">
-        <ng-container *ngIf="loading; else normalText">
-          <mat-spinner diameter="20" strokeWidth="3"></mat-spinner>
-        </ng-container>
-        <ng-template #normalText>
-          {{ isEditMode ? 'Modifier' : 'Ajouter' }}
-        </ng-template>
-      </button>
-    </div>
-  </form>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Annuler</button>
+    <button mat-raised-button color="primary" 
+            type="submit"
+            [disabled]="!employeeForm.valid || loading"
+            (click)="onSubmit()">
+      {{ loading ? 'Envoi...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
+    </button>
+  </mat-dialog-actions>
 </div>

@@ -1,66 +1,144 @@
+/* Styles généraux */
+.management-header {
+  background-color: #f8f9fa;
+  padding: 1.5rem 2rem;
+  margin: -2rem -2rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.header-content h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.header-content p {
+  color: #7f8c8d;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
 .employee-container {
-  max-width: 1100px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Carte principale */
+.content-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
   padding: 2rem;
 }
 
-.title {
-  font-size: 26px;
+/* En-tête */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.list-title-section {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.list-title {
+  font-size: 1.25rem;
   font-weight: 600;
-  text-align: center;
-  margin-bottom: 2rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.total-employees {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Filtres */
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .search-field {
-  width: 100%;
-  margin-bottom: 2rem;
+  flex: 1;
 }
 
-.table-wrapper {
-  border-radius: 10px;
-  background-color: #fff;
-  padding: 1rem;
-  overflow-x: auto;
+.select-filters {
+  display: flex;
+  gap: 1rem;
 }
 
-.custom-table {
-  width: 100%;
+/* Tableau */
+.table-container {
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: white;
+  overflow: hidden;
 }
 
-.add-button {
-  text-align: right;
-  margin-top: 2rem;
+.mat-header-cell {
+  font-weight: 600 !important;
+  color: #495057 !important;
+  background: #fafafa !important;
+  border-bottom: 2px solid #eeeeee !important;
 }
 
-/* Animation de fade-in à l'ouverture */
-.employee-container {
-  animation: fadeIn 0.6s ease-in-out;
+.mat-row {
+  height: 64px;
+  border-bottom: 1px solid #eeeeee;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+/* Badge de statut */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  background: #ecf0f1;
+  color: #7f8c8d;
+}
+
+.status-badge.active {
+  background: #2ecc71;
+  color: white;
+}
+
+/* Bouton Ajouter */
+.add-button button {
+  background-color: #2ecc71;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .filters-container {
+    flex-direction: column;
   }
-}
+  
+  .select-filters {
+    flex-wrap: wrap;
+  }
 
-/* Animation légère sur hover des lignes */
-.custom-table tr:hover {
-  background-color: #f5f5f5;
-  transition: background-color 0.3s ease;
+  .mat-column-phoneNumber {
+  max-width: 150px;
+  white-space: nowrap;
 }
-
-.add-button a {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.add-button a:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  
 }

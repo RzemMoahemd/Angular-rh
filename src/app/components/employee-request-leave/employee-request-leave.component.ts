@@ -5,9 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { KeycloakService } from '../../services/keycloak/keycloak.service';
 import { EmployeeService } from 'app/services/employee.service';
 import { LeaveBalanceService } from 'app/services/leave-balance.service';
-import { take } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { HttpErrorResponse } from '@angular/common/http';
+import { throwError } from 'rxjs';
 
 interface Balance {
   typeConge: string;
@@ -24,6 +26,7 @@ export class EmployeeRequestLeaveComponent {
   loading = false;
   leaveBalances: Balance[] = [];
   minDate: Date;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -100,29 +103,73 @@ export class EmployeeRequestLeaveComponent {
       next: (employee) => {
         const leaveType = this.getLeaveType(formValue.motif);
         const days = this.calculateDays(formValue.dateDebut, formValue.dateFin);
-  
+
+        if (leaveType === 'PAYÉ' || leaveType === 'RTT') {
+          const balance = this.leaveBalances.find(b => b.typeConge === leaveType);
+          
+          if (!balance) {
+            this.handleError('Type de congé non configuré');
+            return;
+          }
+          
+          if (days > balance.nombreJoursRestants) {
+            this.handleError(`❌ Solde insuffisant (${balance.nombreJoursRestants} jours restants)`);
+            return;
+          }
+        }
+
         const leave = {
           employeId: employee.id,
           dateDebut: formValue.dateDebut,
           dateFin: formValue.dateFin,
-          motif: formValue.motif === 'autre' ? formValue.motifPrecision : formValue.motif,
-          statut: 'en attente'
+          motif: formValue.motif,
+          commentaire: formValue.motifPrecision,
+          statut: 'en attente',
+          duration: days
         };
-  
+
         this.leaveService.createLeave(leave).subscribe({
           next: () => {
             this.handleSuccess();
+            this.updateBalanceDisplay(leaveType, days);
           },
-          error: () => this.handleError('Erreur lors de la création du congé')
+          error: (err) => {
+  let errorMessage = err.message; // Message direct du backend
+  
+  // Personnalisation des messages si nécessaire
+  const customMessages = {
+    'Conflit de dates avec une demande existante': '⚠️ Ces dates chevauchent une demande existante',
+    'Solde insuffisant pour PAYÉ': '❌ Solde PAYÉ insuffisant',
+    'Solde insuffisant pour RTT': '❌ Solde RTT insuffisant'
+  };
+
+  errorMessage = customMessages[errorMessage] || errorMessage;
+
+  this.snackBar.open(errorMessage, 'Fermer', {
+    duration: 4000,
+    panelClass: ['error-snackbar']
+  });
+  
+  this.loading = false;
+}
         });
       },
       error: () => this.handleError('Employé non trouvé')
     });
   }
 
+  private updateBalanceDisplay(leaveType: string, days: number): void {
+    if (leaveType === 'PAYÉ' || leaveType === 'RTT') {
+      const balanceIndex = this.leaveBalances.findIndex(b => b.typeConge === leaveType);
+      if (balanceIndex > -1) {
+        this.leaveBalances[balanceIndex].nombreJoursRestants -= days;
+      }
+    }
+  }
+
   private handleSuccess(): void {
-    this.snackBar.open('Demande de congé envoyée avec succès', 'Fermer', { 
-      duration: 3000,
+    this.snackBar.open('✅ Demande de congé envoyée avec succès', 'Fermer', { 
+      duration: 4000,
       panelClass: ['success-snackbar']
     });
     this.dialogRef.close('success');
@@ -130,17 +177,17 @@ export class EmployeeRequestLeaveComponent {
 
   private handleError(message: string): void {
     this.snackBar.open(message, 'Fermer', {
-      duration: 3000,
-      panelClass: ['error-snackbar']
+      duration: 4000,
+      panelClass: message.startsWith('⚠️') ? ['warning-snackbar'] : ['error-snackbar']
     });
     this.loading = false;
   }
 
   private getLeaveType(motif: string): string {
     switch (motif) {
-      case 'Maladie': return 'MALADIE';
-      case 'Congés sans solde': return 'SANS SOLDE';
-      case 'Congés payés': return 'PAYÉ';
+      case 'MALADIE': return 'MALADIE';
+      case 'SANS SOLDE': return 'SANS SOLDE';
+      case 'PAYÉ': return 'PAYÉ';
       case 'RTT': return 'RTT';
       default: return 'AUTRE';
     }
@@ -153,7 +200,7 @@ export class EmployeeRequestLeaveComponent {
     
     while (current <= endDate) {
       const day = current.getDay();
-      if (day !== 0 && day !== 6) { // Exclure samedi (6) et dimanche (0)
+      if (day !== 0 && day !== 6) {
         count++;
       }
       current.setDate(current.getDate() + 1);
@@ -166,7 +213,6 @@ export class EmployeeRequestLeaveComponent {
     this.dialogRef.close();
   }
 
-  // Empêche la sélection des week-ends dans le datepicker
   dateFilter = (d: Date | null): boolean => {
     const day = (d || new Date()).getDay();
     return day !== 0 && day !== 6;

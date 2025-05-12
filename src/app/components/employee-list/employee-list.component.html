@@ -1,69 +1,109 @@
-<div class="employee-container">
-  <h2 class="title">👥 Liste des employés</h2>
-
-  <div class="table-wrapper mat-elevation-z3">
-    <table mat-table [dataSource]="dataSource" matSort class="custom-table">
-
-      <!-- Nom -->
-      <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
-        <td mat-cell *matCellDef="let e">{{ e.lastName }}</td>
-      </ng-container>
-
-      <!-- Prénom -->
-      <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
-        <td mat-cell *matCellDef="let e">{{ e.firstName }}</td>
-      </ng-container>
-
-      <!-- Email -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-        <td mat-cell *matCellDef="let e">{{ e.email }}</td>
-      </ng-container>
-
-      <!-- Téléphone -->
-      <ng-container matColumnDef="phoneNumber">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Téléphone</th>
-        <td mat-cell *matCellDef="let e">{{ e.phoneNumber }}</td>
-      </ng-container>
-
-      <!-- Date embauche -->
-      <ng-container matColumnDef="hireDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date embauche</th>
-        <td mat-cell *matCellDef="let e">{{ e.hireDate | date }}</td>
-      </ng-container>
-
-      <!-- Poste -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Poste</th>
-        <td mat-cell *matCellDef="let e">{{ e.position }}</td>
-      </ng-container>
-
-      <!-- Actions -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let e">
-          <a mat-icon-button color="primary" [routerLink]="['/admin/employee', e.id, 'edit']">
-            <mat-icon>edit</mat-icon>
-          </a>
-          <button mat-icon-button color="warn" (click)="deleteEmployee(e.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="7">Aucun résultat trouvé</td>
-      </tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+<div class="management-header">
+  <div class="header-content">
+    <h1>Gestion des employés</h1>
+    <p>Gérez les informations de vos employés</p>
   </div>
+</div>
 
-  <div class="add-button">
-    <a mat-raised-button color="accent" routerLink="/admin/employee/new">➕ Ajouter un employé</a>
+<div class="employee-container">
+  <div class="content-card">
+    <div class="list-header">
+      <div class="list-title-section">
+        <h2 class="list-title">Liste des employés</h2>
+        <span class="total-employees">Total: {{dataSource.data.length}} employés</span>
+      </div>
+      <div class="add-button">
+        <button mat-raised-button color="primary" (click)="openEmployeeDialog()">
+          <mat-icon>person_add</mat-icon>
+          Ajouter un employé
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher un employé...</mat-label>
+        <input matInput [formControl]="searchControl">
+      </mat-form-field>
+
+      <div class="select-filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Département</mat-label>
+          <mat-select [formControl]="departmentFilter">
+            <mat-option value="Tous">Tous</mat-option>
+            <mat-option *ngFor="let dept of departments" [value]="dept.name">{{dept.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select [formControl]="statusFilter">
+            <mat-option *ngFor="let status of statuses" [value]="status">{{status}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="custom-table">
+        <ng-container matColumnDef="employee">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Employé</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="employee-info">
+              <div class="employee-name">{{e.firstName}} {{e.lastName}}</div>
+              <div class="employee-email">{{e.email}}</div>
+            </div>
+          </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="phoneNumber">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>Téléphone</th>
+  <td mat-cell *matCellDef="let e">{{ e.phoneNumber }}</td>
+</ng-container>
+
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Poste</th>
+          <td mat-cell *matCellDef="let e">{{e.position}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Département</th>
+          <td mat-cell *matCellDef="let e">{{ getDepartmentName(e.departmentId) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="hireDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date d'embauche</th>
+          <td mat-cell *matCellDef="let e">{{e.hireDate | date:'dd/MM/yyyy'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <td mat-cell *matCellDef="let e">
+            <span class="status-badge" [class.active]="e.status === 'Actif'">{{e.status}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let e">
+            <button mat-icon-button color="primary" (click)="openEmployeeDialog(e)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteEmployee(e.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" 
+                   [pageSize]="5"
+                   showFirstLastButtons
+                   [length]="dataSource.filteredData.length">
+      </mat-paginator>
+    </div>
   </div>
 </div>

@@ -7,7 +7,7 @@ export interface Employee {
     hireDate: Date
     position: string
     departmentId: number
-    userId: number
+    status: string
   }
   
   

@@ -1,84 +1,67 @@
-<div class="form-container">
-  <h2 class="title">
-    <mat-icon class="colored-icon">event</mat-icon>
-    <span>Nouvelle demande de congé</span>
-  </h2>
-
-  <div class="subtitle">Remplissez le formulaire pour soumettre une demande de congé</div>
+<div class="form-content">
+  <h2 class="form-title">Nouvelle demande de congé</h2>
+  <p class="form-subtitle">Remplissez le formulaire pour soumettre une demande de congé</p>
 
   <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
-    <div class="section-title">
-      <mat-icon>category</mat-icon>
-      <span>Type de congé</span>
-    </div>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Sélectionner un type de congé</mat-label>
-      <mat-select formControlName="motif" required>
-        <mat-option value="Congés payés">Congés payés</mat-option>
-        <mat-option value="RTT">RTT</mat-option>
-        <mat-option value="Maladie">Maladie</mat-option>
-        <mat-option value="Congés sans solde">Congés sans solde</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div class="date-fields">
-      <mat-form-field appearance="outline">
-        <mat-label>Date de début</mat-label>
-        <input matInput 
-               [matDatepicker]="pickerDebut" 
-               formControlName="dateDebut" 
-               required 
-               placeholder="jj/mm/aaaa"
-               [min]="minDate"
-               [matDatepickerFilter]="dateFilter"
-               (dateChange)="onDateChange('start', $event)">
-        <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDebut></mat-datepicker>
-        <mat-error *ngIf="leaveForm.get('dateDebut')?.hasError('required')">
-          La date de début est requise
-        </mat-error>
-        <mat-error *ngIf="leaveForm.get('dateDebut')?.hasError('weekend')">
-          Les week-ends ne sont pas autorisés
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Date de fin</mat-label>
-        <input matInput 
-               [matDatepicker]="pickerFin" 
-               formControlName="dateFin" 
-               required 
-               placeholder="jj/mm/aaaa"
-               [min]="minDate"
-               [matDatepickerFilter]="dateFilter"
-               (dateChange)="onDateChange('end', $event)">
-        <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
-        <mat-datepicker #pickerFin></mat-datepicker>
-        <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('required')">
-          La date de fin est requise
-        </mat-error>
-        <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('weekend')">
-          Les week-ends ne sont pas autorisés
-        </mat-error>
-        <mat-error *ngIf="leaveForm.hasError('dateOrder')">
-          La date de fin doit être postérieure à la date de début
-        </mat-error>
+    <!-- Type de congé -->
+    <div class="form-group">
+      <label class="input-label">Type de congé*</label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Sélectionner un type de congé</mat-label>
+        <mat-select formControlName="motif" required>
+          <mat-option value="PAYÉ">PAYÉ</mat-option>
+          <mat-option value="RTT">RTT</mat-option>
+          <mat-option value="MALADIE">MALADIE</mat-option>
+          <mat-option value="SANS SOLDE">SANS SOLDE</mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Motif</mat-label>
-      <textarea matInput formControlName="motifPrecision" placeholder="Précisez le motif de votre demande de congé..."></textarea>
-    </mat-form-field>
+    <!-- Dates -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="input-label">Date de début*</label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>jj/mm/aaaa</mat-label>
+          <input matInput
+                 [matDatepicker]="pickerDebut"
+                 formControlName="dateDebut"
+                 placeholder="jj/mm/aaaa">
+          <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDebut></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <label class="input-label">Date de fin*</label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>jj/mm/aaaa</mat-label>
+          <input matInput
+                 [matDatepicker]="pickerFin"
+                 formControlName="dateFin"
+                 placeholder="jj/mm/aaaa">
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
 
-    <div class="form-actions">
-      <button mat-stroked-button type="button" (click)="onCancel()" class="cancel-button">
-        Annuler
-      </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="!leaveForm.valid || loading" class="submit-button">
-        <span *ngIf="!loading">Soumettre la demande</span>
-        <mat-spinner *ngIf="loading" diameter="20" strokeWidth="3"></mat-spinner>
+    <!-- Motif de précision -->
+    <div class="form-group">
+      <label class="input-label">Motif*</label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Précisez le motif de votre demande de congé…</mat-label>
+        <textarea matInput
+                  formControlName="motifPrecision"
+                  rows="3"
+                  placeholder="Précisez le motif de votre demande de congé…"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-buttons">
+      <button mat-stroked-button type="button" (click)="onCancel()">Annuler</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+        {{ loading ? 'Envoi…' : 'Soumettre la demande' }}
       </button>
     </div>
   </form>
