@@ -4,8 +4,12 @@ export interface Leave {
     dateDebut: Date
     dateFin: Date
     motif: string
+    type?: string
     statut: string
-    commentaireManager?: string
+    commentaire?: string
+    duration?: number
+    dateSoumission?: Date;
+    dateRepance?: Date;
   }
   
   

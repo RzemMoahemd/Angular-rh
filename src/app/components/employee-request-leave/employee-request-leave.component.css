@@ -1,7 +1,7 @@
 :host ::ng-deep .mat-dialog-container {
   background-color: #ffffff !important;
   padding: 20px !important;
-  border-radius: 12px !important; /* Arrondi augmenté */
+  border-radius: 12px !important;
   box-shadow: 0 6px 20px rgba(0,0,0,0.04) !important;
 }
 
@@ -98,6 +98,41 @@
 
 .highlight:active:not([disabled]) {
   transform: translateY(0);
+}
+
+mat-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+
+.mat-calendar-body-disabled {
+  background-color: #f8f9fa;
+  color: #d1d5db !important;
+  text-decoration: line-through;
+}
+
+.weekend-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.mat-datepicker-content .mat-calendar-body-cell-content.mat-calendar-body-disabled {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Surbrillance au survol */
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
+  background-color: #e0f2fe !important;
+}
+
+/* Style du jour sélectionné */
+.mat-calendar-body-selected {
+  background-color: #3b82f6 !important;
+  color: white !important;
 }
 
 @media (max-width: 640px) {

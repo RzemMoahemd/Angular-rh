@@ -1,88 +1,145 @@
-<div class="employee-container">
-  <h2 class="title">📆 Liste des congés</h2>
-
-  <div class="table-wrapper mat-elevation-z3" @fadeIn>
-    <table mat-table [dataSource]="dataSource" matSort class="custom-table">
-
-      <!-- Remplace employeId par employeFullName -->
-
-      <ng-container matColumnDef="employeFullName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Employé</th>
-        <td mat-cell *matCellDef="let l">{{ l.employeFullName }}</td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="dateDebut">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Début</th>
-        <td mat-cell *matCellDef="let l">{{ l.dateDebut | date }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="dateFin">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fin</th>
-        <td mat-cell *matCellDef="let l">{{ l.dateFin | date }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="motif">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Motif</th>
-        <td mat-cell *matCellDef="let l">{{ l.motif }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="statut">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
-        <td mat-cell *matCellDef="let l">{{ l.statut }}</td>
-      </ng-container>
-
-      <!-- <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let l">
-          <a mat-icon-button color="primary" [routerLink]="['/admin/leave', l.id, 'edit']">
-            <mat-icon>edit</mat-icon>
-          </a>
-          <button mat-icon-button color="warn" (click)="deleteLeave(l.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container> -->
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let l">
-      
-          <!-- Si en attente -->
-          <ng-container *ngIf="l.statut === 'en attente'; else statusIcon">
-            <button mat-icon-button color="primary" (click)="updateStatus(l, 'approuvé')" matTooltip="Approuver">
-              <mat-icon>check_circle</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="updateStatus(l, 'rejeté')" matTooltip="Rejeter">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </ng-container>
-      
-          <!-- Si approuvé ou rejeté -->
-          <ng-template #statusIcon>
-            <mat-icon [ngClass]="{
-              'green-icon': l.statut === 'approuvé',
-              'red-icon': l.statut === 'rejeté'
-            }">
-              {{ l.statut === 'approuvé' ? 'check_circle' : 'cancel' }}
-            </mat-icon>
-          </ng-template>
-      
-        </td>
-      </ng-container>
-      
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="6">Aucun résultat trouvé</td>
-      </tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+<div class="management-header">
+  <div class="header-content">
+    <h1>Gestion des congés</h1>
+    <p>Gérez les demandes de congés de vos employés</p>
   </div>
+</div>
 
-  <div class="add-button">
-    <a mat-raised-button color="accent" routerLink="/admin/leave/new">➕ Demander un congé</a>
+<div class="leave-container">
+  <div class="content-card">
+    <div class="list-header">
+      <div class="list-title-section">
+        <h2 class="list-title">Liste des congés</h2>
+        <span class="total-leaves">Total: {{dataSource.data.length}} congés</span>
+      </div>
+      <div class="add-button">
+        <button mat-raised-button color="primary" (click)="openLeaveDialog()">
+          <mat-icon>add</mat-icon>
+          Demander un congé
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-container">
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <input matInput 
+                 placeholder="Rechercher un congé..." 
+                 [formControl]="searchControl">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="select-filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select [formControl]="typeFilter">
+            <mat-option *ngFor="let type of typesConges" [value]="type">{{type}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select [formControl]="statusFilter">
+            <mat-option *ngFor="let status of statuses" [value]="status">{{status}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="custom-table">
+        <ng-container matColumnDef="employee">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Employé</th>
+          <td mat-cell *matCellDef="let l">{{ l.employeeFullName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+          <td mat-cell *matCellDef="let l">{{ l.motif }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Période</th>
+          <td mat-cell *matCellDef="let l">
+            <div class="period-cell">
+              <mat-icon class="period-icon">event</mat-icon>
+              {{ l.dateDebut | date:'dd/MM/yyyy' }} - {{ l.dateFin | date:'dd/MM/yyyy' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="duration">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Durée</th>
+          <td mat-cell *matCellDef="let l">{{ l.duration }} jours</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <td mat-cell *matCellDef="let l">
+            <span class="status-badge" 
+                  [class.pending]="l.statut === 'en attente'"
+                  [class.approved]="l.statut === 'approuvé'"
+                  [class.rejected]="l.statut === 'rejeté'">
+              {{l.statut}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let l">
+            <ng-container *ngIf="l.statut === 'en attente'">
+              <button mat-icon-button color="primary" (click)="updateStatus(l, 'approuvé')" matTooltip="Approuver">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="updateStatus(l, 'rejeté')" matTooltip="Rejeter">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </ng-container>
+          </td>
+        </ng-container> -->
+
+     
+<ng-container matColumnDef="actions">
+  <th mat-header-cell *matHeaderCellDef>Actions</th>
+  <td mat-cell *matCellDef="let l">
+    <div class="action-buttons">
+      <!-- Nouveau bouton Détails -->
+      <button mat-icon-button 
+              color="accent" 
+              (click)="openDetailsDialog(l)"
+              matTooltip="Voir les détails">
+        <mat-icon>description</mat-icon>
+      </button>
+      
+      <ng-container *ngIf="l.statut === 'en attente'">
+        <button mat-icon-button 
+                color="primary" 
+                (click)="updateStatus(l, 'approuvé')" 
+                matTooltip="Approuver">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button mat-icon-button 
+                color="warn" 
+                (click)="updateStatus(l, 'rejeté')" 
+                matTooltip="Rejeter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </ng-container>
+    </div>
+  </td>
+</ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" 
+                   [pageSize]="5"
+                   showFirstLastButtons
+                   [length]="dataSource.filteredData.length">
+      </mat-paginator>
+    </div>
   </div>
 </div>

@@ -23,7 +23,8 @@
   color: #3f51b5;
 }
 
-.loading-spinner, .error-message {
+.loading-spinner,
+.error-message {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -114,44 +115,71 @@
   font-size: 16px;
 }
 
-.request-card {
-  margin-bottom: 16px;
+/* Nouvelles classes pour les cartes de congés */
+.leave-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.request-card h3 {
-  font-size: 16px;
-  font-weight: 500;
-  margin: 0 0 8px 0;
+.leave-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.leave-card-header {
+  margin-bottom: 12px;
+}
+
+.leave-card-header h3 {
   color: #333;
+  font-size: 17px;
+  margin: 0 0 8px 0;
+  font-weight: 500;
 }
 
-.request-dates {
-  color: #555;
-  font-size: 14px;
-  margin-bottom: 8px;
+.leave-dates {
+  font-size: 15px;
+  color: #444;
 }
 
-.request-days {
+.leave-days {
   color: #777;
 }
 
-.request-footer {
+.leave-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 12px;
 }
 
-.request-status {
-  font-weight: 500;
-  text-transform: capitalize;
-  padding: 4px 8px;
+.leave-status {
+  padding: 4px 12px;
   border-radius: 16px;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.request-submitted {
-  color: #777;
-  font-size: 13px;
+.leave-details {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.leave-submitted {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.details-button {
+  font-weight: 500;
+  padding: 0 8px;
+  line-height: 28px;
+  min-width: auto;
 }
 
 .status-approved {
@@ -315,12 +343,13 @@ mat-divider {
   .balances-section {
     grid-template-columns: 1fr;
   }
-  
+
   .leave-container {
     padding: 16px;
   }
-  
-  .requests-section, .history-section {
+
+  .requests-section,
+  .history-section {
     padding: 16px;
   }
 
@@ -338,5 +367,11 @@ mat-divider {
 
   .month-label {
     font-size: 10px;
+  }
+
+  .leave-details {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
   }
 }

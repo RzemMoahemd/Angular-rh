@@ -1,0 +1,77 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title class="dialog-title">Détails de la demande</h2>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="grid-container">
+      <div class="header-container">
+        <span class="badge" [ngClass]="getBadgeClass(parsedData.statut)">
+          {{ parsedData.statut | titlecase }}
+        </span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <p class="info-label">Type de congé</p>
+          <p class="info-value">{{ parsedData.motif }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Durée</p>
+          <p class="info-value">{{ parsedData.duration }} jours</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <p class="info-label">Date de début</p>
+          <p class="info-value">{{ parsedData.dateDebut | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Date de fin</p>
+          <p class="info-value">{{ parsedData.dateFin | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="info-full">
+        <p class="info-label">Motif</p>
+        <p class="info-value">{{ parsedData.type }}</p>
+      </div>
+
+      <div class="history-section">
+        <p class="section-title">Historique</p>
+        <div class="history-items">
+          <div class="history-item">
+            <mat-icon class="history-icon clock-icon">schedule</mat-icon>
+            <p class="history-text">
+              Soumis le <span class="date-value">{{ parsedData.dateSoumission | date:'dd/MM/yyyy' }}</span>
+            </p>
+          </div>
+          
+          <div *ngIf="parsedData.statut === 'approuvé'" class="history-item">
+            <mat-icon class="history-icon check-icon">check_circle</mat-icon>
+            <p class="history-text">
+              Approuvé le <span class="date-value">{{ parsedData.dateReponse | date:'dd/MM/yyyy' }}</span>
+              <span *ngIf="parsedData.responsable"> par <span class="author">{{ parsedData.responsable }}</span></span>
+            </p>
+          </div>
+          
+          <div *ngIf="parsedData.statut === 'rejeté'" class="history-item">
+            <mat-icon class="history-icon cancel-icon">cancel</mat-icon>
+            <p class="history-text">
+              Refusé le <span class="date-value">{{ parsedData.dateReponse | date:'dd/MM/yyyy' }}</span>
+              <span *ngIf="parsedData.responsable"> par <span class="author">{{ parsedData.responsable }}</span></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="parsedData.statut === 'rejeté'" class="refusal-section">
+        <p class="info-label">Motif du refus</p>
+        <p class="info-value">{{ parsedData.commentaire }}</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-footer">
+    <button mat-button mat-dialog-close class="close-button">Fermer</button>
+  </mat-dialog-actions>
+</div>

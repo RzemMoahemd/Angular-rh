@@ -1,0 +1,174 @@
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: none;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  text-align: left; /* Remis à gauche */
+}
+
+.dialog-header h2 {
+  margin: 0; /* Suppression de margin auto */
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-button {
+  color: #666;
+}
+
+.dialog-content {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.employee-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  justify-content: flex-start; /* Remis à gauche */
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  margin-right: 12px;
+}
+
+.employee-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+  text-align: left; /* Remis à gauche */
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  align-self: flex-start; /* Remis à gauche */
+}
+
+.status-en-attente {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.status-approuvé {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-rejeté {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.detail-row {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.detail-column {
+  flex: 1;
+  text-align: left;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.detail-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid #eee;
+  padding: 16px 24px;
+}
+
+.reject-button {
+  color: #c62828 !important;
+  border-color: #c62828 !important;
+}
+.approve-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  min-width: 100px;
+  background-color: #2e7d32 !important;
+}
+
+.reject-button {
+  margin-right: 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #333;
+}
+
+.approve-button {
+  background-color: #212121;
+  color: white;
+}
+
+.reject-button mat-icon,
+.approve-button mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+/* Masquer les éléments indésirables */
+.regulation-section,
+.remplage-section,
+.pagination,
+[class*="hidden-section"] {
+  display: none !important;
+}

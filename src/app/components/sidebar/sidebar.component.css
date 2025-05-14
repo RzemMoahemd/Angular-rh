@@ -1,0 +1,68 @@
+/* Styles spécifiques au bouton de déconnexion */
+.sticky-footer {
+  position: absolute;
+  bottom: 30px;
+  width: calc(100% - 40px);
+  margin: 0 20px;
+  border-top: none; /* Suppression de la ligne noire */
+}
+
+.sticky-footer::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background-color: #dee2e6; /* Couleur grise légère */
+  margin: 10px 0; /* Espacement avant et après la ligne */
+  width: 100%;
+}
+.logout-section .nav-link {
+  display: flex !important;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 15px !important;
+  color: #2c3e50 !important;
+  transition: all 0.3s ease;
+  border: 1px solid #dee2e6;
+  margin-top: 10px;
+}
+
+.logout-section .material-icons {
+  font-size: 20px;
+  margin-right: 12px;
+  color: #e74c3c;
+}
+
+.logout-text {
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.logout-section .nav-link:hover {
+  background: #fff5f5;
+  border-color: #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1);
+}
+
+.sticky-footer ul {
+  list-style: none !important; /* Supprime tout marqueur de liste */
+  padding-left: 0 !important; /* Supprime l'indentation résiduelle */
+}
+
+.sticky-footer .nav-item {
+  list-style: none !important; /* Double garantie pour le <li> */
+}
+
+@media (max-width: 991px) {
+  .sticky-footer {
+    position: static;
+    width: 100%;
+    margin: 20px 0 0;
+    padding: 0;
+  }
+  
+  .logout-section .nav-link {
+    justify-content: center;
+    padding: 10px 15px !important;
+  }
+}

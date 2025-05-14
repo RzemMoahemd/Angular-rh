@@ -35,6 +35,13 @@ import { EmployeeMyLeavesComponent } from './employee-my-leaves/employee-my-leav
 import { EmployeeRequestLeaveComponent } from './employee-request-leave/employee-request-leave.component';
 import { EmployeeDashboardComponent } from './employee-dashboard/employee-dashboard.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { LeaveDetailsDialogComponent } from './dialogs/leave-details-dialog/leave-details-dialog.component';
+import { LeaveDetailsDialogEmpComponent } from './dialogs/leave-details-dialog-emp/leave-details-dialog-emp.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ApprovalDialogComponent } from './dialogs/approval-dialog/approval-dialog.component';
+import { RejectionDialogComponent } from './dialogs/rejection-dialog/rejection-dialog.component';
+
 
 
 
@@ -60,7 +67,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTooltipModule,
     MatCardModule,
     MatButtonToggleModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDividerModule,
+    MatCheckboxModule
   ],
   declarations: [
     FooterComponent,
@@ -73,7 +82,11 @@ import { MatDialogModule } from '@angular/material/dialog';
     DashboardComponent,
     EmployeeMyLeavesComponent,
     EmployeeRequestLeaveComponent,
-    EmployeeDashboardComponent
+    EmployeeDashboardComponent,
+    LeaveDetailsDialogComponent,
+    LeaveDetailsDialogEmpComponent,
+    ApprovalDialogComponent,
+    RejectionDialogComponent
   ],
   exports: [
     FooterComponent,

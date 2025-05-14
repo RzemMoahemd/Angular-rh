@@ -1,0 +1,64 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>Détails de la demande</h2>
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="employee-info">
+      <div class="avatar"></div>
+      <div class="employee-details">
+        <div class="employee-name">{{ data.employeeFullName }}</div>
+        <div class="status-badge" [ngClass]="'status-' + data.statut.toLowerCase().replace(' ', '-')">
+          {{ data.statut }}
+        </div>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-row">
+        <div class="detail-column">
+          <div class="detail-label">Type de congé</div>
+          <div class="detail-value">{{ data.motif }}</div>
+        </div>
+        
+        <div class="detail-column">
+          <div class="detail-label">Durée</div>
+          <div class="detail-value">{{ data.duration }} jours</div>
+        </div>
+      </div>
+      
+      <div class="detail-row">
+        <div class="detail-column">
+          <div class="detail-label">Date de début</div>
+          <div class="detail-value">{{ formatDate(data.dateDebut) }}</div>
+        </div>
+        
+        <div class="detail-column">
+          <div class="detail-label">Date de fin</div>
+          <div class="detail-value">{{ formatDate(data.dateFin) }}</div>
+        </div>
+      </div>
+      
+      <div class="detail-row">
+        <div class="detail-column full-width">
+          <div class="detail-label">Motif</div>
+          <div class="detail-value">{{ data.type || 'Aucun motif' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions" *ngIf="data.statut === 'en attente'">
+  <button mat-stroked-button class="reject-button" (click)="onReject()">
+    <mat-icon>close</mat-icon>
+    Refuser
+  </button>
+  <button mat-raised-button class="approve-button" (click)="onApprove()">
+    <mat-icon>check</mat-icon>
+    Approuver
+  </button>
+</div>
+</div>

@@ -56,26 +56,39 @@
 
     <!-- Contenu Mes demandes (tous les congés) -->
     <div *ngIf="activeTab === 'requests'" class="requests-section">
-      <h2>Demandes de congés</h2>
-      <p class="subtitle">Vos demandes de congés et leur statut</p>
+  <h2>Demandes de congés</h2>
+  <p class="subtitle">Vos demandes de congés et leur statut</p>
 
-      <div *ngFor="let leave of allLeaves; let last = last" class="request-card">
+  <div class="leave-cards-container">
+    <div *ngFor="let leave of allLeaves; let last = last" class="leave-card">
+      <div class="leave-card-header">
         <h3>{{ leave.motif }}</h3>
-        <div class="request-dates">
+        <div class="leave-dates">
           {{ leave.dateDebut | date:'dd/MM/yyyy' }} - {{ leave.dateFin | date:'dd/MM/yyyy' }}
-          <span class="request-days">({{ calculateDays(leave.dateDebut, leave.dateFin) }} jours)</span>
+          <span class="leave-days">({{ calculateDays(leave.dateDebut, leave.dateFin) }} jours)</span>
         </div>
-        <div class="request-footer">
-          <span class="request-status" [ngClass]="getStatusClass(leave.statut)">
-            {{ leave.statut }}
+      </div>
+      
+      <div class="leave-card-footer">
+        <span class="leave-status" [ngClass]="getStatusClass(leave.statut)">
+          {{ leave.statut }}
+        </span>
+        <div class="leave-details">
+          <span *ngIf="leave.dateSoumission" class="leave-submitted">
+            Soumis le {{ leave.dateSoumission | date:'dd/MM/yyyy' }}
           </span>
-          <span *ngIf="leave.createdAt" class="request-submitted">
-            Soumis le {{ leave.createdAt | date:'dd/MM/yyyy' }}
-          </span>
+          <button mat-button 
+                  color="primary" 
+                  (click)="openDetailsDialog(leave)"
+                  class="details-button">
+            Détails
+          </button>
         </div>
-        <mat-divider *ngIf="!last"></mat-divider>
       </div>
     </div>
+  </div>
+</div>
+
 
     <!-- Contenu Historique (uniquement les approuvés) -->
     <div *ngIf="activeTab === 'history'" class="history-section">

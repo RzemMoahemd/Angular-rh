@@ -1,0 +1,17 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>Confirmer l'approbation</h2>
+    <button mat-icon-button class="close-button" (click)="onNoClick()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <p>Êtes-vous sûr de vouloir approuver cette demande de congé ?</p>
+    
+    <div class="dialog-actions">
+      <button mat-stroked-button class="reject-button" (click)="onNoClick()">Annuler</button>
+      <button mat-raised-button class="approve-button" (click)="onConfirm()">Approuver</button>
+    </div>
+  </div>
+</div>

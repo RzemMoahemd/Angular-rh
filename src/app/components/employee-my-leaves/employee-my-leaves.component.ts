@@ -7,6 +7,7 @@ import { LeaveService } from '../../services/leave.service';
 import { LeaveBalanceService } from '../../services/leave-balance.service';
 import { forkJoin } from 'rxjs';
 import { LeaveBalance, LEAVE_TYPES } from '../../models/leave-balance';
+import { LeaveDetailsDialogEmpComponent } from '../dialogs/leave-details-dialog-emp/leave-details-dialog-emp.component';
 
 interface LeaveBalanceDisplay {
   type: string;
@@ -42,6 +43,14 @@ export class EmployeeMyLeavesComponent implements OnInit {
   ngOnInit(): void {
     this.loadEmployeeData();
   }
+
+  openDetailsDialog(leave: any): void {
+  this.dialog.open(LeaveDetailsDialogEmpComponent, { // <-- Nouveau nom de composant
+    width: '600px',
+    data: leave,
+    autoFocus: false
+  });
+}
 
   loadEmployeeData(): void {
     const email = this.keycloakService.keycloak.tokenParsed?.email;

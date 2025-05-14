@@ -32,6 +32,10 @@ export class SidebarComponent implements OnInit {
 
   constructor(private kc: KeycloakService) {}
 
+  logout() {
+    this.kc.logout();
+  }
+
   ngOnInit() {
     const role = this.kc.getUserRole();
     if (role === 'admin') {

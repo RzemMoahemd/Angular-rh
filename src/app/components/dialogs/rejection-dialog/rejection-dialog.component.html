@@ -1,0 +1,29 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>Refuser la demande</h2>
+    <button mat-icon-button class="close-button" (click)="onNoClick()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <p>Veuillez indiquer la raison du refus de cette demande de congé.</p>
+    
+    <div class="full-width">
+      <mat-form-field appearance="outline" class="full-width">
+        <textarea matInput
+                  placeholder="Motif du refus"
+                  [(ngModel)]="rejectionReason"
+                  required></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-stroked-button class="reject-button" (click)="onNoClick()">Annuler</button>
+      <button mat-raised-button 
+              class="approve-button" 
+              [disabled]="!rejectionReason"
+              (click)="onConfirm()">Refuser</button>
+    </div>
+  </div>
+</div>

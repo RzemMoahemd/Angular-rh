@@ -48,11 +48,13 @@ export class EmployeeRequestLeaveComponent {
     this.loadLeaveBalances();
   }
 
-  weekendValidator = (control: { value: Date }) => {
-    const date = new Date(control.value);
-    const day = date.getDay();
-    return day === 0 || day === 6 ? { weekend: true } : null;
-  };
+ weekendValidator = (control: { value: Date }) => {
+  if (!control.value) return null;
+  
+  const date = new Date(control.value);
+  const day = date.getDay();
+  return day === 0 || day === 6 ? { weekend: true } : null;
+};
 
   dateOrderValidator = (group: FormGroup) => {
     const start = group.get('dateDebut')?.value;
@@ -123,9 +125,10 @@ export class EmployeeRequestLeaveComponent {
           dateDebut: formValue.dateDebut,
           dateFin: formValue.dateFin,
           motif: formValue.motif,
-          commentaire: formValue.motifPrecision,
+          type: formValue.motifPrecision,
           statut: 'en attente',
-          duration: days
+          duration: days,
+          DateSoumission: new Date() 
         };
 
         this.leaveService.createLeave(leave).subscribe({
@@ -194,27 +197,33 @@ export class EmployeeRequestLeaveComponent {
   }
   
   private calculateDays(start: Date, end: Date): number {
-    let count = 0;
-    const current = new Date(start);
-    const endDate = new Date(end);
-    
-    while (current <= endDate) {
-      const day = current.getDay();
-      if (day !== 0 && day !== 6) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
+  let count = 0;
+  const current = new Date(start);
+  const endDate = new Date(end);
+  
+  while (current <= endDate) {
+    const day = current.getDay();
+    if (day !== 0 && day !== 6) {
+      count++;
     }
-    
-    return count;
+    current.setDate(current.getDate() + 1);
   }
+  
+  return count;
+}
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
   dateFilter = (d: Date | null): boolean => {
-    const day = (d || new Date()).getDay();
-    return day !== 0 && day !== 6;
-  };
+  if (!d) return false;
+  
+  const day = d.getDay();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Bloquer les weekends uniquement
+  return day !== 0 && day !== 6;
+};
 }

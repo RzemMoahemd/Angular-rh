@@ -18,33 +18,42 @@
     </div>
 
     <!-- Dates -->
-    <div class="form-row">
-      <div class="form-group">
-        <label class="input-label">Date de début*</label>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>jj/mm/aaaa</mat-label>
-          <input matInput
-                 [matDatepicker]="pickerDebut"
-                 formControlName="dateDebut"
-                 placeholder="jj/mm/aaaa">
-          <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
-          <mat-datepicker #pickerDebut></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="form-group">
-        <label class="input-label">Date de fin*</label>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>jj/mm/aaaa</mat-label>
-          <input matInput
-                 [matDatepicker]="pickerFin"
-                 formControlName="dateFin"
-                 placeholder="jj/mm/aaaa">
-          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFin></mat-datepicker>
-        </mat-form-field>
-      </div>
-    </div>
+    <!-- Modifier les champs de date comme suit -->
+<div class="form-row">
+  <div class="form-group">
+    <label class="input-label">Date de début*</label>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>jj/mm/aaaa</mat-label>
+      <input matInput
+             [matDatepicker]="pickerDebut"
+             formControlName="dateDebut"
+             [matDatepickerFilter]="dateFilter"
+             placeholder="jj/mm/aaaa">
+      <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDebut></mat-datepicker>
+      <mat-error *ngIf="leaveForm.get('dateDebut')?.hasError('weekend')">
+        ❌ Les week-ends ne sont pas autorisés
+      </mat-error>
+    </mat-form-field>
+  </div>
 
+  <div class="form-group">
+    <label class="input-label">Date de fin*</label>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>jj/mm/aaaa</mat-label>
+      <input matInput
+             [matDatepicker]="pickerFin"
+             formControlName="dateFin"
+             [matDatepickerFilter]="dateFilter"
+             placeholder="jj/mm/aaaa">
+      <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFin></mat-datepicker>
+      <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('weekend')">
+        ❌ Les week-ends ne sont pas autorisés
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
     <!-- Motif de précision -->
     <div class="form-group">
       <label class="input-label">Motif*</label>
