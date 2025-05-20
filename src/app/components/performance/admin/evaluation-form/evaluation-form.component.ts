@@ -17,8 +17,8 @@ export class EvaluationFormComponent implements OnInit {
   employees: Employee[] = [];
   currentYear = new Date().getFullYear();
   quarters: { value: string; label: string }[] = [];
+  existingPeriods: string[] = [];
 
-  // Configuration des listes
   predefinedCriteria = [
     "Ponctualité", "Productivité", "Qualité du travail",
     "Esprit d'équipe", "Communication", "Leadership",
@@ -50,12 +50,12 @@ export class EvaluationFormComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { evaluation?: Evaluation; employees: Employee[] },
     private performanceService: PerformanceService
   ) {
-    this.generateQuarters();
     this.initializeForm();
   }
 
   ngOnInit(): void {
     this.criteriaArray.valueChanges.subscribe(() => this.updateOverallScore());
+    this.setupEmployeeChangeListener();
   }
 
   // Gestion des FormArray
@@ -65,7 +65,7 @@ export class EvaluationFormComponent implements OnInit {
   get goalsArray(): FormArray { return this.evaluationForm.get("goals") as FormArray; }
 
   private generateQuarters(): void {
-    this.quarters = Array.from({ length: 4 }, (_, i) => {
+    const allQuarters = Array.from({ length: 4 }, (_, i) => {
       const quarter = i + 1;
       const startMonth = (quarter - 1) * 3;
       const startDate = new Date(this.currentYear, startMonth, 1);
@@ -75,6 +75,12 @@ export class EvaluationFormComponent implements OnInit {
         label: `Q${quarter} ${this.currentYear} (${startDate.toLocaleDateString('fr-FR', { month: 'short' })} - ${endDate.toLocaleDateString('fr-FR', { month: 'short' })})`
       };
     });
+
+    // Filtrer les périodes existantes
+    this.quarters = allQuarters.filter(q => 
+      !this.existingPeriods.includes(q.value) || 
+      (this.isEditMode && q.value === this.data.evaluation?.period)
+    );
   }
 
   private initializeForm(): void {
@@ -88,7 +94,7 @@ export class EvaluationFormComponent implements OnInit {
         (control: AbstractControl) => this.periodValidator(control)
       ]],
       status: [this.data.evaluation?.status || 'EN_ATTENTE', Validators.required],
-      overallScore: [this.data.evaluation?.overallScore || 0, [
+      overallScore: [this.data.evaluation?.overallScore || 80, [
         Validators.required, Validators.min(0), Validators.max(100)
       ]],
       comments: [this.data.evaluation?.comments || ''],
@@ -99,7 +105,32 @@ export class EvaluationFormComponent implements OnInit {
     });
 
     this.initializeFormArrays();
-    this.setupPeriodValidation();
+  }
+
+  private setupEmployeeChangeListener(): void {
+    this.evaluationForm.get('employee')?.valueChanges.subscribe(employeeId => {
+      if (employeeId) {
+        this.performanceService.getEvaluationsByEmployeeId(employeeId).pipe(take(1)).subscribe(evaluations => {
+          this.existingPeriods = evaluations.map(e => e.period);
+          this.generateQuarters();
+          this.checkExistingEvaluation();
+        });
+      }
+    });
+
+    // Initial load if in edit mode
+    if (this.isEditMode && this.data.evaluation?.employee.id) {
+      this.performanceService.getEvaluationsByEmployeeId(this.data.evaluation.employee.id)
+        .pipe(take(1))
+        .subscribe(evaluations => {
+          this.existingPeriods = evaluations
+            .filter(e => e.id !== this.data.evaluation?.id)
+            .map(e => e.period);
+          this.generateQuarters();
+        });
+    } else {
+      this.generateQuarters();
+    }
   }
 
   private periodValidator(control: AbstractControl): { [key: string]: any } | null {

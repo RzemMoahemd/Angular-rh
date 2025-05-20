@@ -95,8 +95,8 @@ export class MyPerformanceDashboardComponent implements OnInit {
           if (results.evaluations.length > 0) {
             // Trier par date décroissante
             const sortedEvaluations = [...results.evaluations].sort((a, b) => {
-              if (typeof a.date === "string" && typeof b.date === "string") {
-                return new Date(b.date).getTime() - new Date(a.date).getTime()
+              if (typeof a.evaluationDate === "string" && typeof b.evaluationDate === "string") {
+                return new Date(b.evaluationDate).getTime() - new Date(a.evaluationDate).getTime()
               }
               return 0
             })

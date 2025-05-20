@@ -1,7 +1,7 @@
 <div class="performance-dashboard">
   <div class="header">
-    <h1>Tableau de bord des performances</h1>
-    <p>Vue d'ensemble des performances des employés</p>
+    <h1>Évaluation des performances</h1>
+    <p>Gérez et suivez les performances de vos employés</p>
   </div>
 
   <div *ngIf="loading" class="loading">
@@ -57,70 +57,227 @@
         </mat-card-header>
         <mat-card-content>
           <div class="stat-value">{{ completedEvaluations }}</div>
+          <div class="stat-subtext">
+            <span>{{ evaluatedPercentage }}% des employés évalués</span>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
 
-    <!-- Graphiques -->
-    <div class="charts-container">
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>Évolution des performances</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <canvas baseChart
-            [data]="performanceTrends"
-            [options]="trendChartOptions"
-            [type]="'line'">
-          </canvas>
-        </mat-card-content>
-      </mat-card>
+    <!-- Navigation par onglets -->
+    <div class="tab-nav">
+      <button mat-button [class.active]="selectedTab === 'list'" (click)="selectedTab = 'list'">
+        Liste des évaluations
+      </button>
+      <button mat-button [class.active]="selectedTab === 'trends'" (click)="selectedTab = 'trends'">
+        Tendances
+      </button>
+    </div>
 
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>Performances par département</mat-card-title>
-        </mat-card-header>
+    <!-- Contenu des onglets -->
+    <div *ngIf="selectedTab === 'list'" class="list-content">
+      <mat-card>
         <mat-card-content>
-          <canvas baseChart
-            [data]="departmentPerformances"
-            [options]="departmentChartOptions"
-            [type]="'bar'">
-          </canvas>
+          <div class="filters">
+            <mat-form-field appearance="outline">
+              <mat-label>Rechercher</mat-label>
+              <input matInput [(ngModel)]="searchTerm" (keyup)="applyFilters()" placeholder="Nom, poste...">
+              <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="searchTerm=''; applyFilters()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Employé</mat-label>
+              <mat-select [(ngModel)]="selectedEmployee" (selectionChange)="applyFilters()">
+                <mat-option [value]="null">Tous</mat-option>
+                <mat-option *ngFor="let employee of employees" [value]="employee.id">
+                  {{ employee.firstName }} {{ employee.lastName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Période</mat-label>
+              <mat-select [(ngModel)]="selectedPeriodFilter" (selectionChange)="applyFilters()">
+                <mat-option [value]="null">Toutes</mat-option>
+                <mat-option *ngFor="let period of getUniquePeriodsFromEvaluations()" [value]="period">
+                  {{ period }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Statut</mat-label>
+              <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+                <mat-option [value]="null">Tous</mat-option>
+                <mat-option value="EN_ATTENTE">En attente</mat-option>
+                <mat-option value="EN_COURS">En cours</mat-option>
+                <mat-option value="COMPLETE">Complété</mat-option>
+                <mat-option value="ANNULE">Annulé</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-button color="primary" (click)="resetFilters()">
+              <mat-icon>refresh</mat-icon>
+              Réinitialiser
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table mat-table [dataSource]="filteredEvaluations">
+              <!-- Colonne Employé -->
+              <ng-container matColumnDef="employee">
+                <th mat-header-cell *matHeaderCellDef>Employé</th>
+                <td mat-cell *matCellDef="let evaluation">
+                  <div class="employee-cell">
+                    <div class="employee-info">
+                      <div class="employee-name">{{ evaluation.employee.firstName }} {{ evaluation.employee.lastName }}</div>
+                      <div class="employee-position">
+                        {{ evaluation.employee.position }}
+                        <span *ngIf="evaluation.employee.departmentId" class="department-badge">
+                          {{ getDepartmentName(evaluation.employee.departmentId) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Colonne Période -->
+              <ng-container matColumnDef="period">
+                <th mat-header-cell *matHeaderCellDef>Période</th>
+                <td mat-cell *matCellDef="let evaluation">{{ evaluation.period }}</td>
+              </ng-container>
+
+              <!-- Colonne Date -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date d'évaluation</th>
+                <td mat-cell *matCellDef="let evaluation">{{ evaluation.evaluationDate }}</td>
+              </ng-container>
+
+              <!-- Colonne Score -->
+              <ng-container matColumnDef="score">
+                <th mat-header-cell *matHeaderCellDef>Score</th>
+                <td mat-cell *matCellDef="let evaluation">
+                  <div class="score-cell">
+                    <span>{{ evaluation.overallScore }}%</span>
+                    <mat-progress-bar mode="determinate" [value]="evaluation.overallScore"></mat-progress-bar>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Colonne Statut -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>
+                <td mat-cell *matCellDef="let evaluation">
+                  <span class="status-badge" [ngClass]="getStatusClass(evaluation.status)">
+                    {{ getStatusLabel(evaluation.status) }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Colonne Actions -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let evaluation">
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="openDetailsDialog(evaluation)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>Détails</span>
+                    </button>
+                    <button mat-menu-item (click)="openEditEvaluationDialog(evaluation)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Modifier</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteEvaluation(evaluation)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Supprimer</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [length]="totalItems" 
+                          [pageSize]="pageSize"
+                          [pageSizeOptions]="[5, 10, 25, 50]"
+                          (page)="onPageChange($event)"
+                          *ngIf="totalItems > 0">
+            </mat-paginator>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
 
-    <div class="bottom-section">
-      <mat-card class="criteria-chart">
-        <mat-card-header>
-          <mat-card-title>Scores par critère</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <canvas baseChart
-            [data]="criteriaAverages"
-            [options]="criteriaChartOptions"
-            [type]="'horizontalBar'">
-          </canvas>
-        </mat-card-content>
-      </mat-card>
+    <!-- Onglet Tendances -->
+    <div *ngIf="selectedTab === 'trends'" class="trends-content">
+      <div class="charts-container">
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Évolution des performances</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <canvas baseChart
+              [data]="performanceTrends"
+              [options]="trendChartOptions"
+              [type]="'line'">
+            </canvas>
+          </mat-card-content>
+        </mat-card>
 
-      <mat-card class="top-performers">
-        <mat-card-header>
-          <mat-card-title>Top performers</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-list>
-            <mat-list-item *ngFor="let performer of topPerformers; let i = index">
-              <div matListItemTitle>{{ performer.employee.firstName }} {{ performer.employee.lastName }}</div>
-              <div matListItemLine>{{ performer.employee.position }}</div>
-              <div matListItemMeta class="performer-score">
-                <span>{{ performer.overallScore }}%</span>
-                <mat-progress-bar mode="determinate" [value]="performer.overallScore"></mat-progress-bar>
-              </div>
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Performances par département</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <canvas baseChart
+              [data]="departmentPerformances"
+              [options]="departmentChartOptions"
+              [type]="'bar'">
+            </canvas>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="bottom-section">
+        <mat-card class="criteria-chart">
+          <mat-card-header>
+            <mat-card-title>Scores par critère</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <canvas baseChart
+              [data]="criteriaAverages"
+              [options]="criteriaChartOptions"
+              [type]="'horizontalBar'">
+            </canvas>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="top-performers">
+          <mat-card-header>
+            <mat-card-title>Top performers</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let performer of topPerformers">
+                <div matListItemTitle>{{ performer.employee.firstName }} {{ performer.employee.lastName }}</div>
+                <div matListItemLine>{{ performer.employee.position }}</div>
+                <div matListItemMeta class="performer-score">
+                  <span>{{ performer.overallScore }}%</span>
+                  <mat-progress-bar mode="determinate" [value]="performer.overallScore"></mat-progress-bar>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>
