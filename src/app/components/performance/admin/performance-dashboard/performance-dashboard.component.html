@@ -1,0 +1,126 @@
+<div class="performance-dashboard">
+  <div class="header">
+    <h1>Tableau de bord des performances</h1>
+    <p>Vue d'ensemble des performances des employés</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Chargement des données...</span>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    <!-- Cartes statistiques -->
+    <div class="stats-cards">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Score moyen</mat-card-title>
+          <mat-icon>star</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-value">{{ averageScore | number:'1.0-0' }}%</div>
+          <mat-progress-bar mode="determinate" [value]="averageScore"></mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Score le plus élevé</mat-card-title>
+          <mat-icon>trending_up</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-value">{{ highestScore | number:'1.0-0' }}%</div>
+          <mat-progress-bar mode="determinate" [value]="highestScore"></mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Score le plus bas</mat-card-title>
+          <mat-icon>trending_down</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-value">{{ lowestScore | number:'1.0-0' }}%</div>
+          <mat-progress-bar mode="determinate" [value]="lowestScore"></mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Évaluations complétées</mat-card-title>
+          <mat-icon>assignment_turned_in</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-value">{{ completedEvaluations }}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="charts-container">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Évolution des performances</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <canvas baseChart
+            [data]="performanceTrends"
+            [options]="trendChartOptions"
+            [type]="'line'">
+          </canvas>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Performances par département</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <canvas baseChart
+            [data]="departmentPerformances"
+            [options]="departmentChartOptions"
+            [type]="'bar'">
+          </canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="bottom-section">
+      <mat-card class="criteria-chart">
+        <mat-card-header>
+          <mat-card-title>Scores par critère</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <canvas baseChart
+            [data]="criteriaAverages"
+            [options]="criteriaChartOptions"
+            [type]="'horizontalBar'">
+          </canvas>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="top-performers">
+        <mat-card-header>
+          <mat-card-title>Top performers</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let performer of topPerformers; let i = index">
+              <div matListItemTitle>{{ performer.employee.firstName }} {{ performer.employee.lastName }}</div>
+              <div matListItemLine>{{ performer.employee.position }}</div>
+              <div matListItemMeta class="performer-score">
+                <span>{{ performer.overallScore }}%</span>
+                <mat-progress-bar mode="determinate" [value]="performer.overallScore"></mat-progress-bar>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

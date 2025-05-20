@@ -9,6 +9,10 @@ import { authGuard } from 'app/services/guard/auth.guard';
 import { adminGuard } from 'app/services/guard/admin.guard';
 import { DashboardComponent } from 'app/components/dashboard/dashboard.component';
 
+// Admin Components
+import { PerformanceDashboardComponent } from 'app/components/performance/admin/performance-dashboard/performance-dashboard.component';
+import { EvaluationListComponent } from 'app/components/performance/admin/evaluation-list/evaluation-list.component';
+
 
 export const AdminLayoutRoutes: Routes = [
   { path: 'employees', component: EmployeeListComponent, canActivate: [authGuard, adminGuard] },
@@ -19,7 +23,22 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'leave/:id/edit', component: LeaveFormComponent, canActivate: [authGuard] },
   { path: 'dahsboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'employees', pathMatch: 'full', canActivate: [authGuard] }
+  { path: '', redirectTo: 'employees', pathMatch: 'full', canActivate: [authGuard] },
   // { path: '', component: LeaveListComponent, canActivate: [authGuard] }
+
+
+  // Routes Admin
+  {
+    path: "performance",
+    component: PerformanceDashboardComponent,
+    // canActivate: [AdminGuard],
+  },
+  {
+    path: "evaluations",
+    component: EvaluationListComponent,
+    // canActivate: [AdminGuard],
+  },
+
+
 ];
 

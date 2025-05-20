@@ -1,91 +1,92 @@
 <div class="dialog-container">
   <div class="dialog-header">
-    <h2 mat-dialog-title>
-      <mat-icon class="title-icon">badge</mat-icon>
-      {{ isEditMode ? 'Modifier employé' : 'Nouvel employé' }}
-    </h2>
-    <button mat-icon-button (click)="onCancel()">
+    <h2>{{ isEditMode ? 'Modifier employé' : 'Ajouter un nouvel employé' }}</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
       <mat-icon>close</mat-icon>
     </button>
   </div>
+  
+  <p class="dialog-subtitle">Remplissez les informations {{ isEditMode ? 'de l\'employé' : 'du nouvel employé' }}</p>
 
-  <mat-dialog-content>
-    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="rh-form">
-      <div class="form-section">
-        <h3 class="section-title">Informations de base</h3>
-        
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Prénom *</mat-label>
-            <input matInput formControlName="firstName">
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Nom *</mat-label>
-            <input matInput formControlName="lastName">
-          </mat-form-field>
+  <div class="dialog-content">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      <!-- Première ligne -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Prénom</label>
+          <input id="firstName" type="text" formControlName="firstName" placeholder="Prénom">
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Email *</mat-label>
-            <input matInput formControlName="email" type="email">
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Téléphone *</mat-label>
-            <input matInput formControlName="phoneNumber" type="tel">
-          </mat-form-field>
+        <div class="form-group">
+          <label for="lastName">Nom</label>
+          <input id="lastName" type="text" formControlName="lastName" placeholder="Nom">
         </div>
       </div>
 
-      <div class="form-section">
-        <h3 class="section-title">Informations professionnelles</h3>
-        
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Date d'embauche *</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="hireDate">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Poste *</mat-label>
-            <input matInput formControlName="position">
-          </mat-form-field>
+      <!-- Deuxième ligne -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" placeholder="email@example.com">
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Département *</mat-label>
-            <mat-select formControlName="departmentId">
-              <mat-option *ngFor="let department of departments" [value]="department.id">
+        <div class="form-group">
+          <label for="phoneNumber">Téléphone</label>
+          <input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="Téléphone">
+        </div>
+      </div>
+
+      <!-- Troisième ligne -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="date">Date d'embauche</label>
+          <div class="date-input-wrapper">
+            <input id="date" type="date" formControlName="hireDate" placeholder="jj/mm/aaaa">
+            <mat-icon class="date-icon">calendar_today</mat-icon>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="poste">Poste</label>
+          <input id="poste" type="text" formControlName="position" placeholder="Poste">
+        </div>
+      </div>
+
+      <!-- Quatrième ligne -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="departement">Département</label>
+          <div class="select-wrapper">
+            <select id="departement" formControlName="departmentId">
+              <option value="" disabled>Sélectionnez un département</option>
+              <option *ngFor="let department of departments" [value]="department.id">
                 {{ department.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Statut *</mat-label>
-            <mat-select formControlName="status">
-              <mat-option *ngFor="let status of statuses" [value]="status">
-                {{ status }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+              </option>
+            </select>
+            <mat-icon class="select-icon">expand_more</mat-icon>
+          </div>
         </div>
+
+        <div class="form-group">
+          <label for="statut">Statut</label>
+          <div class="select-wrapper">
+            <select id="statut" formControlName="status">
+              <option *ngFor="let status of statuses" [value]="status">
+                {{ status }}
+              </option>
+            </select>
+            <mat-icon class="select-icon">expand_more</mat-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="dialog-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Annuler</button>
+        <button type="submit" class="btn-submit" [disabled]="!employeeForm.valid || loading">
+          {{ loading ? 'Envoi...' : (isEditMode ? 'Mettre à jour' : 'Ajouter') }}
+        </button>
       </div>
     </form>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Annuler</button>
-    <button mat-raised-button color="primary" 
-            type="submit"
-            [disabled]="!employeeForm.valid || loading"
-            (click)="onSubmit()">
-      {{ loading ? 'Envoi...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
-    </button>
-  </mat-dialog-actions>
+  </div>
 </div>

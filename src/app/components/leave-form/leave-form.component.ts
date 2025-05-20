@@ -20,8 +20,9 @@ export class LeaveFormComponent implements OnInit {
   isEditMode = false
   leaveId?: number
   loading = false
+  employees: Employee[] = []
+  minDate: Date
 
-  employees: Employee[] = [] 
 
   constructor(
     private fb: FormBuilder,
@@ -31,14 +32,31 @@ export class LeaveFormComponent implements OnInit {
     private snackBar: MatSnackBar,
     private employeeService: EmployeeService,
   ) {
+    this.minDate = new Date()
     this.leaveForm = this.fb.group({
       employeId: ["", Validators.required],
-      dateDebut: ["", Validators.required],
-      dateFin: ["", Validators.required],
-      motif: ["", Validators.required],
+      dateDebut: ["", [Validators.required, this.weekendValidator]],
+      dateFin: ["", [Validators.required, this.weekendValidator]],
+      typeConge: ["", Validators.required],
       statut: ["en attente", Validators.required],
-      commentaireManager: [""]
-    })
+      motif: [""]
+    }, { validator: this.dateOrderValidator })
+  }
+
+
+
+  weekendValidator = (control: { value: Date }) => {
+    if (!control.value) return null
+    const date = new Date(control.value)
+    const day = date.getDay()
+    return day === 0 || day === 6 ? { weekend: true } : null
+  }
+
+  dateOrderValidator = (group: FormGroup) => {
+    const start = group.get('dateDebut')?.value
+    const end = group.get('dateFin')?.value
+    if (!start || !end) return null
+    return new Date(end) <= new Date(start) ? { dateOrder: true } : null
   }
 
   ngOnInit(): void {
@@ -50,14 +68,16 @@ export class LeaveFormComponent implements OnInit {
       }
     })
 
-    // ✅ Écoute des 2 champs pour vérifier la validité
-    this.leaveForm.get("dateDebut")?.valueChanges.subscribe(() => this.validateDates())
-    this.leaveForm.get("dateFin")?.valueChanges.subscribe(() => this.validateDates())
-
     this.employeeService.getEmployees().subscribe({
       next: (data) => this.employees = data,
       error: () => console.error("Erreur lors du chargement des employés")
     })
+  }
+
+  dateFilter = (d: Date | null): boolean => {
+    if (!d) return false
+    const day = d.getDay()
+    return day !== 0 && day !== 6
   }
 
   validateDates(): void {
@@ -78,6 +98,7 @@ export class LeaveFormComponent implements OnInit {
     })
   }
 
+ 
   onSubmit(): void {
     if (this.leaveForm.invalid) return
 
@@ -95,10 +116,7 @@ export class LeaveFormComponent implements OnInit {
       next: () => {
         const msg = this.isEditMode ? "Congé modifié avec succès" : "Demande de congé créée"
         this.showSuccessMessage(msg)
-
-        setTimeout(() => {
-          this.router.navigate(["/admin/leaves"])
-        }, 1000)
+        setTimeout(() => this.router.navigate(["/admin/leaves"]), 1000)
       },
       error: () => {
         const msg = this.isEditMode ? "Erreur de mise à jour" : "Erreur de création"

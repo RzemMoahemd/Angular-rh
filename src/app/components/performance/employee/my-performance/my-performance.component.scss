@@ -1,0 +1,275 @@
+.my-performance-dashboard {
+  padding: 20px;
+
+  .header {
+    margin-bottom: 24px;
+    
+    h1 {
+      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 500;
+    }
+    
+    p {
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    
+    span {
+      margin-top: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    
+    mat-icon {
+      color: #f44336;
+      margin-right: 8px;
+    }
+  }
+
+  .dashboard-content {
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      
+      .latest-evaluation-card, .next-evaluation-card {
+        .score-display {
+          display: flex;
+          align-items: center;
+          margin-bottom: 16px;
+          
+          .score-value {
+            font-size: 32px;
+            font-weight: 500;
+            margin-right: 16px;
+            min-width: 80px;
+          }
+          
+          mat-progress-bar {
+            flex: 1;
+            height: 8px;
+          }
+        }
+        
+        .evaluation-meta {
+          .meta-item {
+            margin-bottom: 8px;
+            
+            .meta-label {
+              font-weight: 500;
+              margin-right: 8px;
+            }
+            
+            .status-badge {
+              padding: 4px 8px;
+              border-radius: 16px;
+              font-size: 12px;
+              font-weight: 500;
+              
+              &.status-pending {
+                background-color: #fff8e1;
+                color: #ffa000;
+              }
+              
+              &.status-in-progress {
+                background-color: #e3f2fd;
+                color: #1976d2;
+              }
+              
+              &.status-completed {
+                background-color: #e8f5e9;
+                color: #388e3c;
+              }
+              
+              &.status-cancelled {
+                background-color: #f5f5f5;
+                color: #757575;
+              }
+            }
+          }
+        }
+      }
+      
+      .next-evaluation-card {
+        background-color: #e8f5e9;
+        
+        mat-icon {
+          color: #388e3c;
+        }
+      }
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      
+      .chart-card {
+        height: 350px;
+        
+        mat-card-content {
+          height: calc(100% - 56px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .no-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 0, 0, 0.38);
+            
+            mat-icon {
+              font-size: 48px;
+              height: 48px;
+              width: 48px;
+              margin-bottom: 16px;
+              opacity: 0.5;
+            }
+          }
+        }
+      }
+    }
+
+    .goals-card {
+      margin-bottom: 24px;
+      
+      mat-list-item {
+        .goal-not-started {
+          color: rgba(0, 0, 0, 0.38);
+        }
+        
+        .goal-in-progress {
+          color: #1976d2;
+        }
+        
+        .goal-completed {
+          color: #388e3c;
+        }
+        
+        .priority-badge {
+          padding: 4px 8px;
+          border-radius: 16px;
+          font-size: 12px;
+          font-weight: 500;
+          
+          &.priority-high {
+            background-color: #ffebee;
+            color: #d32f2f;
+          }
+          
+          &.priority-medium {
+            background-color: #fff8e1;
+            color: #ffa000;
+          }
+          
+          &.priority-low {
+            background-color: #e8f5e9;
+            color: #388e3c;
+          }
+        }
+      }
+    }
+
+    .no-evaluations {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: rgba(0, 0, 0, 0.6);
+      
+      mat-icon {
+        font-size: 48px;
+        height: 48px;
+        width: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+      
+      h3 {
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.latest-evaluation-card {
+  .performance-section {
+    margin-bottom: 16px;
+    
+    .performance-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .performance-subtitle {
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 16px;
+    }
+    
+    .score-display {
+      margin-bottom: 16px;
+      
+      .score-value {
+        font-size: 42px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      
+      .score-evolution {
+        display: flex;
+        flex-direction: column;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+        margin-bottom: 8px;
+        
+        .evolution-badge {
+          color: #4caf50;
+          font-weight: 500;
+          margin-top: 4px;
+        }
+      }
+    }
+    
+    .performance-progress {
+      height: 10px;
+      border-radius: 5px;
+    }
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .my-performance-dashboard {
+    padding: 16px;
+    
+    .dashboard-content {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

@@ -1,0 +1,262 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Modifier l\'évaluation' : 'Nouvelle évaluation' }}</h2>
+
+<form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="mat-typography">
+    <!-- Section Informations générales -->
+    <div class="form-section">
+      <h3>Informations générales</h3>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Employé</mat-label>
+          <mat-select formControlName="employee" [disabled]="isEditMode">
+            <mat-option *ngFor="let employee of employees" [value]="employee.id">
+              {{ employee.firstName }} {{ employee.lastName }} - {{ employee.position }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="evaluationForm.get('employee')?.hasError('required')">
+            Sélectionnez un employé
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Période</mat-label>
+          <mat-select formControlName="period">
+            <mat-option *ngFor="let q of quarters" [value]="q.value">
+              {{ q.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="evaluationForm.get('period')?.hasError('required')">
+            Période requise
+          </mat-error>
+          <mat-error *ngIf="evaluationForm.get('period')?.hasError('invalidFormat')">
+            Format: Q1 {{ currentYear }}
+          </mat-error>
+          <mat-error *ngIf="evaluationForm.hasError('duplicate')">
+            Évaluation existante pour cette période
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of statuses" [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Section Critères d'évaluation -->
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Critères d'évaluation</h3>
+        <div class="predefined-criteria">
+          <span>Ajouter :</span>
+          <mat-chip-listbox>
+            <mat-chip *ngFor="let criterion of predefinedCriteria" 
+                     (click)="addPredefinedCriterion(criterion)">
+              {{ criterion }}
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+      </div>
+      
+      <div formArrayName="criteria">
+        <div *ngFor="let criterion of criteriaArray.controls; let i = index" 
+             [formGroupName]="i" class="criterion-item">
+          <div class="criterion-header">
+            <h4>Critère {{ i + 1 }}</h4>
+            <button type="button" mat-icon-button color="warn" (click)="removeCriterion(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="name">
+              <mat-error *ngIf="criterion.get('name')?.invalid">
+                Nom requis
+              </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Score</mat-label>
+              <input matInput type="number" formControlName="score" min="0" max="100">
+              <span matSuffix>%</span>
+              <mat-error *ngIf="criterion.get('score')?.invalid">
+                0-100%
+              </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Poids</mat-label>
+              <input matInput type="number" formControlName="weight" min="1">
+              <mat-error *ngIf="criterion.get('weight')?.invalid">
+                Minimum 1
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <button type="button" mat-stroked-button color="primary" 
+                (click)="addCriterion()" class="add-button">
+          <mat-icon>add</mat-icon>
+          Ajouter un critère
+        </button>
+      </div>
+    </div>
+
+    <!-- Section Score global -->
+    <div class="form-section">
+      <h3>Score global</h3>
+      <div class="overall-score">
+        <mat-form-field appearance="outline">
+          <mat-label>Score</mat-label>
+          <input matInput type="number" formControlName="overallScore" readonly>
+          <span matSuffix>%</span>
+        </mat-form-field>
+        <mat-progress-bar mode="determinate" 
+                         [value]="evaluationForm.get('overallScore')?.value">
+        </mat-progress-bar>
+      </div>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Commentaires généraux</mat-label>
+        <textarea matInput formControlName="comments" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3>Points forts</h3>
+      
+      <div formArrayName="strengths">
+        <div *ngFor="let strength of strengthsArray.controls; let i = index" class="array-item">
+          <mat-form-field appearance="outline" class="array-field">
+            <mat-label>Point fort {{ i + 1 }}</mat-label>
+            <input matInput [formControlName]="i">
+            <button mat-icon-button matSuffix color="warn" type="button" (click)="removeStrength(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <mat-error *ngIf="strength.hasError('required')">
+              Ce champ est requis
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <button type="button" mat-stroked-button color="primary" (click)="addStrength()" class="add-button">
+          <mat-icon>add</mat-icon>
+          Ajouter un point fort
+        </button>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Axes d'amélioration</h3>
+      
+      <div formArrayName="areasForImprovement">
+        <div *ngFor="let area of areasForImprovementArray.controls; let i = index" class="array-item">
+          <mat-form-field appearance="outline" class="array-field">
+            <mat-label>Axe d'amélioration {{ i + 1 }}</mat-label>
+            <input matInput [formControlName]="i">
+            <button mat-icon-button matSuffix color="warn" type="button" (click)="removeAreaForImprovement(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <mat-error *ngIf="area.hasError('required')">
+              Ce champ est requis
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <button type="button" mat-stroked-button color="primary" (click)="addAreaForImprovement()" class="add-button">
+          <mat-icon>add</mat-icon>
+          Ajouter un axe d'amélioration
+        </button>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Objectifs</h3>
+      
+      <div formArrayName="goals">
+        <div *ngFor="let goal of goalsArray.controls; let i = index" [formGroupName]="i" class="goal-item">
+          <div class="goal-header">
+            <h4>Objectif {{ i + 1 }}</h4>
+            <button type="button" mat-icon-button color="warn" (click)="removeGoal(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="2"></textarea>
+              <mat-error *ngIf="goal.get('description')?.hasError('required')">
+                La description est requise
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Date cible</mat-label>
+              <input matInput [matDatepicker]="targetPicker" formControlName="targetDate">
+              <mat-datepicker-toggle matSuffix [for]="targetPicker"></mat-datepicker-toggle>
+              <mat-datepicker #targetPicker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Priorité</mat-label>
+              <mat-select formControlName="priority">
+                <mat-option *ngFor="let priority of priorities" [value]="priority.value">
+                  {{ priority.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Statut</mat-label>
+              <mat-select formControlName="status">
+                <mat-option *ngFor="let status of goalStatuses" [value]="status.value">
+                  {{ status.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Résultat mesurable</mat-label>
+              <textarea matInput formControlName="measurableOutcome" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <button type="button" mat-stroked-button color="primary" (click)="addGoal()" class="add-button">
+          <mat-icon>add</mat-icon>
+          Ajouter un objectif
+        </button>
+      </div>
+    </div>
+    
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Annuler</button>
+    <button mat-raised-button color="primary" type="submit" 
+            [disabled]="evaluationForm.invalid">
+      {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+    </button>
+  </mat-dialog-actions>
+</form>

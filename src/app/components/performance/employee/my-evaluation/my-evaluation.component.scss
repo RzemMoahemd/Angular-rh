@@ -1,0 +1,159 @@
+.my-evaluations-container {
+  padding: 20px;
+
+  .header {
+    margin-bottom: 24px;
+    
+    h1 {
+      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 500;
+    }
+    
+    p {
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    
+    span {
+      margin-top: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    
+    mat-icon {
+      color: #f44336;
+      margin-right: 8px;
+    }
+  }
+
+  .content {
+    .next-evaluation-card {
+      margin-bottom: 24px;
+      background-color: #e8f5e9;
+      
+      mat-icon {
+        color: #388e3c;
+      }
+      
+      mat-card-content {
+        padding-top: 8px;
+      }
+    }
+
+    .table-container {
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        
+        .score-cell {
+          display: flex;
+          flex-direction: column;
+          width: 100px;
+          
+          span {
+            margin-bottom: 4px;
+            font-weight: 500;
+          }
+        }
+        
+        .status-badge {
+          padding: 4px 8px;
+          border-radius: 16px;
+          font-size: 12px;
+          font-weight: 500;
+          display: inline-block;
+          
+          &.status-pending {
+            background-color: #fff8e1;
+            color: #ffa000;
+          }
+          
+          &.status-in-progress {
+            background-color: #e3f2fd;
+            color: #1976d2;
+          }
+          
+          &.status-completed {
+            background-color: #e8f5e9;
+            color: #388e3c;
+          }
+          
+          &.status-cancelled {
+            background-color: #f5f5f5;
+            color: #757575;
+          }
+        }
+        
+        .acknowledged-badge {
+          display: flex;
+          align-items: center;
+          font-size: 12px;
+          color: #388e3c;
+          margin-top: 4px;
+          
+          mat-icon {
+            font-size: 14px;
+            height: 14px;
+            width: 14px;
+            margin-right: 4px;
+          }
+        }
+      }
+      
+      .no-evaluations {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        color: rgba(0, 0, 0, 0.6);
+        
+        mat-icon {
+          font-size: 48px;
+          height: 48px;
+          width: 48px;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+        
+        h3 {
+          margin-bottom: 8px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .my-evaluations-container {
+    padding: 16px;
+    
+    .content {
+      .table-container {
+        table {
+          .score-cell {
+            width: 80px;
+          }
+        }
+      }
+    }
+  }
+}

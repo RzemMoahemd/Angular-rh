@@ -1,0 +1,167 @@
+.evaluation-list-container {
+  padding: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .title-section {
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 500;
+      }
+      p {
+        margin: 5px 0 0;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+
+  .table-container {
+    overflow-x: auto;
+    
+    .loading-container, .error-message, .no-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+      
+      span {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+    
+    .error-message mat-icon {
+      color: #f44336;
+    }
+    
+    table {
+      width: 100%;
+      
+      .employee-cell {
+        display: flex;
+        align-items: center;
+        
+        .employee-info {
+          .employee-name {
+            font-weight: 500;
+          }
+          
+          .employee-position {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.6);
+          }
+          
+          .department-badge {
+            background-color: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+          }
+        }
+      }
+      
+      .score-cell {
+        display: flex;
+        flex-direction: column;
+        width: 100px;
+        
+        span {
+          margin-bottom: 4px;
+          font-weight: 500;
+        }
+      }
+      
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        
+        &.status-pending {
+          background-color: #fff9c4;
+          color: #fbc02d;
+        }
+        
+        &.status-in-progress {
+          background-color: #bbdefb;
+          color: #1976d2;
+        }
+        
+        &.status-completed {
+          background-color: #c8e6c9;
+          color: #388e3c;
+        }
+        
+        &.status-cancelled {
+          background-color: #ffcdd2;
+          color: #d32f2f;
+        }
+      }
+      
+      .acknowledged-badge {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 8px;
+        font-size: 12px;
+        color: #388e3c;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .evaluation-list-container {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      
+      button {
+        margin-top: 16px;
+        align-self: flex-end;
+      }
+    }
+    
+    .filters {
+      flex-direction: column;
+      
+      mat-form-field {
+        width: 100%;
+      }
+    }
+  }
+}

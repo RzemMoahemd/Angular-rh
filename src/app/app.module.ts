@@ -37,6 +37,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatOptionModule } from "@angular/material/core";
 
+
 //import { SidenavComponent } from "./components/sidenav/sidenav.component";
 //import { EmployeeListComponent } from "./components/employee-list/employee-list.component";
 //import { EmployeeFormComponent } from "./components/employee-form/employee-form.component";
@@ -45,6 +46,12 @@ import { MatOptionModule } from "@angular/material/core";
 //import { LoginComponent } from './components/login/login.component';
 
 //import { EmployeeLayoutComponent } from './layouts/employee-layout/employee-layout.component'; // ✅
+
+
+
+
+
+
 
 
 
@@ -57,6 +64,7 @@ export function initializeKeycloak(kc: KeycloakService): () => Promise<boolean> 
   declarations: [
     AppComponent,
     AdminLayoutComponent,
+
     
   ],
   imports: [

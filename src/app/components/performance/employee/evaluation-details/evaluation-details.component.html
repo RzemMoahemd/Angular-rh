@@ -1,0 +1,199 @@
+<div class="evaluation-details-dialog">
+  <h2 mat-dialog-title>Détails de l'évaluation</h2>
+  
+  <mat-dialog-content class="mat-typography">
+    <div class="evaluation-header">
+      <div class="employee-info">
+        <div>
+          <h3>{{ evaluation.employee.firstName }} {{ evaluation.employee.lastName }}</h3>
+          <p>{{ evaluation.employee.position }}</p>
+        </div>
+      </div>
+      
+      <div class="evaluation-meta">
+        <div class="meta-item">
+          <span class="meta-label">Période :</span>
+          <span class="meta-value">{{ evaluation.period }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Date :</span>
+          <span class="meta-value">{{ evaluation.date }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Évaluateur :</span>
+          <span class="meta-value">{{ evaluation.evaluator }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Statut :</span>
+          <span class="status-badge" [ngClass]="getStatusClass(evaluation.status)">
+            {{ getStatusLabel(evaluation.status) }}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="overall-score-section">
+      <h3>Score global</h3>
+      <div class="score-display">
+        <div class="score-value">{{ evaluation.overallScore }}%</div>
+        <mat-progress-bar mode="determinate" [value]="evaluation.overallScore"></mat-progress-bar>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="criteria-section">
+      <h3>Critères d'évaluation</h3>
+      <div class="criteria-list">
+        <mat-card *ngFor="let criterion of evaluation.criteria" class="criterion-card">
+          <mat-card-header>
+            <mat-card-title>{{ criterion.name }}</mat-card-title>
+            <div class="criterion-score">
+              <span>{{ criterion.score }}%</span>
+              <mat-progress-bar mode="determinate" [value]="criterion.score"></mat-progress-bar>
+            </div>
+          </mat-card-header>
+          <mat-card-content *ngIf="criterion.description || criterion.comments">
+            <p *ngIf="criterion.description" class="criterion-description">{{ criterion.description }}</p>
+            <p *ngIf="criterion.comments" class="criterion-comments">
+              <strong>Commentaires :</strong> {{ criterion.comments }}
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="strengths-areas-section">
+      <div class="strengths">
+        <h3>Points forts</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let strength of evaluation.strengths">
+            <mat-icon matListItemIcon color="primary">star</mat-icon>
+            <div matListItemTitle>{{ strength }}</div>
+          </mat-list-item>
+          <mat-list-item *ngIf="!evaluation.strengths || evaluation.strengths.length === 0">
+            <div matListItemTitle class="no-data">Aucun point fort spécifié</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      
+      <div class="areas-for-improvement">
+        <h3>Axes d'amélioration</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let area of evaluation.areasForImprovement">
+            <mat-icon matListItemIcon color="accent">trending_up</mat-icon>
+            <div matListItemTitle>{{ area }}</div>
+          </mat-list-item>
+          <mat-list-item *ngIf="!evaluation.areasForImprovement || evaluation.areasForImprovement.length === 0">
+            <div matListItemTitle class="no-data">Aucun axe d'amélioration spécifié</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="goals-section">
+      <h3>Objectifs</h3>
+      <div class="goals-list">
+        <mat-card *ngFor="let goal of evaluation.goals" class="goal-card">
+          <mat-card-header>
+            <mat-card-title>{{ goal.description }}</mat-card-title>
+            <div class="goal-meta">
+              <span *ngIf="goal.priority" class="priority-badge" [ngClass]="getPriorityClass(goal.priority)">
+                {{ getPriorityLabel(goal.priority) }}
+              </span>
+              <span *ngIf="goal.status" class="status-badge" [ngClass]="getGoalStatusClass(goal.status)">
+                {{ getGoalStatusLabel(goal.status) }}
+              </span>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <p *ngIf="goal.measurableOutcome" class="goal-outcome">
+              <strong>Résultat mesurable :</strong> {{ goal.measurableOutcome }}
+            </p>
+            <p *ngIf="goal.targetDate" class="goal-date">
+              <strong>Date cible :</strong> {{ goal.targetDate }}
+            </p>
+          </mat-card-content>
+        </mat-card>
+        <div *ngIf="!evaluation.goals || evaluation.goals.length === 0" class="no-goals">
+          Aucun objectif défini
+        </div>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="comments-section">
+      <h3>Commentaires</h3>
+      
+      <div *ngIf="evaluation.comments" class="evaluator-comments">
+        <h4>Commentaires de l'évaluateur</h4>
+        <p>{{ evaluation.comments }}</p>
+      </div>
+      
+      <div *ngIf="evaluation.employeeComments" class="employee-comments">
+        <h4>Vos commentaires</h4>
+        <p>{{ evaluation.employeeComments }}</p>
+      </div>
+      
+      <div *ngIf="!evaluation.comments && !evaluation.employeeComments" class="no-comments">
+        Aucun commentaire pour cette évaluation
+      </div>
+      
+      <div *ngIf="canAddComment() && !showCommentForm" class="add-comment-button">
+        <button mat-stroked-button color="primary" (click)="toggleCommentForm()">
+          <mat-icon>comment</mat-icon>
+          Ajouter un commentaire
+        </button>
+      </div>
+      
+      <div *ngIf="showCommentForm" class="comment-form">
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Votre commentaire</mat-label>
+            <textarea matInput formControlName="comment" rows="4" placeholder="Partagez vos réflexions sur cette évaluation..."></textarea>
+            <mat-error *ngIf="commentForm.get('comment')?.hasError('required')">
+              Le commentaire est requis
+            </mat-error>
+            <mat-error *ngIf="commentForm.get('comment')?.hasError('minlength')">
+              Le commentaire doit contenir au moins 10 caractères
+            </mat-error>
+          </mat-form-field>
+          
+          <div class="form-actions">
+            <button type="button" mat-button (click)="toggleCommentForm()">Annuler</button>
+            <button type="submit" mat-raised-button color="primary" [disabled]="commentForm.invalid">Soumettre</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="acknowledgement-section" *ngIf="evaluation.status === 'COMPLETE'">
+      <h3>Accusé de réception</h3>
+      
+      <div *ngIf="evaluation.acknowledgementDate" class="acknowledged">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <span>Vous avez accusé réception de cette évaluation le {{ evaluation.acknowledgementDate }}</span>
+      </div>
+      
+      <div *ngIf="!evaluation.acknowledgementDate" class="not-acknowledged">
+        <p>Veuillez accuser réception de cette évaluation pour confirmer que vous l'avez lue et comprise.</p>
+        
+        <button *ngIf="canAcknowledge()" mat-raised-button color="primary" (click)="acknowledgeEvaluation()">
+          <mat-icon>done_all</mat-icon>
+          Accuser réception
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Fermer</button>
+  </mat-dialog-actions>
+</div>

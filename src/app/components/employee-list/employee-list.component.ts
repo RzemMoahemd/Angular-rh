@@ -58,7 +58,6 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
 
   openEmployeeDialog(employee?: Employee): void {
   const dialogRef = this.dialog.open(EmployeeFormComponent, {
-    width: '600px',
     data: { employee }
   });
 

@@ -61,18 +61,17 @@ export class LeaveListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openLeaveDialog(): void {
-    const dialogRef = this.dialog.open(LeaveFormComponent, {
-      width: '600px',
-      data: { leave: null }
-    });
+  // openLeaveDialog(): void {
+  //   const dialogRef = this.dialog.open(LeaveFormComponent, {
+  //     data: { leave: null }
+  //   });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'success') {
-        this.loadEmployeesAndLeaves();
-      }
-    });
-  }
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result === 'success') {
+  //       this.loadEmployeesAndLeaves();
+  //     }
+  //   });
+  // }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -189,7 +188,6 @@ export class LeaveListComponent implements OnInit, AfterViewInit {
 
   openDetailsDialog(leave: Leave): void {
   this.dialog.open(LeaveDetailsDialogComponent, {
-    width: '600px',
     data: {
       ...leave,
       employeeFullName: this.employeeMap.get(leave.employeId) || 'Non spécifié'

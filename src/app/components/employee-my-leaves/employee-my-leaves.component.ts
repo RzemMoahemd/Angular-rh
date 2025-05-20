@@ -46,7 +46,6 @@ export class EmployeeMyLeavesComponent implements OnInit {
 
   openDetailsDialog(leave: any): void {
   this.dialog.open(LeaveDetailsDialogEmpComponent, { // <-- Nouveau nom de composant
-    width: '600px',
     data: leave,
     autoFocus: false
   });

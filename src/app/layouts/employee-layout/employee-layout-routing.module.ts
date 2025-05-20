@@ -6,6 +6,10 @@ import { EmployeeMyLeavesComponent } from 'app/components/employee-my-leaves/emp
 import { EmployeeRequestLeaveComponent } from 'app/components/employee-request-leave/employee-request-leave.component';
 import { EmployeeDashboardComponent } from 'app/components/employee-dashboard/employee-dashboard.component';
 
+
+import { MyEvaluationsComponent } from 'app/components/performance/employee/my-evaluation/my-evaluation.component';
+import { MyPerformanceDashboardComponent } from 'app/components/performance/employee/my-performance/my-performance.component';
+
 // const routes: Routes = [
 //     { path: 'my-leaves', component: EmployeeMyLeavesComponent, canActivate: [authGuard] },
 //     { path: 'request-leave', component: EmployeeRequestLeaveComponent, canActivate: [authGuard] },  
@@ -19,7 +23,22 @@ const routes: Routes = [
   { path: 'my-leaves', component: EmployeeMyLeavesComponent, canActivate: [authGuard] },
   { path: 'request-leave', component: EmployeeRequestLeaveComponent, canActivate: [authGuard] },
   { path: 'dashboardemp', component: EmployeeDashboardComponent, canActivate: [authGuard] },
-  { path: '', redirectTo: 'my-leaves', pathMatch: 'full', canActivate: [authGuard] }
+  { path: '', redirectTo: 'my-leaves', pathMatch: 'full', canActivate: [authGuard] },
+
+
+
+   // Routes Employé
+  {
+    path: "my-performance",
+    component: MyPerformanceDashboardComponent,
+    // canActivate: [EmployeeGuard],
+  },
+  {
+    path: "my-evaluations",
+    component: MyEvaluationsComponent,
+    // canActivate: [EmployeeGuard],
+  },
+
 ];
 
 

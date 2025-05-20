@@ -18,6 +18,11 @@ export const ALL_ROUTES: RouteInfo[] = [
   //{ path: 'request-leave', title: 'request-leave', icon: 'event', class: '' },
   { path: 'dashboardemp', title: 'dashboard', icon: 'event', class: '' },
 
+  { path: 'performance', title: 'Gestion performances', icon: 'event', class: '' },
+  { path: 'evaluations', title: 'Gestion evaluations', icon: 'event', class: '' },
+  { path: 'my-performance', title: 'my-performance', icon: 'event', class: '' },
+  { path: 'my-evaluations', title: 'my-evaluations', icon: 'event', class: '' },
+
   
 ];
 
@@ -39,9 +44,9 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
     const role = this.kc.getUserRole();
     if (role === 'admin') {
-      this.menuItems = ALL_ROUTES.filter(r => r.path === 'employees' || r.path === 'dahsboard'  || r.path === 'leaves');
+      this.menuItems = ALL_ROUTES.filter(r => r.path === 'employees' || r.path === 'dahsboard'  || r.path === 'leaves' || r.path === 'performance' || r.path === 'evaluations');
     } else if (role === 'user') {
-      this.menuItems = ALL_ROUTES.filter(r => r.path === 'my-leaves'  || r.path === 'dashboardemp');
+      this.menuItems = ALL_ROUTES.filter(r => r.path === 'my-leaves'  || r.path === 'dashboardemp' || r.path ==='my-performance' || r.path ==='my-evaluations');
     }
     console.log(this.kc.keycloak.token);
   

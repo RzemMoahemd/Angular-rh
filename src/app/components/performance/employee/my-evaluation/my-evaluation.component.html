@@ -1,0 +1,112 @@
+<div class="my-evaluations-container">
+  <div class="header">
+    <div class="title-section">
+      <h1>Mes évaluations de performance</h1>
+      <p *ngIf="currentEmployee">Historique de vos évaluations de performance</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Chargement de vos évaluations...</span>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!loading && !error" class="content">
+    <!-- Carte d'information sur la prochaine évaluation -->
+    <mat-card *ngIf="nextEvaluation" class="next-evaluation-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>event</mat-icon>
+        <mat-card-title>Prochaine évaluation</mat-card-title>
+        <mat-card-subtitle>{{ nextEvaluation.period }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Votre prochaine évaluation est prévue pour le {{ nextEvaluation.date }}</p>
+        <p>Préparez-vous en réfléchissant à vos réalisations et objectifs pour cette période.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tableau des évaluations -->
+    <mat-card>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="evaluations" *ngIf="evaluations.length > 0">
+            <!-- Colonne Période -->
+            <ng-container matColumnDef="period">
+              <th mat-header-cell *matHeaderCellDef>Période</th>
+              <td mat-cell *matCellDef="let evaluation">{{ evaluation.period }}</td>
+            </ng-container>
+
+            <!-- Colonne Date -->
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date d'évaluation</th>
+              <td mat-cell *matCellDef="let evaluation">{{ evaluation.date }}</td>
+            </ng-container>
+
+            <!-- Colonne Évaluateur -->
+            <ng-container matColumnDef="evaluator">
+              <th mat-header-cell *matHeaderCellDef>Évaluateur</th>
+              <td mat-cell *matCellDef="let evaluation">{{ evaluation.evaluator }}</td>
+            </ng-container>
+
+            <!-- Colonne Score -->
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef>Score</th>
+              <td mat-cell *matCellDef="let evaluation">
+                <div class="score-cell">
+                  <span>{{ evaluation.overallScore }}%</span>
+                  <mat-progress-bar mode="determinate" [value]="evaluation.overallScore"></mat-progress-bar>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Colonne Statut -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let evaluation">
+                <span class="status-badge" [ngClass]="getStatusClass(evaluation.status)">
+                  {{ getStatusLabel(evaluation.status) }}
+                </span>
+                <span *ngIf="evaluation.acknowledgementDate" class="acknowledged-badge">
+                  <mat-icon>check_circle</mat-icon> Accusé de réception
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Colonne Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let evaluation">
+                <button mat-icon-button color="primary" (click)="openEvaluationDetails(evaluation)" matTooltip="Voir les détails">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  color="accent" 
+                  *ngIf="canAcknowledge(evaluation)"
+                  (click)="acknowledgeEvaluation(evaluation)" 
+                  matTooltip="Accuser réception">
+                  <mat-icon>done_all</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <!-- Message si aucune évaluation -->
+          <div *ngIf="!loading && evaluations.length === 0" class="no-evaluations">
+            <mat-icon>assessment</mat-icon>
+            <h3>Aucune évaluation disponible</h3>
+            <p>Vous n'avez pas encore d'évaluations de performance.</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

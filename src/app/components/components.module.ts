@@ -44,6 +44,22 @@ import { RejectionDialogComponent } from './dialogs/rejection-dialog/rejection-d
 
 
 
+import { MatChipsModule } from "@angular/material/chips"
+import { MatListModule } from "@angular/material/list"
+import { MatMenuModule } from "@angular/material/menu"
+import { MatProgressBarModule } from "@angular/material/progress-bar"
+import { MatSnackBarModule } from "@angular/material/snack-bar"
+
+
+import { MyPerformanceDashboardComponent } from './performance/employee/my-performance/my-performance.component';
+import { MyEvaluationsComponent } from './performance/employee/my-evaluation/my-evaluation.component';
+import { EvaluationDetailssComponent } from './performance/employee/evaluation-details/evaluation-detailss.component';
+import { ConfirmDialogComponent } from './performance/confirm-dialog/confirm-dialog.component';
+import { EvaluationListComponent } from './performance/admin/evaluation-list/evaluation-list.component';
+import { PerformanceDashboardComponent } from './performance/admin/performance-dashboard/performance-dashboard.component';
+import { EvaluationFormComponent } from './performance/admin/evaluation-form/evaluation-form.component';
+import { EvaluationDetailsComponent } from './performance/admin/evaluation-details/evaluation-details.component';
+
 
 @NgModule({
   imports: [
@@ -69,7 +85,16 @@ import { RejectionDialogComponent } from './dialogs/rejection-dialog/rejection-d
     MatButtonToggleModule,
     MatDialogModule,
     MatDividerModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatChipsModule,
+    MatListModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatSnackBarModule
+
+
+
+
   ],
   declarations: [
     FooterComponent,
@@ -86,7 +111,19 @@ import { RejectionDialogComponent } from './dialogs/rejection-dialog/rejection-d
     LeaveDetailsDialogComponent,
     LeaveDetailsDialogEmpComponent,
     ApprovalDialogComponent,
-    RejectionDialogComponent
+    RejectionDialogComponent,
+    MyPerformanceDashboardComponent,
+    MyEvaluationsComponent,
+    EvaluationDetailssComponent,
+    ConfirmDialogComponent,
+    EvaluationDetailsComponent,
+    EvaluationFormComponent,
+    PerformanceDashboardComponent,
+    EvaluationListComponent
+    
+
+
+
   ],
   exports: [
     FooterComponent,
