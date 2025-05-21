@@ -60,6 +60,7 @@ import { PerformanceDashboardComponent } from './performance/admin/performance-d
 import { EvaluationFormComponent } from './performance/admin/evaluation-form/evaluation-form.component';
 import { EvaluationDetailsComponent } from './performance/admin/evaluation-details/evaluation-details.component';
 
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   imports: [
@@ -90,7 +91,8 @@ import { EvaluationDetailsComponent } from './performance/admin/evaluation-detai
     MatListModule,
     MatMenuModule,
     MatProgressBarModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NgChartsModule
 
 
 

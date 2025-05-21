@@ -1,8 +1,17 @@
 <div class="performance-dashboard">
   <div class="header">
+  <div class="header-titles">
     <h1>Évaluation des performances</h1>
     <p>Gérez et suivez les performances de vos employés</p>
   </div>
+  <div class="header-actions">
+    <button mat-raised-button color="primary" (click)="openNewEvaluationDialog()">
+      <mat-icon>add</mat-icon>
+      Nouvelle évaluation
+    </button>
+  </div>
+</div>
+  
 
   <div *ngIf="loading" class="loading">
     <mat-spinner diameter="40"></mat-spinner>
@@ -169,13 +178,17 @@
 
               <!-- Colonne Statut -->
               <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Statut</th>
-                <td mat-cell *matCellDef="let evaluation">
-                  <span class="status-badge" [ngClass]="getStatusClass(evaluation.status)">
-                    {{ getStatusLabel(evaluation.status) }}
-                  </span>
-                </td>
-              </ng-container>
+  <th mat-header-cell *matHeaderCellDef>Statut</th>
+  <td mat-cell *matCellDef="let evaluation">
+    <span class="status-badge" [ngClass]="getStatusClass(evaluation.status)">
+      {{ getStatusLabel(evaluation.status) }}
+    </span>
+    <!-- Ajouter l'icône de validation -->
+    <span *ngIf="evaluation.acknowledgementDate" class="acknowledged-badge">
+      <mat-icon>check_circle</mat-icon>
+    </span>
+  </td>
+</ng-container>
 
               <!-- Colonne Actions -->
               <ng-container matColumnDef="actions">
@@ -220,63 +233,72 @@
     <div *ngIf="selectedTab === 'trends'" class="trends-content">
       <div class="charts-container">
         <mat-card class="chart-card">
-          <mat-card-header>
-            <mat-card-title>Évolution des performances</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <canvas baseChart
-              [data]="performanceTrends"
-              [options]="trendChartOptions"
-              [type]="'line'">
-            </canvas>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="chart-card">
-          <mat-card-header>
-            <mat-card-title>Performances par département</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <canvas baseChart
-              [data]="departmentPerformances"
-              [options]="departmentChartOptions"
-              [type]="'bar'">
-            </canvas>
-          </mat-card-content>
-        </mat-card>
+  <mat-card-header>
+    <mat-card-title>Évolution des performances par département</mat-card-title>
+    <mat-card-subtitle>
+      <span class="legend-item" *ngFor="let color of colorPalette; let i = index">
+        <span class="legend-color" [style.background-color]="color"></span>
+        {{ departmentTrendsData?.datasets[i]?.label }}
+      </span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="chart-container" style="height: 500px; padding: 20px">
+      <canvas baseChart
+        [type]="'line'"
+        [data]="departmentTrendsData"
+        [options]="chartOptions">
+      </canvas>
+    </div>
+  </mat-card-content>
+</mat-card>
       </div>
 
       <div class="bottom-section">
-        <mat-card class="criteria-chart">
-          <mat-card-header>
-            <mat-card-title>Scores par critère</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <canvas baseChart
-              [data]="criteriaAverages"
-              [options]="criteriaChartOptions"
-              [type]="'horizontalBar'">
-            </canvas>
-          </mat-card-content>
-        </mat-card>
+         <!-- Remplacez la section des critères par -->
+<mat-card class="criteria-card">
+  <mat-card-header>
+    <mat-card-title>Scores moyens par critère d'évaluation</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="criteria-list">
+      <div class="criterion-item" *ngFor="let criterion of criteriaAverages">
+        <div class="criterion-label">{{ criterion.name }}</div> <!-- Correction ici -->
+        <div class="progress-container">
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="criterion.score" 
+            color="primary">
+          </mat-progress-bar>
+          <span class="score-value">{{ criterion.score | number:'1.0-0' }}%</span> <!-- Correction ici -->
+        </div>
+      </div>
+    </div>
+    <div class="scale-indicator">
+      <span *ngFor="let mark of [0, 25, 50, 75, 100]">{{ mark }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>
 
         <mat-card class="top-performers">
-          <mat-card-header>
-            <mat-card-title>Top performers</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-list>
-              <mat-list-item *ngFor="let performer of topPerformers">
-                <div matListItemTitle>{{ performer.employee.firstName }} {{ performer.employee.lastName }}</div>
-                <div matListItemLine>{{ performer.employee.position }}</div>
-                <div matListItemMeta class="performer-score">
-                  <span>{{ performer.overallScore }}%</span>
-                  <mat-progress-bar mode="determinate" [value]="performer.overallScore"></mat-progress-bar>
-                </div>
-              </mat-list-item>
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
+      <mat-card-header>
+        <mat-card-title>Top performers</mat-card-title>
+        <mat-card-subtitle>Employés avec les meilleurs scores</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="performer-list">
+          <div class="performer-item" *ngFor="let performer of topPerformers">
+            <div class="performer-info">
+              <div class="performer-name">{{ performer.employee.firstName }} {{ performer.employee.lastName }}</div>
+              <div class="performer-position">{{ performer.employee.position }}</div>
+            </div>
+            <div class="performer-score">
+              {{ performer.overallScore | number:'1.0-0' }}%
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
       </div>
     </div>
   </div>

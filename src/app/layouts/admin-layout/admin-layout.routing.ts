@@ -32,12 +32,8 @@ export const AdminLayoutRoutes: Routes = [
     path: "performance",
     component: PerformanceDashboardComponent,
     // canActivate: [AdminGuard],
-  },
-  {
-    path: "evaluations",
-    component: EvaluationListComponent,
-    // canActivate: [AdminGuard],
-  },
+  }
+ 
 
 
 ];

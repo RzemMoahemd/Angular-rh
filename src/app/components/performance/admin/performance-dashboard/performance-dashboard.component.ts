@@ -38,6 +38,10 @@ export class PerformanceDashboardComponent implements OnInit {
   filteredEvaluations: Evaluation[] = [];
   employees: Employee[] = [];
 
+  departmentTrendsData: any;
+chartOptions: any;
+colorPalette = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+
   // Statistics
   averageScore = 0;
   highestScore = 0;
@@ -125,12 +129,107 @@ export class PerformanceDashboardComponent implements OnInit {
     this.employees = results.employees;
     this.evaluations = results.evaluations;
     this.totalEmployees = results.employees.length;
+    this.prepareDepartmentTrendsChart(results.departmentPerformances);
+
 
     this.enrichDataWithDepartments();
     this.calculateStatistics();
     this.applyFilters();
     this.updateCharts();
   }
+
+
+  private prepareDepartmentTrendsChart(performances: DepartmentPerformance[]): void {
+  // Ordonner les trimestres avant de les traiter
+  const quarters = this.getSortedQuarters(performances);
+  
+  // Grouper les données par département
+  const departments = [...new Set(performances.map(p => p.departmentName.trim()))]
+    .sort(); // Tri alphabétique des départements
+
+  this.departmentTrendsData = {
+    labels: quarters,
+    datasets: departments.map((department, index) => ({
+      label: department,
+      data: quarters.map(quarter => {
+        const perf = performances.find(p => 
+          p.departmentName.trim() === department && 
+          p.quarter === quarter
+        );
+        return perf ? Math.round(perf.averageScore) : null;
+      }),
+      borderColor: this.colorPalette[index],
+      backgroundColor: 'transparent',
+      tension: 0.4,
+      pointBackgroundColor: this.colorPalette[index],
+      pointBorderColor: '#fff',
+      pointHoverRadius: 8
+    }))
+  };
+
+  // Options spécifiques pour la capture
+  this.chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    elements: {
+      line: {
+        borderWidth: 3
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 45
+        }
+      },
+      y: {
+        min: 0,
+        max: 100,
+        ticks: {
+          stepSize: 25,
+          callback: (value: string | number) => `${value}%`
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          boxWidth: 20,
+          padding: 20,
+          font: { size: 14 }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.9)',
+        titleFont: { size: 16 },
+        bodyFont: { size: 14 }
+      }
+    }
+  };
+}
+
+
+private getSortedQuarters(performances: DepartmentPerformance[]): string[] {
+  return [...new Set(performances.map(p => p.quarter))]
+    .sort((a, b) => {
+      const [qA, yA] = a.split(' ');
+      const [qB, yB] = b.split(' ');
+      return parseInt(yA) - parseInt(yB) || qA.localeCompare(qB);
+    });
+}
+
+private getDepartmentScores(department: string, quarters: string[], data: DepartmentPerformance[]): number[] {
+  return quarters.map(quarter => {
+    const entry = data.find(d => 
+      d.departmentName.trim() === department.trim() && d.quarter === quarter // Comparaison avec .trim()
+    );
+    return entry ? Math.round(entry.averageScore) : 0;
+  });
+}
 
   private enrichDataWithDepartments(): void {
     this.enrichEvaluationsWithDepartments();
@@ -298,15 +397,17 @@ export class PerformanceDashboardComponent implements OnInit {
       width: "400px",
       data: {
         title: "Confirmer la suppression",
-        message: `Supprimer l'évaluation de ${evaluation.employee.firstName} ${evaluation.employee.lastName} (${evaluation.period}) ?`
-      }
-    });
+        message: `Êtes-vous sûr de vouloir supprimer l'évaluation de ${evaluation.employee.firstName} ${evaluation.employee.lastName} pour la période ${evaluation.period} ?`,
+        confirmText: "Supprimer",
+        cancelText: "Annuler",
+      },
+    })
 
     dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.handleEvaluationDeletion(evaluation.id!);
-      }
-    });
+    if (confirmed) {
+      this.handleEvaluationDeletion(evaluation.id!);
+    }
+  });
   }
 
   private handleEvaluationDeletion(id: number): void {
@@ -375,4 +476,11 @@ export class PerformanceDashboardComponent implements OnInit {
     this.error = "Erreur lors du chargement des données";
     console.error("Erreur:", error);
   }
+
+  openDetailsDialog(evaluation: Evaluation): void {
+  this.dialog.open(EvaluationDetailsComponent, {
+    width: "800px",
+    data: { evaluation },
+  });
+}
 }

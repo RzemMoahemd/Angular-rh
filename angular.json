@@ -85,20 +85,20 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "material-dashboard-angular:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "material-dashboard-angular:build:production"
-            },
-            "development": {
-              "browserTarget": "material-dashboard-angular:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
+  "builder": "@angular-devkit/build-angular:dev-server",
+  "options": {
+    "buildTarget": "material-dashboard-angular:build"
+  },
+  "configurations": {
+    "production": {
+      "buildTarget": "material-dashboard-angular:build:production"
+    },
+    "development": {
+      "buildTarget": "material-dashboard-angular:build:development"
+    }
+  },
+  "defaultConfiguration": "development"
+},
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
