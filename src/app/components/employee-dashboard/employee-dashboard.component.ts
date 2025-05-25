@@ -3,15 +3,26 @@ import { LeaveService } from '../../services/leave.service';
 import { EmployeeService } from '../../services/employee.service';
 import { KeycloakService } from '../../services/keycloak/keycloak.service';
 import { LeaveBalanceService } from '../../services/leave-balance.service';
-import { LeaveBalance, LeaveBalanceDisplay, LEAVE_TYPES } from '../../models/leave-balance';
-import { forkJoin } from 'rxjs';
+import { PerformanceService } from '../../services/performance.service';
+import { forkJoin, lastValueFrom } from 'rxjs';
+import { LEAVE_TYPES } from 'app/models/leave-balance';
+import { Goal } from 'app/models/Goal';
+import { CriterionAverage } from 'app/models/CriterionAverage';
+import { Employee } from 'app/models/employee';
 
-interface LeaveStats {
-  total: number;
-  accepted: number;
-  pending: number;
-  refused: number;
+interface GoalProgress extends Goal {
+  progress: number;
+  status: "NON_COMMENCE" | "EN_COURS" | "COMPLETE"
 }
+
+interface CalendarEvent {
+  date: Date;
+  title: string;
+  type: 'evaluation' | 'leave';
+  period: string; // Ajouté
+  formattedDate: string; // Ajouté
+}
+
 
 @Component({
   selector: 'app-employee-dashboard',
@@ -19,23 +30,20 @@ interface LeaveStats {
   styleUrls: ['./employee-dashboard.component.css']
 })
 export class EmployeeDashboardComponent implements OnInit {
-  leaveStats: LeaveStats = {
-    total: 0,
-    accepted: 0,
-    pending: 0,
-    refused: 0
-  };
-  
-  nextLeave: any = null;
-  leaveBalances: LeaveBalanceDisplay[] = [];
-  recentLeaves: any[] = [];
+  goals: GoalProgress[] = [];
+  leaveBalances: any[] = [];
+  calendarEvents: CalendarEvent[] = [];
   isLoading = true;
   errorMessage: string | null = null;
+  recentComments: Array<{evaluator: string; comment: string; date: Date}> = [];
+  skills: CriterionAverage[] = [];
+  employee?: Employee;
 
   constructor(
     private leaveService: LeaveService,
     private employeeService: EmployeeService,
     private leaveBalanceService: LeaveBalanceService,
+    private performanceService: PerformanceService,
     private keycloakService: KeycloakService
   ) {}
 
@@ -43,165 +51,184 @@ export class EmployeeDashboardComponent implements OnInit {
     this.loadEmployeeData();
   }
 
-  loadEmployeeData(): void {
-  const email = this.keycloakService.keycloak.tokenParsed?.email;
-  if (!email) {
-    this.errorMessage = 'Email non trouvé dans le token';
-    this.isLoading = false;
-    return;
-  }
-
-  this.employeeService.getEmployeeByEmail(email).subscribe({
-    next: employe => {
-      // on lance les deux appels en parallèle
-      forkJoin({
-        leaves:    this.leaveService.getLeavesByEmployee(employe.id),
-        balances: this.leaveBalanceService.getCurrentYearBalances(employe.id)
-      }).subscribe({
-        next: ({ leaves, balances }) => {
-          // traitement des congés
-          this.processLeaveStats(leaves);
-          this.processNextLeave(leaves);
-          this.processRecentLeaves(leaves);
-          // traitement des soldes
-          this.processLeaveBalances(balances);
-          // on désactive le loader
-          this.isLoading = false;
-        },
-        error: err => {
-          console.error('Erreur chargement dashboard', err);
-          this.errorMessage = 'Erreur lors du chargement des données';
-          this.isLoading = false;  // toujours désactiver le spinner
-        }
-      });
-    },
-    error: err => {
-      console.error('Erreur chargement employé', err);
-      this.errorMessage = 'Erreur chargement données employé';
+  private loadEmployeeData(): void {
+    const email = this.keycloakService.keycloak.tokenParsed?.email;
+    if (!email) {
+      this.errorMessage = 'Email non trouvé dans le token';
       this.isLoading = false;
+      return;
     }
-  });
-}
 
-  loadLeaves(employeeId: number): void {
-    this.leaveService.getLeavesByEmployee(employeeId).subscribe({
-      next: (leaves) => {
-        this.processLeaveStats(leaves);
-        this.processNextLeave(leaves);
-        this.processRecentLeaves(leaves);
+    this.employeeService.getEmployeeByEmail(email).subscribe({
+      next: employee => {
+        this.employee = employee; 
+        forkJoin({
+          leaves: this.leaveService.getLeavesByEmployee(employee.id),
+          balances: this.leaveBalanceService.getCurrentYearBalances(employee.id),
+          performance: this.performanceService.getMyEvaluations(employee.id),
+          goals: this.performanceService.getEvaluationsByEmployeeId(employee.id),
+          skills: this.performanceService.getMySkillScores(employee.id)
+        }).subscribe({
+          next: ({ leaves, balances, performance, goals, skills }) => {
+            this.skills = skills.slice(0, 5);
+            this.processGoals(goals);
+            this.processPerformance(performance);
+            this.processLeaveData(leaves, balances);
+            this.processCalendarEvents(leaves, performance);
+            this.isLoading = false;
+          },
+          error: err => this.handleError(err)
+        });
       },
-      error: (err) => {
-        this.errorMessage = 'Error loading leave data';
-        console.error('Error loading leaves', err);
-        this.isLoading = false;
-      }
+      error: err => this.handleError(err)
     });
   }
 
-  private processLeaveStats(leaves: any[]): void {
-    this.leaveStats = {
-      total: leaves.length,
-      accepted: leaves.filter(l => l.statut === 'approuvé').length,
-      pending: leaves.filter(l => l.statut === 'en attente').length,
-      refused: leaves.filter(l => l.statut === 'rejeté').length
+  private processGoals(evaluations: any[]): void {
+    this.goals = evaluations.flatMap(e => 
+      e.goals?.map((g: any) => ({
+        ...g,
+        progress: this.calculateGoalProgress(g),
+        status: this.mapGoalStatus(g.status),
+        targetDate: new Date(g.targetDate)
+      })) || []
+    ).slice(0, 3);
+  }
+
+  private processPerformance(evaluations: any[]): void {
+    this.recentComments = evaluations
+      .filter(e => e.comments)
+      .map(e => ({
+        evaluator: e.evaluator,
+        comment: e.comments,
+        date: new Date(e.evaluationDate)
+      }))
+      .slice(-3)
+      .reverse();
+  }
+
+  private processLeaveData(leaves: any[], balances: any[]): void {
+    this.leaveBalances = LEAVE_TYPES.map(typeConfig => {
+      const balance = balances.find(b => b.typeConge === typeConfig.type);
+      return {
+        type: typeConfig.label,
+        icon: this.getLeaveTypeIcon(typeConfig.type),
+        used: balance?.nombreJoursRestants || 0,
+        total: typeConfig.total,
+        color: this.getLeaveTypeColor(typeConfig.type)
+      };
+    });
+  }
+
+  private processCalendarEvents(leaves: any[], evaluations: any[]): void {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Trouver la dernière évaluation
+  const latestEvaluation = this.sortEvaluations([...evaluations])[0];
+  
+  // Calculer la prochaine évaluation
+  let nextEvaluation: CalendarEvent | null = null;
+  if (latestEvaluation) {
+    const [currentQuarter, year] = this.parsePeriod(latestEvaluation.period);
+    let nextQuarter = currentQuarter + 1;
+    let nextYear = year;
+
+    if (nextQuarter > 4) {
+      nextQuarter = 1;
+      nextYear++;
+    }
+
+    const quarterEndMonth = nextQuarter * 3;
+    const evaluationDate = new Date(nextYear, quarterEndMonth - 1, 15);
+    
+    nextEvaluation = {
+      date: evaluationDate,
+      title: 'Évaluation à venir',
+      type: 'evaluation',
+      period: `Q${nextQuarter} ${nextYear}`,
+      formattedDate: evaluationDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
     };
   }
 
-  private processNextLeave(leaves: any[]): void {
-    const now = new Date();
-    const upcomingApproved = leaves
-      .filter(l => l.statut === 'approuvé' && new Date(l.dateDebut) > now)
-      .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime());
-    
-    this.nextLeave = upcomingApproved[0] || null;
-  }
+  const approvedLeaves = leaves
+    .filter(l => l.statut === 'approuvé' && new Date(l.dateDebut) >= today);
 
-  private processRecentLeaves(leaves: any[]): void {
-    this.recentLeaves = leaves
-      .sort((a, b) => new Date(b.dateDebut).getTime() - new Date(a.dateDebut).getTime())
-      .slice(0, 3);
-  }
+  this.calendarEvents = [
+    ...approvedLeaves.map(l => ({
+      date: new Date(l.dateDebut),
+      title: 'Congé approuvé',
+      type: 'leave' as const,
+      period: '',
+      formattedDate: ''
+    })),
+    ...(nextEvaluation ? [nextEvaluation] : [])
+  ].sort((a, b) => a.date.getTime() - b.date.getTime())
+   .slice(0, 5);
+}
 
-  loadLeaveBalances(employeeId: number): void {
-    this.leaveBalanceService
-      .getCurrentYearBalances(employeeId)
-      .subscribe({
-        next: (balances) => {
-          this.processLeaveBalances(balances);
-          this.isLoading = false;
-        },
-        error: (err) => { /* … */ }
-      });
-  }
-
-  // private processLeaveBalances(balances: LeaveBalance[]): void {
-  //   // Pour chaque type défini dans LEAVE_TYPES
-  //   this.leaveBalances = LEAVE_TYPES.map(typeConfig => {
-  //     // on cherche le solde correspondant
-  //     const solde = balances.find(b => b.typeConge === typeConfig.type);
-  //     const remaining = solde ? solde.nombreJoursRestants : typeConfig.total;
-  //     const used = typeConfig.total - remaining;
-  //     return {
-  //       type: typeConfig.label,
-  //       total: typeConfig.total,
-  //       used,
-  //       remaining,
-  //       percentage: (remaining / typeConfig.total) * 100
-  //     } as LeaveBalanceDisplay;
-  //   });
-  // }
-
-
-  // Remplacer la méthode processLeaveBalances par :
-private processLeaveBalances(balances: LeaveBalance[]): void {
-  this.leaveBalances = LEAVE_TYPES.map(typeConfig => {
-    const balance = balances.find(b => b.typeConge === typeConfig.type);
-    
-    if (!balance) {
-      return {
-        type: typeConfig.label,
-        total: typeConfig.total,
-        used: 0,
-        remaining: typeConfig.total,
-        percentage: 100
-      };
-    }
-
-    if (typeConfig.behavior === 'increment') {
-      return {
-        type: typeConfig.label,
-        total: typeConfig.total,
-        used: balance.nombreJoursRestants,
-        remaining: 0,
-        percentage: 0
-      };
-    } else {
-      const remaining = balance.nombreJoursRestants;
-      const used = typeConfig.total - remaining;
-      return {
-        type: typeConfig.label,
-        total: typeConfig.total,
-        used,
-        remaining,
-        percentage: (remaining / typeConfig.total) * 100
-      };
-    }
+private sortEvaluations(evaluations: any[]): any[] {
+  return [...evaluations].sort((a, b) => {
+    const [aQuarter, aYear] = this.parsePeriod(a.period);
+    const [bQuarter, bYear] = this.parsePeriod(b.period);
+    return bYear - aYear || bQuarter - aQuarter;
   });
 }
-  
 
-  getStatusClass(status: string): string {
-    switch(status.toLowerCase()) {
-      case 'approuvé': return 'status-accepted';
-      case 'rejeté': return 'status-refused';
-      default: return 'status-pending';
+private parsePeriod(period: string): [number, number] {
+  const matches = period.match(/Q(\d)\s+(\d{4})/i);
+  return matches ? [parseInt(matches[1], 10), parseInt(matches[2], 10)] : [0, 0];
+}
+
+
+  private getLeaveTypeIcon(type: string): string {
+    const icons: {[key: string]: string} = {
+      'PAYÉ': 'beach_access',
+      'RTT': 'self_improvement',
+      'MALADIE': 'healing',
+      'SANS SOLDE': 'money_off'
+    };
+    return icons[type] || 'event';
+  }
+
+  private getLeaveTypeColor(type: string): string {
+    const colors: {[key: string]: string} = {
+      'PAYÉ': '#4CAF50',
+      'RTT': '#2196F3',
+      'MALADIE': '#FF9800',
+      'SANS SOLDE': '#9E9E9E'
+    };
+    return colors[type] || '#000';
+  }
+
+  private calculateGoalProgress(goal: any): number {
+    return goal.status === 'COMPLETE' ? 100 : 30;
+  }
+
+  private mapGoalStatus(status: string): GoalProgress['status'] {
+    switch (status?.toUpperCase()) {
+      case 'COMPLETE': return 'COMPLETE';
+      case 'EN_COURS': return 'EN_COURS';
+      default: return 'NON_COMMENCE';
     }
   }
 
-  getProgressBarColor(percentage: number | undefined): string {
-    if (percentage === undefined) return 'primary';
-    if (percentage > 50) return 'primary';
-    if (percentage > 25) return 'accent';
-    return 'warn';
+  private handleError(error: any): void {
+    console.error(error);
+    this.errorMessage = 'Erreur de chargement des données';
+    this.isLoading = false;
+  }
+
+  async updateGoalStatus(goal: GoalProgress): Promise<void> {
+    try {
+      await lastValueFrom(this.performanceService.updateGoalStatus(goal.id!, goal.status.toUpperCase()));
+      this.loadEmployeeData();
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 }

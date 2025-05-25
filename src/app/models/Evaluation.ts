@@ -9,7 +9,7 @@ export interface Evaluation {
   period: string
   startDate: Date | string
   endDate: Date | string
-  evaluationDate?: string
+  evaluationDate?: Date | string
   status: "EN_ATTENTE" | "EN_COURS" | "COMPLETE" | "ANNULE"
   overallScore: number
   comments?: string

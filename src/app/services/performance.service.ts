@@ -6,6 +6,7 @@ import  { PerformanceTrend } from "app/models/PerformanceTrend"
 import  { DepartmentPerformance } from "app/models/DepartmentPerformance"
 import  { CriterionAverage } from "app/models/CriterionAverage"
 import  { KeycloakService } from "./keycloak/keycloak.service"
+import { Goal } from "app/models/Goal"
 
 @Injectable({
   providedIn: "root",
@@ -188,4 +189,21 @@ export class PerformanceService {
         }),
       )
   }
+
+
+  // Ajoutez cette méthode dans PerformanceService
+updateGoalStatus(goalId: number, newStatus: string): Observable<Goal> {
+  return this.http.patch<Goal>(
+    `${this.apiUrl}/goals/${goalId}/status`,
+    { status: newStatus },
+    { headers: this.getHeaders() }
+  ).pipe(
+    catchError((error) => {
+      console.error('Erreur lors de la mise à jour du statut', error);
+      return throwError(() => new Error('Impossible de mettre à jour le statut'));
+    })
+  );
+}
+
+
 }

@@ -1,141 +1,188 @@
-<div class="my-performance-dashboard">
-  <div class="header">
-    <h1>Mon tableau de bord de performance</h1>
-    <p *ngIf="currentEmployee">Bienvenue, {{ currentEmployee.firstName }} {{ currentEmployee.lastName }}</p>
+<div class="performance-dashboard">
+  <!-- En-tête -->
+  <div class="dashboard-header">
+    <h1>Mes Performances</h1>
+    <p>Consultez vos évaluations de performance</p>
   </div>
 
-  <div *ngIf="loading" class="loading">
-    <mat-spinner diameter="40"></mat-spinner>
-    <span>Chargement de vos données de performance...</span>
+  <!-- Score principal -->
+  <div class="main-score-card">
+    <h2>Score de performance</h2>
+    <div class="score-container">
+      <!-- Cercle de progression -->
+      <div class="progress-circle">
+        <div class="progress-background"></div>
+        <div class="progress-bar" [style.transform]="'rotate(' + (latestEvaluation?.overallScore * 3.6) + 'deg)'"></div>
+        <div class="progress-content">
+          <div class="score-value">{{ latestEvaluation?.overallScore || 0 }}%</div>
+        </div>
+      </div>
+
+      <!-- Détails -->
+      <div class="score-details">
+        <p>Dernière évaluation: {{ latestEvaluation?.period }} 
+          ({{ getFormattedEvaluationDate(latestEvaluation?.evaluationDate) }})
+        </p>
+        <p class="evolution" *ngIf="evaluationsHistory.length > 1">
+          ➤ {{ getPerformanceEvolution() }}
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="error" class="error-message">
-    <mat-icon>error</mat-icon>
-    <span>{{ error }}</span>
-  </div>
+  <!-- Navigation -->
+  <nav class="section-nav">
+    <button 
+      *ngFor="let btn of ['Evaluations', 'Évolution', 'Compétences', 'Objectifs']"
+      [class.active]="activeSection === btn.toLowerCase()"
+      (click)="setActive(btn.toLowerCase())">
+      {{ btn }}
+    </button>
+  </nav>
 
-  <div *ngIf="!loading && !error" class="dashboard-content">
-    <!-- Cartes d'information -->
-    <div class="info-cards">
-      <!-- Dernière évaluation -->
-      <!-- Dernière évaluation -->
-<mat-card *ngIf="latestEvaluation" class="latest-evaluation-card">
-  <mat-card-content>
-    <div class="performance-section">
-      <h3 class="performance-title">Score de performance</h3>
-      <p class="performance-subtitle">Votre score global de performance</p>
-      
-      <div class="score-display">
-        <div class="score-value">{{ latestEvaluation.overallScore }}%</div>
-        <div class="score-evolution">
-          <span>Dernière évaluation: {{ latestEvaluation.period }} ({{ getFormattedEvaluationDate(latestEvaluation.date) }})</span>
-          <span class="evolution-badge">
-            ➤ {{ getPerformanceEvolution() }} depuis la dernière évaluation
-          </span>
+  <!-- Contenu des sections -->
+  <div class="section-content">
+    <!-- Section Évaluations -->
+    <div *ngIf="activeSection === 'evaluations'" class="section evaluations-section">
+      <h3>Historique des évaluations</h3>
+      <app-my-evaluations [embedded]="true"></app-my-evaluations>
+    </div>
+
+    <!-- Section Évolution -->
+    <div *ngIf="activeSection === 'évolution'" class="section evolution-section">
+      <div class="chart-container">
+        <h3>Évolution de mes performances</h3>
+        <div *ngIf="trendChartData">
+          <canvas baseChart 
+                  [data]="trendChartData"
+                  [options]="trendChartOptions"
+                  [type]="trendChartType"></canvas>
+        </div>
+        <div *ngIf="!performanceTrends.length" class="no-data">
+          Pas assez de données historiques
         </div>
       </div>
       
-      <mat-progress-bar 
-        mode="determinate" 
-        [value]="latestEvaluation.overallScore"
-        color="primary"
-        class="performance-progress">
-      </mat-progress-bar>
-    </div>
-  </mat-card-content>
-</mat-card>
-
-      <!-- Prochaine évaluation -->
-      <mat-card *ngIf="nextEvaluation" class="next-evaluation-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>event</mat-icon>
-          <mat-card-title>Prochaine évaluation</mat-card-title>
-          <mat-card-subtitle>{{ nextEvaluation.period }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p>Votre prochaine évaluation est prévue pour le {{ nextEvaluation.date }}</p>
-          <p>Préparez-vous en réfléchissant à vos réalisations et objectifs pour cette période.</p>
-        </mat-card-content>
-      </mat-card>
+      <div class="next-evaluation">
+        <h3>Prochaine évaluation</h3>
+        <div class="info-card">
+          <p *ngIf="nextEvaluation">{{ nextEvaluation.period }} - {{ nextEvaluation.date }}</p>
+          <p>Préparez vos objectifs pour la prochaine période</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Graphiques -->
-    <div class="charts-container">
-      <!-- Évolution des performances -->
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>Évolution de mes performances</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="performanceTrends.length === 0" class="no-data">
-            <mat-icon>timeline</mat-icon>
-            <p>Pas assez de données pour afficher l'évolution</p>
-          </div>
-          <canvas *ngIf="performanceTrends.length > 0" baseChart
-            [data]="performanceTrends"
-            [options]="trendChartOptions"
-            [type]="'line'">
-          </canvas>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Scores par compétence -->
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>Mes compétences</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="skillScores.length === 0" class="no-data">
-            <mat-icon>equalizer</mat-icon>
-            <p>Pas de données de compétences disponibles</p>
-          </div>
-          <canvas *ngIf="skillScores.length > 0" baseChart
-            [data]="skillScores"
-            [options]="skillsChartOptions"
-            [type]="'horizontalBar'">
-          </canvas>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Objectifs actuels -->
-    <mat-card *ngIf="latestEvaluation?.goals && latestEvaluation.goals.length > 0" class="goals-card">
-      <mat-card-header>
-        <mat-card-title>Mes objectifs actuels</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-list>
-          <mat-list-item *ngFor="let goal of latestEvaluation.goals">
-            <div matListItemIcon>
-              <mat-icon [ngClass]="{
-                'goal-not-started': goal.status === 'NON_COMMENCE',
-                'goal-in-progress': goal.status === 'EN_COURS',
-                'goal-completed': goal.status === 'COMPLETE'
-              }">
-                {{ goal.status === 'COMPLETE' ? 'check_circle' : (goal.status === 'EN_COURS' ? 'pending' : 'radio_button_unchecked') }}
-              </mat-icon>
+    <!-- Section Compétences -->
+    <div *ngIf="activeSection === 'compétences'" class="section skills-section">
+      <div class="skills-list">
+        <h3>Scores par compétence</h3>
+        <p class="subtitle">Vos scores moyens par critère d'évaluation</p>
+        
+        <div class="skill-category">
+          <div class="skill-item" *ngFor="let skill of skillScores">
+            <div class="skill-info">
+              <span class="skill-name">{{skill.name}}</span>
+              <span class="skill-score">{{skill.score}}%</span>
             </div>
-            <div matListItemTitle>{{ goal.description }}</div>
-            <div matListItemLine *ngIf="goal.targetDate">Date cible: {{ goal.targetDate }}</div>
-            <div matListItemMeta>
-              <span class="priority-badge" [ngClass]="{
-                'priority-high': goal.priority === 'HAUTE',
-                'priority-medium': goal.priority === 'MOYENNE',
-                'priority-low': goal.priority === 'BASSE'
-              }">
-                {{ goal.priority === 'HAUTE' ? 'Haute' : (goal.priority === 'MOYENNE' ? 'Moyenne' : 'Basse') }}
-              </span>
+            <div class="progress-bar">
+              <div class="progress" [style.width]="skill.score + '%'"></div>
             </div>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+          </div>
+        </div>
 
-    <!-- Message si pas d'évaluation -->
-    <div *ngIf="!latestEvaluation && !loading" class="no-evaluations">
-      <mat-icon>assessment</mat-icon>
-      <h3>Aucune évaluation disponible</h3>
-      <p>Vous n'avez pas encore d'évaluations de performance.</p>
+        <div class="strengths-improvement">
+          <div class="strengths-section">
+            <h4>Points forts</h4>
+            <ul>
+              <li *ngFor="let strength of latestEvaluation?.strengths">
+                <mat-icon>check_circle</mat-icon>
+                {{ strength }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="improvement-section">
+            <h4>Axes d'amélioration</h4>
+            <ul>
+              <li *ngFor="let area of latestEvaluation?.areasForImprovement">
+                <mat-icon>warning</mat-icon>
+                {{ area }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+     <!-- Section Objectifs -->
+<div *ngIf="activeSection === 'objectifs'" class="section goals-section">
+  <h3>Mes objectifs</h3>
+  
+  <div class="goals-container">
+    <div *ngFor="let goal of latestEvaluation?.goals" class="goal-card">
+      <div class="goal-header">
+        <mat-icon class="status-icon">{{ getGoalStatusIcon(goal.status) }}</mat-icon>
+        <div class="goal-title">{{ goal.description }}</div>
+      </div>
+      
+      <div class="goal-details">
+        <div class="detail-item">
+          <mat-icon>event</mat-icon>
+          <span>{{ getFormattedDate(goal.targetDate) || 'Sans date limite' }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <mat-icon>priority_high</mat-icon>
+          <span class="priority-badge {{ goal.priority?.toLowerCase() }}">
+            {{ goal.priority || 'Non défini' }}
+          </span>
+        </div>
+        
+        <div class="detail-item status-actions">
+          <div class="current-status {{ goal.status?.toLowerCase() }}">
+            {{ getGoalStatusLabel(goal.status) }}
+          </div>
+          <button *ngIf="goal.status === 'NON_COMMENCE'" 
+                  class="status-button start-button"
+                  (click)="onGoalStatusChange(goal, 'EN_COURS')">
+            <mat-icon>play_arrow</mat-icon>
+            Commencer
+          </button>
+          <button *ngIf="goal.status === 'EN_COURS'" 
+                  class="status-button complete-button"
+                  (click)="onGoalStatusChange(goal, 'COMPLETE')">
+            <mat-icon>check</mat-icon>
+            Marquer comme complet
+          </button>
+          <div *ngIf="goal.status === 'COMPLETE'" class="completed-badge">
+            <mat-icon>verified</mat-icon>
+            Complété
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="goal.measurableOutcome" class="measurable-outcome">
+        <mat-icon>track_changes</mat-icon>
+        {{ goal.measurableOutcome }}
+      </div>
+    </div>
+
+    <div *ngIf="!latestEvaluation?.goals?.length" class="no-data">
+      Aucun objectif défini pour cette période
+    </div>
+  </div>
+</div>
+
+    <!-- États de chargement et erreurs -->
+    <div *ngIf="loading" class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Chargement en cours...</span>
+    </div>
+
+    <div *ngIf="error" class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error }}</p>
     </div>
   </div>
 </div>

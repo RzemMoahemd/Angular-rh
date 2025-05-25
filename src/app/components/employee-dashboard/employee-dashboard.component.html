@@ -1,145 +1,115 @@
-<div class="dashboard-container">
-    <h2><mat-icon>dashboard</mat-icon> Tableau de bord</h2>
-    
-    <div *ngIf="isLoading" class="loading-spinner">
-      <mat-spinner diameter="50"></mat-spinner>
+<div class="profile-container">
+  <div class="profile-header">
+    <h1><mat-icon>person</mat-icon> Mon Profil</h1>
+    <p>Consultez vos informations personnelles</p>
+  </div>
+
+  <mat-card class="profile-section employee-info">
+    <div class="employee-main">
+      <div class="employee-identity">
+        <h2>{{ employee?.firstName }} {{ employee?.lastName }}</h2>
+        <h3>{{ employee?.position }}</h3>
+        <span class="status-badge" [class.active]="employee?.status === 'ACTIF'">
+          {{ employee?.status }}
+        </span>
+      </div>
+
+      <div class="employee-contacts">
+        <div class="contact-line">
+          <mat-icon class="contact-icon">mail</mat-icon>
+          <a href="mailto:{{ employee?.email }}" class="contact-link">{{ employee?.email }}</a>
+        </div>
+        <div class="contact-line">
+          <mat-icon class="contact-icon">phone</mat-icon>
+          <span>{{ employee?.phoneNumber }}</span>
+        </div>
+        <div class="contact-line">
+          <mat-icon class="contact-icon">event</mat-icon>
+          <span>Embauché le: {{ employee?.hireDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="errorMessage" class="error-message">
-      <mat-icon>error_outline</mat-icon>
-      <span>{{ errorMessage }}</span>
-      <button mat-button color="warn" (click)="loadEmployeeData()">Réessayer</button>
-    </div>
-  
-    <div *ngIf="!isLoading && !errorMessage" class="dashboard-content">
-      <!-- Section Statistiques -->
-      <div class="stats-section">
-        <mat-card class="stat-card">
-          <mat-card-title>Total demandes</mat-card-title>
-          <mat-card-content>
-            <div class="stat-value">{{ leaveStats.total }}</div>
-          </mat-card-content>
-        </mat-card>
-  
-        <mat-card class="stat-card accepted">
-          <mat-card-title>Acceptées</mat-card-title>
-          <mat-card-content>
-            <div class="stat-value">{{ leaveStats.accepted }}</div>
-          </mat-card-content>
-        </mat-card>
-  
-        <mat-card class="stat-card pending">
-          <mat-card-title>En attente</mat-card-title>
-          <mat-card-content>
-            <div class="stat-value">{{ leaveStats.pending }}</div>
-          </mat-card-content>
-        </mat-card>
-  
-        <mat-card class="stat-card refused">
-          <mat-card-title>Refusées</mat-card-title>
-          <mat-card-content>
-            <div class="stat-value">{{ leaveStats.refused }}</div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-  
-      <!-- Section Solde de congés -->
-      <!-- <mat-card class="section-card">
-        <mat-card-header>
-          <mat-card-title><mat-icon>beach_access</mat-icon> Solde de congés</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngFor="let balance of leaveBalances" class="balance-item">
-            <div class="balance-info">
-              <h3>{{ balance.type }}</h3>
-              <p>
-                <span class="used">Utilisés: {{ balance.used }} jours</span> • 
-                <span class="remaining">Restant: {{ balance.remaining }} jours</span> • 
-                <span class="total">Total: {{ balance.total }} jours</span>
-              </p>
+    <mat-divider></mat-divider>
+
+    <div class="employee-details">
+      <h3>Informations détaillées</h3>
+      <div class="details-grid">
+        <div class="detail-card">
+          <h4>Solde de congés</h4>
+          <div class="detail-content">
+  <div *ngFor="let balance of leaveBalances" class="balance-item">
+    <span class="balance-type">{{ balance.type }}</span>
+    <span class="balance-days">
+      <!-- Modification conditionnelle ici -->
+      {{ 
+        (balance.type === 'Maladie' || balance.type === 'Congés sans solde') 
+        ? balance.used 
+        : balance.used + '/' + balance.total 
+      }} jours
+    </span>
+  </div>
+</div>
+        </div>
+
+        <div class="detail-card">
+          <h4>Compétences</h4>
+          <div class="skills-list">
+            <div *ngFor="let skill of skills" class="skill-item">
+              <span>{{ skill.name }}</span>
+              <mat-progress-bar mode="determinate" [value]="skill.score" color="primary"></mat-progress-bar>
             </div>
-            <mat-progress-bar 
-              mode="determinate" 
-              [value]="balance.percentage"
-              [color]="getProgressBarColor(balance.percentage)">
-            </mat-progress-bar>
           </div>
-        </mat-card-content>
-      </mat-card> -->
+        </div>
 
+         <div class="detail-card">
+  <h4>Calendrier des événements</h4>
+  <div class="calendar-events">
+    <div *ngFor="let event of calendarEvents" class="event-item info-card">
+      <div class="event-content">
+        <mat-icon class="event-icon">
+          {{ event.type === 'evaluation' ? 'assignment' : 'event_available' }}
+        </mat-icon>
+        
+        <div *ngIf="event.type === 'evaluation'" class="event-details">
+          <h3>Prochaine évaluation</h3>
+          <div class="evaluation-info">
+            <div class="evaluation-period">{{ event.period }}</div>
+            <div class="evaluation-date">{{ event.formattedDate }}</div>
+          </div>
+        </div>
 
-       <!-- Section Solde de congés -->
-      <!-- Modifier la section des soldes comme suit -->
-<mat-card class="section-card">
-  <mat-card-header>
-    <mat-card-title><mat-icon>beach_access</mat-icon> Solde de congés</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <div *ngFor="let balance of leaveBalances" class="balance-item">
-      <div class="balance-info">
-        <h3>{{ balance.type }}</h3>
-        <p>
-          <span class="used">Jours pris: {{ balance.used }} jours</span>
-          <span *ngIf="balance.type !== 'Maladie' && balance.type !== 'Congés sans solde'">
-            • <span class="remaining">Restant: {{ balance.remaining }} jours</span>
-            • <span class="total">Total: {{ balance.total }} jours</span>
-          </span>
-        </p>
-      </div>
-      <mat-progress-bar 
-        *ngIf="balance.type !== 'Maladie' && balance.type !== 'Congés sans solde'"
-        mode="determinate" 
-        [value]="balance.percentage"
-        [color]="getProgressBarColor(balance.percentage)">
-      </mat-progress-bar>
-    </div>
-  </mat-card-content>
-</mat-card>
-      
-      
-  
-      <!-- Section Prochain congé -->
-      <div class="row-section">
-        <mat-card class="half-width">
-          <mat-card-header>
-            <mat-card-title><mat-icon>event_available</mat-icon> Prochain congé</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div *ngIf="nextLeave; else noLeave" class="next-leave">
-              <p><strong>Du:</strong> {{ nextLeave.dateDebut | date:'mediumDate' }}</p>
-              <p><strong>Au:</strong> {{ nextLeave.dateFin | date:'mediumDate' }}</p>
-              <p><strong>Type:</strong> {{ nextLeave.typeConge }}</p>
-              <p><strong>Motif:</strong> {{ nextLeave.motif }}</p>
-            </div>
-            <ng-template #noLeave>
-              <p class="no-data">Aucun congé à venir</p>
-            </ng-template>
-          </mat-card-content>
-        </mat-card>
-  
-        <!-- Section Dernières demandes -->
-        <mat-card class="half-width">
-          <mat-card-header>
-            <mat-card-title><mat-icon>history</mat-icon> Dernières demandes</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-list>
-              <mat-list-item *ngFor="let leave of recentLeaves">
-                <mat-icon matListIcon>event</mat-icon>
-                <div matLine>
-                  {{ leave.dateDebut | date:'shortDate' }} - {{ leave.dateFin | date:'shortDate' }}
-                  <span class="status-badge {{ getStatusClass(leave.statut) }}">
-                    {{ leave.statut }}
-                  </span>
-                </div>
-                <div matLine class="leave-motive">{{ leave.motif }}</div>
-              </mat-list-item>
-              <mat-list-item *ngIf="recentLeaves.length === 0">
-                <p class="no-data">Aucune demande récente</p>
-              </mat-list-item>
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
+        <div *ngIf="event.type === 'leave'" class="event-details">
+          <h3>{{ event.title }}</h3>
+          <div class="leave-date">
+            {{ event.date | date:'dd MMM yyyy' }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</div>
+
+        <div class="detail-card">
+          <h4>Commentaires récents</h4>
+          <div class="comments-list">
+            <div *ngFor="let comment of recentComments" class="comment-item">
+              <mat-icon class="comment-icon">forum</mat-icon>
+              <div class="comment-content">
+                <div class="comment-meta">
+                  <span class="evaluator">{{ comment.evaluator }}</span>
+                  <span class="date">{{ comment.date | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <p class="comment-text">{{ comment.comment }}</p>
+              </div>
+            </div>
+            <div *ngIf="recentComments.length === 0" class="no-comments">
+              Aucun commentaire récent
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </mat-card>
+</div>

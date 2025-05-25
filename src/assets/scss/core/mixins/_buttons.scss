@@ -1,18 +1,33 @@
+
 // from bs mixins/buttons button-variant
+
+@mixin shadow-2dp-color($color) {
+  box-shadow: 
+    0 2px 2px 0 rgba($color, 0.14),
+    0 3px 1px -2px rgba($color, 0.2),
+    0 1px 5px 0 rgba($color, 0.12);
+}
+
+@mixin button-shadow-color($color) {
+  box-shadow: 
+    0 14px 26px -12px rgba($color, 0.42),
+    0 4px 23px 0px rgba(0, 0, 0, 0.12),
+    0 8px 10px -5px rgba($color, 0.2);
+}
+
 @mixin bmd-button-variant($color, $background, $focus-background, $active-background, $border, $focus-border, $active-border) {
   color: $color;
   background-color: $background;
   border-color: $border;
 
-  @include hover {
+  &:hover {
     color: $color;
     background-color: $focus-background;
     border-color: $focus-border;
   }
-
+  
   &:focus,
-  &.focus,
-  &:hover{
+  &.focus {
     color: $color;
     background-color: $focus-background;
     border-color: $focus-border;
@@ -20,7 +35,6 @@
 
   &:active,
   &.active,
-  .open > &.dropdown-toggle,
   .show > &.dropdown-toggle {
     color: $color;
     background-color: $focus-background;
@@ -36,12 +50,10 @@
     }
   }
 
-  // when it is an icon, kill the active bg on open dropdown, but stabilize on hover
-  .open > &.dropdown-toggle.bmd-btn-icon {
+  .show > &.dropdown-toggle.bmd-btn-icon {
     color: inherit;
     background-color: $background;
 
-    // leave hover on with the lighter focus color
     &:hover {
       background-color: $focus-background;
     }
@@ -54,7 +66,7 @@
       background-color: $background;
       border-color: $border;
     }
-    @include hover {
+    &:hover {
       background-color: $background;
       border-color: $border;
     }
@@ -328,58 +340,40 @@ $opacity-2:                  rgba(255,255,255, .2) !default;
 }
 
 @mixin btn-styles($btn-color) {
+  @include shadow-2dp-color($btn-color);
 
-    // remove this line if you want black shadows
-    @include shadow-2dp-color($btn-color);
+  &,
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .show > &.dropdown-toggle {
+    background-color: $btn-color;
+    color: $white-color;
+  }
 
-    &,
-    &:hover,
-    &:focus,
-    &:active,
-    &.active,
-    &:active:focus,
-    &:active:hover,
-    &.active:focus,
-    &.active:hover,
-    .open > &.dropdown-toggle,
-    .open > &.dropdown-toggle:focus,
-    .open > &.dropdown-toggle:hover {
-      background-color: $btn-color;
-      color: $white-color;
-    }
-
-    &:focus,
-    &:active,
-    &:hover{
-      // remove this line if you want black shadows
-      @include button-shadow-color($btn-color);
-    }
+  &:focus,
+  &:active,
+  &:hover {
+    @include button-shadow-color($btn-color);
+  }
 
   &.disabled,
-  &:disabled,
-  &[disabled],
-  fieldset[disabled] & {
+  &:disabled {
     &,
     &:hover,
-    &:focus,
-    &.focus,
-    &:active,
-    &.active {
-        box-shadow: none;
+    &:focus {
+      box-shadow: none;
     }
   }
 
-  &.btn-simple{
+  &.btn-simple {
+    background-color: transparent;
+    color: $btn-color;
+    
+    &:hover,
+    &:focus {
       background-color: transparent;
-      color: $btn-color;
-      box-shadow: none;
-
-      &:hover,
-      &:focus,
-      &:active{
-          background-color: transparent;
-          color: $btn-color;
-      }
+    }
   }
-
 }

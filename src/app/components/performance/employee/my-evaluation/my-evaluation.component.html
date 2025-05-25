@@ -1,8 +1,7 @@
 <div class="my-evaluations-container">
   <div class="header">
     <div class="title-section">
-      <h1>Mes évaluations de performance</h1>
-      <p *ngIf="currentEmployee">Historique de vos évaluations de performance</p>
+      <p>Vos évaluations de performance passées</p>
     </div>
   </div>
 
@@ -17,18 +16,7 @@
   </div>
 
   <div *ngIf="!loading && !error" class="content">
-    <!-- Carte d'information sur la prochaine évaluation -->
-    <mat-card *ngIf="nextEvaluation" class="next-evaluation-card">
-      <mat-card-header>
-        <mat-icon mat-card-avatar>event</mat-icon>
-        <mat-card-title>Prochaine évaluation</mat-card-title>
-        <mat-card-subtitle>{{ nextEvaluation.period }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Votre prochaine évaluation est prévue pour le {{ nextEvaluation.date }}</p>
-        <p>Préparez-vous en réfléchissant à vos réalisations et objectifs pour cette période.</p>
-      </mat-card-content>
-    </mat-card>
+   
 
     <!-- Tableau des évaluations -->
     <mat-card>

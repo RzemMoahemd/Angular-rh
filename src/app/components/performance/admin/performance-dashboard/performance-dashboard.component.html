@@ -235,15 +235,10 @@
         <mat-card class="chart-card">
   <mat-card-header>
     <mat-card-title>Évolution des performances par département</mat-card-title>
-    <mat-card-subtitle>
-      <span class="legend-item" *ngFor="let color of colorPalette; let i = index">
-        <span class="legend-color" [style.background-color]="color"></span>
-        {{ departmentTrendsData?.datasets[i]?.label }}
-      </span>
-    </mat-card-subtitle>
+    <mat-card-subtitle>Évolution des scores moyens sur les derniers trimestres</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div class="chart-container" style="height: 500px; padding: 20px">
+    <div class="chart-container" style="height: 400px">
       <canvas baseChart
         [type]="'line'"
         [data]="departmentTrendsData"

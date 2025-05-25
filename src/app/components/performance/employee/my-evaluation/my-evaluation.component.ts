@@ -20,7 +20,7 @@ export class MyEvaluationsComponent implements OnInit {
   department: Department | null = null
   loading = true
   error: string | null = null
-  nextEvaluation: { period: string; date: string } | null = null
+ 
 
   // Colonnes à afficher
   displayedColumns: string[] = ["period", "date", "evaluator", "score", "status", "actions"]
@@ -71,25 +71,17 @@ export class MyEvaluationsComponent implements OnInit {
   }
 
   loadEmployeeData(employeeId: number): void {
-    forkJoin({
-      evaluations: this.performanceService.getMyEvaluations(employeeId),
-      nextEvaluation: this.performanceService.getNextEvaluation(employeeId),
-    })
-      .pipe(
-        finalize(() => {
-          this.loading = false
-        }),
-      )
+    this.performanceService.getMyEvaluations(employeeId)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (results) => {
-          this.evaluations = results.evaluations
-          this.nextEvaluation = results.nextEvaluation
+        next: (evaluations) => {
+          this.evaluations = evaluations;
         },
         error: (err) => {
-          this.error = "Erreur lors du chargement des données"
-          console.error(err)
+          this.error = "Erreur lors du chargement des données";
+          console.error(err);
         },
-      })
+      });
   }
 
   openEvaluationDetails(evaluation: Evaluation): void {

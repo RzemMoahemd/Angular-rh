@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'my-leaves', component: EmployeeMyLeavesComponent, canActivate: [authGuard] },
   { path: 'request-leave', component: EmployeeRequestLeaveComponent, canActivate: [authGuard] },
   { path: 'dashboardemp', component: EmployeeDashboardComponent, canActivate: [authGuard] },
-  { path: '', redirectTo: 'my-leaves', pathMatch: 'full', canActivate: [authGuard] },
+  { path: '', redirectTo: 'dashboardemp', pathMatch: 'full', canActivate: [authGuard] },
 
 
 
@@ -33,11 +33,7 @@ const routes: Routes = [
     component: MyPerformanceDashboardComponent,
     // canActivate: [EmployeeGuard],
   },
-  {
-    path: "my-evaluations",
-    component: MyEvaluationsComponent,
-    // canActivate: [EmployeeGuard],
-  },
+  
 
 ];
 

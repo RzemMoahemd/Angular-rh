@@ -23,7 +23,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'leave/:id/edit', component: LeaveFormComponent, canActivate: [authGuard] },
   { path: 'dahsboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'employees', pathMatch: 'full', canActivate: [authGuard] },
+  { path: '', redirectTo: 'dahsboard', pathMatch: 'full', canActivate: [authGuard] },
   // { path: '', component: LeaveListComponent, canActivate: [authGuard] }
 
 

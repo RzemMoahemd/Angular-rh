@@ -9,24 +9,34 @@ import  { CriterionAverage } from "app/models/CriterionAverage"
 import  { Evaluation } from "app/models/Evaluation"
 import { finalize, forkJoin } from "rxjs"
 
+import { ChartConfiguration, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { Goal } from "app/models/Goal"
+
 @Component({
   selector: "app-my-performance-dashboard",
   templateUrl: "./my-performance.component.html",
   styleUrls: ["./my-performance.component.scss"],
 })
 export class MyPerformanceDashboardComponent implements OnInit {
-  currentEmployee: Employee | null = null
-  department: Department | null = null
-  performanceTrends: PerformanceTrend[] = []
-  skillScores: CriterionAverage[] = []
-  latestEvaluation: Evaluation | null = null
-  nextEvaluation: { period: string; date: string } | null = null
-  loading = true
-  error: string | null = null
+  currentEmployee: Employee | null = null;
+  performanceTrends: PerformanceTrend[] = [];
+  skillScores: CriterionAverage[] = [];
+  latestEvaluation: Evaluation | null = null;
+  nextEvaluation: { period: string; date: string } | null = null;
+  loading = true;
+  error: string | null = null;
+  activeSection: string = 'evaluations';
+  evaluationsHistory: Evaluation[] = [];
 
-  // Options pour les graphiques
-  trendChartOptions: any
-  skillsChartOptions: any
+  // Options des graphiques
+  trendChartOptions: any;
+  skillsChartOptions: any;
+
+
+  // Nouveaux champs pour le graphique
+  public trendChartData!: ChartConfiguration['data'];
+  public trendChartType: ChartType = 'line';
 
   constructor(
     private performanceService: PerformanceService,
@@ -35,107 +45,136 @@ export class MyPerformanceDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.initChartOptions()
-    this.loadCurrentEmployee()
+    this.initChartOptions();
+    this.loadCurrentEmployee();
   }
 
-  loadCurrentEmployee(): void {
-    this.loading = true
-    this.error = null
-
+  private loadCurrentEmployee(): void {
     this.employeeService.getCurrentEmployee().subscribe({
       next: (employee) => {
-        this.currentEmployee = employee
-        if (employee && employee.id) {
-          this.loadDashboardData(employee.id)
-
-          // Charger les informations du département
-          if (employee.departmentId) {
-            this.departmentService.getDepartmentById(employee.departmentId).subscribe({
-              next: (department) => {
-                this.department = department
-              },
-              error: (err) => {
-                console.error("Erreur lors du chargement du département", err)
-              },
-            })
-          }
-        } else {
-          this.error = "Impossible de récupérer les informations de l'employé actuel"
-          this.loading = false
-        }
+        this.currentEmployee = employee;
+        if (employee?.id) this.loadDashboardData(employee.id);
       },
-      error: (err) => {
-        this.error = "Erreur lors du chargement des informations de l'employé"
-        console.error(err)
-        this.loading = false
-      },
-    })
+      error: (err) => this.handleError(err, "Erreur de chargement des données employé")
+    });
   }
 
-  loadDashboardData(employeeId: number): void {
+  private loadDashboardData(employeeId: number): void {
     forkJoin({
       trends: this.performanceService.getMyPerformanceEvolution(employeeId),
       skills: this.performanceService.getMySkillScores(employeeId),
       evaluations: this.performanceService.getMyEvaluations(employeeId),
-      nextEvaluation: this.performanceService.getNextEvaluation(employeeId),
-    })
-      .pipe(
-        finalize(() => {
-          this.loading = false
-        }),
-      )
-      .subscribe({
-        next: (results) => {
-          this.performanceTrends = results.trends
-          this.skillScores = results.skills
-          this.nextEvaluation = results.nextEvaluation
-
-          // Trouver la dernière évaluation
-          if (results.evaluations.length > 0) {
-            // Trier par date décroissante
-            const sortedEvaluations = [...results.evaluations].sort((a, b) => {
-              if (typeof a.evaluationDate === "string" && typeof b.evaluationDate === "string") {
-                return new Date(b.evaluationDate).getTime() - new Date(a.evaluationDate).getTime()
-              }
-              return 0
-            })
-            this.latestEvaluation = sortedEvaluations[0]
-          }
-
-          this.updateCharts()
-        },
-        error: (err) => {
-          this.error = "Erreur lors du chargement des données du tableau de bord"
-          console.error(err)
-        },
-      })
+      nextEvaluation: this.performanceService.getNextEvaluation(employeeId)
+    }).pipe(finalize(() => this.loading = false))
+    .subscribe({
+      next: (results) => this.handleDataResults(results),
+      error: (err) => this.handleError(err, "Erreur de chargement des données")
+    });
   }
 
-  initChartOptions(): void {
-    // Options pour le graphique des tendances
-    this.trendChartOptions = {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: false,
-          min: 70,
-          max: 100,
-        },
-      },
-    }
+  private handleDataResults(results: any): void {
+  this.performanceTrends = results.trends;
+  this.skillScores = results.skills;
+  this.nextEvaluation = results.nextEvaluation;
+  
+  // Ajoutez cette conversion de date
+  this.evaluationsHistory = this.sortEvaluations(results.evaluations).map(evaluation => ({
+    ...evaluation,
+    evaluationDate: this.parseDate(evaluation.evaluationDate) // Conversion ici
+  }));
+  
+  this.latestEvaluation = this.evaluationsHistory[0] || null;
+  
+  if (this.latestEvaluation) {
+    console.log('Dernière évaluation:', this.latestEvaluation);
+  }
+  
+  this.updateCharts();
+  this.calculateNextEvaluation();
+  this.updateTrendChart();
+}
 
-    // Options pour le graphique des compétences
-    this.skillsChartOptions = {
-      responsive: true,
-      indexAxis: "y",
-      scales: {
-        x: {
-          beginAtZero: true,
-          max: 100,
-        },
-      },
+  private sortEvaluations(evaluations: Evaluation[]): Evaluation[] {
+  return [...evaluations].sort((a, b) => {
+    // Extraire l'année et le trimestre de la période
+    const [aQuarter, aYear] = this.parsePeriod(a.period);
+    const [bQuarter, bYear] = this.parsePeriod(b.period);
+
+    // Comparaison par année d'abord
+    if (bYear !== aYear) {
+      return bYear - aYear; // Année décroissante
     }
+    
+    // Même année : comparer par trimestre
+    return bQuarter - aQuarter; // Trimestre décroissant
+  });
+}
+
+private parsePeriod(period: string): [number, number] {
+  const matches = period.match(/Q(\d)\s+(\d{4})/i);
+  if (!matches || matches.length < 3) {
+    console.error('Format de période invalide:', period);
+    return [0, 0];
+  }
+  
+  const quarter = parseInt(matches[1], 10);
+  const year = parseInt(matches[2], 10);
+  return [quarter, year];
+}
+
+  private parseDate(date: string | Date): Date {
+    if (typeof date === 'string') {
+      // Supporter les dates au format ISO et 'dd/MM/yyyy'
+      const parts = date.split(/[-T]/);
+      if (parts.length === 3) return new Date(date); // Format ISO
+      return new Date(date.split('/').reverse().join('-'));
+    }
+    return date;
+  }
+
+
+  
+
+  setActive(section: string): void {
+    this.activeSection = section;
+  }
+
+  private initChartOptions(): void {
+  this.trendChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: false,
+        min: 70,
+        max: 100,
+        title: {
+          display: true,
+          text: 'Score (%)'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Périodes d\'évaluation'
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) => `Score: ${context.parsed.y}%`
+        }
+      }
+    }
+  };
+}
+
+
+   private handleError(error: any, message: string): void {
+    this.error = message;
+    this.loading = false;
+    console.error(error);
   }
 
   updateCharts(): void {
@@ -145,15 +184,56 @@ export class MyPerformanceDashboardComponent implements OnInit {
     this.updateSkillsChart()
   }
 
-  updateTrendChart(): void {
-    // Mise à jour des données du graphique des tendances
-    // Cette méthode serait implémentée selon la bibliothèque de graphiques utilisée
-    console.log("Mise à jour du graphique des tendances avec", this.performanceTrends)
+  private updateTrendChart(): void {
+    if (!this.performanceTrends?.length) return;
+
+  const sortedTrends = this.sortPerformanceTrends([...this.performanceTrends]);
+    
+    this.trendChartData = {
+    labels: sortedTrends.map(t => t.period),
+    datasets: [{
+        label: 'Score de performance',
+        data: sortedTrends.map(t => t.score),
+        borderColor: '#4299e1',
+        backgroundColor: 'rgba(66, 153, 225, 0.2)',
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#4299e1'
+      }]
+    };
+  }
+
+
+  private calculateNextEvaluation(): void {
+    if (!this.latestEvaluation) return;
+
+    // Calcul de la prochaine période
+    const [currentQuarter, year] = this.parsePeriod(this.latestEvaluation.period);
+    let nextQuarter = currentQuarter + 1;
+    let nextYear = year;
+
+    if (nextQuarter > 4) {
+      nextQuarter = 1;
+      nextYear++;
+    }
+
+    // Calcul de la date (15 jours avant fin trimestre)
+    const quarterEndMonth = nextQuarter * 3; // Mars, Juin, Septembre, Décembre
+    const evaluationDate = new Date(nextYear, quarterEndMonth - 1, 15); // 15 du mois de fin de trimestre
+    
+    this.nextEvaluation = {
+      period: `Q${nextQuarter} ${nextYear}`,
+      date: evaluationDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    };
   }
 
   updateSkillsChart(): void {
     // Mise à jour des données du graphique des compétences
-    console.log("Mise à jour du graphique des compétences avec", this.skillScores)
+      this.skillScores = this.skillScores.sort((a, b) => b.score - a.score);
   }
 
   getStatusLabel(status: string): string {
@@ -187,43 +267,92 @@ export class MyPerformanceDashboardComponent implements OnInit {
   }
 
 
-  // Dans la classe MyPerformanceDashboardComponent
-getPerformanceEvolution(): string {
-  if (!this.performanceTrends || this.performanceTrends.length < 2) {
-    return '0%';
-  }
-
-  // Trier les trends par date avant calcul
-  const sortedTrends = this.sortPerformanceTrends([...this.performanceTrends]);
+  getPerformanceEvolution(): string {
+  if (this.evaluationsHistory.length < 2) return '0%';
   
-  const currentScore = this.latestEvaluation?.overallScore || 0;
-  const previousScore = sortedTrends[1].score; // [0]=dernière, [1]=précédente
-  const evolution = currentScore - previousScore;
-
-  return `${evolution > 0 ? '+' : ''}${evolution.toFixed(0)}%`;
+  const current = this.evaluationsHistory[0];
+  const previous = this.evaluationsHistory[1];
+  
+  const evolution = current.overallScore - previous.overallScore;
+  return `${evolution > 0 ? '+' : ''}${evolution.toFixed(0)}% (${previous.period} → ${current.period})`;
 }
 
 private sortPerformanceTrends(trends: PerformanceTrend[]): PerformanceTrend[] {
   return trends.sort((a, b) => {
-    // Convertir les périodes en dates comparables
     const dateA = this.parsePeriodToDate(a.period);
     const dateB = this.parsePeriodToDate(b.period);
-    return dateB.getTime() - dateA.getTime(); // Tri décroissant
+    return dateA.getTime() - dateB.getTime(); // Tri croissant
   });
 }
 
 private parsePeriodToDate(period: string): Date {
-  // Gérer les formats 'QX YYYY' et 'qX YYYY'
   const [q, year] = period.toLowerCase().split(' ');
-  const quarter = parseInt(q.replace('q', ''));
-  return new Date(parseInt(year), (quarter - 1) * 3); // Ex: Q1 2024 → 1er janvier 2024
+  const quarter = parseInt(q.replace('q', ''), 10);
+  return new Date(
+    parseInt(year), 
+    (quarter - 1) * 3 // Janvier (Q1), Avril (Q2), Juillet (Q3), Octobre (Q4)
+  );
 }
 
-getFormattedEvaluationDate(dateString: string | Date): string {
-  if (!dateString) return 'Non disponible';
+getFormattedEvaluationDate(date: Date | string | undefined): string {
+  if (!date) return 'Date non disponible';
   
-  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  // Conversion sécurisée
+  const parsedDate = typeof date === 'string' ? this.parseDate(date) : date;
+  
+  // Vérification finale
+  return parsedDate instanceof Date && !isNaN(parsedDate.getTime()) 
+    ? parsedDate.toLocaleDateString('fr-FR') 
+    : 'Date invalide';
+}
+
+
+// Ajouter dans le composant
+getGoalStatusIcon(status: string): string {
+  switch(status?.toUpperCase()) {
+    case 'COMPLETE': return 'check_circle';
+    case 'EN_COURS': return 'autorenew';
+    default: return 'radio_button_unchecked';
+  }
+}
+
+getGoalStatusLabel(status: string): string {
+  switch(status?.toUpperCase()) {
+    case 'NON_COMMENCE': return 'Non commencé';
+    case 'EN_COURS': return 'En cours';
+    case 'COMPLETE': return 'Complété';
+    default: return 'Non défini';
+  }
+}
+
+getFormattedDate(date: Date | string): string {
+  if (!date) return '';
+  const parsedDate = typeof date === 'string' ? new Date(date) : date;
+  return parsedDate.toLocaleDateString('fr-FR', { 
+    day: '2-digit', 
+    month: 'long', 
+    year: 'numeric' 
+  });
+}
+
+// Ajoutez cette méthode dans la classe MyPerformanceDashboardComponent
+onGoalStatusChange(goal: Goal, newStatus: string) {
+  if (!goal.id) {
+    console.error('ID d\'objectif manquant');
+    return;
+  }
+
+  const previousStatus = goal.status;
+  goal.status = newStatus as typeof goal.status;
+
+  this.performanceService.updateGoalStatus(goal.id, newStatus).subscribe({
+    error: (error) => {
+      goal.status = previousStatus;
+      console.error('Échec de la mise à jour:', error);
+      this.error = 'Erreur lors de la mise à jour du statut';
+      setTimeout(() => this.error = null, 3000);
+    }
+  });
 }
   
 }

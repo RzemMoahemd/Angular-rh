@@ -139,57 +139,38 @@ colorPalette = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
   }
 
 
-  private prepareDepartmentTrendsChart(performances: DepartmentPerformance[]): void {
-  // Ordonner les trimestres avant de les traiter
+  // Modifier la structure des données du graphique
+private prepareDepartmentTrendsChart(performances: DepartmentPerformance[]): void {
+  const departments = [...new Set(performances.map(p => p.departmentName.trim()))];
   const quarters = this.getSortedQuarters(performances);
-  
-  // Grouper les données par département
-  const departments = [...new Set(performances.map(p => p.departmentName.trim()))]
-    .sort(); // Tri alphabétique des départements
 
+  // Nouvelle structure de données conforme à Chart.js
   this.departmentTrendsData = {
     labels: quarters,
     datasets: departments.map((department, index) => ({
       label: department,
-      data: quarters.map(quarter => {
-        const perf = performances.find(p => 
-          p.departmentName.trim() === department && 
-          p.quarter === quarter
-        );
-        return perf ? Math.round(perf.averageScore) : null;
-      }),
-      borderColor: this.colorPalette[index],
+      data: this.getDepartmentScores(department, quarters, performances),
+      borderColor: this.colorPalette[index % this.colorPalette.length],
       backgroundColor: 'transparent',
       tension: 0.4,
-      pointBackgroundColor: this.colorPalette[index],
-      pointBorderColor: '#fff',
-      pointHoverRadius: 8
+      pointRadius: 5,
+      pointHoverRadius: 7
     }))
   };
 
-  // Options spécifiques pour la capture
+  // Options du graphique mises à jour
   this.chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    elements: {
-      line: {
-        borderWidth: 3
-      }
-    },
     scales: {
       x: {
-        grid: { display: false },
-        ticks: {
-          autoSkip: false,
-          maxRotation: 45,
-          minRotation: 45
-        }
+        grid: { display: false }
       },
       y: {
         min: 0,
         max: 100,
         ticks: {
-          stepSize: 25,
+          stepSize: 20,
           callback: (value: string | number) => `${value}%`
         }
       }
@@ -197,16 +178,7 @@ colorPalette = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
     plugins: {
       legend: {
         position: 'bottom',
-        labels: {
-          boxWidth: 20,
-          padding: 20,
-          font: { size: 14 }
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        titleFont: { size: 16 },
-        bodyFont: { size: 14 }
+        labels: { boxWidth: 20 }
       }
     }
   };

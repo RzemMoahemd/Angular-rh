@@ -1,274 +1,522 @@
-.my-performance-dashboard {
-  padding: 20px;
+.performance-dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 
-  .header {
-    margin-bottom: 24px;
-    
+  .dashboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
     h1 {
-      margin-bottom: 8px;
-      font-size: 24px;
-      font-weight: 500;
+      color: #2d3748;
+      font-size: 2.25rem;
+      margin-bottom: 0.5rem;
     }
-    
+
     p {
-      color: rgba(0, 0, 0, 0.6);
+      color: #718096;
+      font-size: 1.1rem;
     }
   }
 
-  .loading {
+  .chart-container {
+    position: relative;
+    height: 400px;
+    
+    canvas {
+      height: 400px !important;
+      width: 100% !important;
+    }
+  }
+
+  .next-evaluation {
+    margin-top: 2rem;
+    
+    .info-card {
+      background: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 8px;
+      p:first-child {
+        color: #4299e1;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .main-score-card {
+    .score-container {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      position: relative;
+
+      .progress-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        position: relative;
+        background: #f0f0f0;
+
+        .progress-background {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          clip: rect(0 75px 150px 0);
+          background: #e0e0e0;
+        }
+
+        .progress-bar {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          clip: rect(0 75px 150px 0);
+          background: #4299e1;
+          transition: transform 1s ease-in-out;
+        }
+
+        .progress-content {
+          position: absolute;
+          width: 130px;
+          height: 130px;
+          background: white;
+          border-radius: 50%;
+          top: 10px;
+          left: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .score-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+          }
+        }
+      }
+
+      .score-details {
+        flex: 1;
+        .evolution {
+          color: #48bb78;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .section-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    button {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      background: #e2e8f0;
+      color: #4a5568;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.active {
+        background: #4299e1;
+        color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      &:hover:not(.active) {
+        background: #cbd5e0;
+      }
+    }
+  }
+
+  .section-content {
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+
+      h3 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .evolution-section {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+
+      .info-card {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 8px;
+      }
+    }
+
+    .skills-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .skills-list {
+        .subtitle {
+          color: #718096;
+          margin-bottom: 1.5rem;
+        }
+
+        .skill-category {
+          margin-bottom: 2rem;
+
+          h4 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+          }
+        }
+
+        .skill-item {
+          margin-bottom: 1rem;
+
+          .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+
+            .skill-name {
+              color: #4a5568;
+            }
+
+            .skill-score {
+              color: #4299e1;
+              font-weight: 500;
+            }
+          }
+
+          .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+
+            .progress {
+              height: 100%;
+              background-color: #4299e1;
+              transition: width 0.5s ease;
+            }
+          }
+        }
+      }
+
+      .strengths-improvement {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+
+        h4 {
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+          color: #2d3748;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+
+          li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
+
+        .strengths-section {
+          ul li {
+            background-color: #f0fff4;
+            color: #2f855a;
+            mat-icon {
+              color: #48bb78;
+            }
+          }
+        }
+
+        .improvement-section {
+          ul li {
+            background-color: #fff5f5;
+            color: #c53030;
+            mat-icon {
+              color: #f56565;
+            }
+          }
+        }
+      }
+    }
+
+    .no-data {
+      text-align: center;
+      color: #718096;
+      padding: 2rem;
+    }
+  }
+
+  .goals-section {
+
+    
+
+    .goals-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .goal-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-left: 4px solid;
+
+      .goal-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .status-icon {
+          margin-right: 0.5rem;
+          color: #718096;
+        }
+
+        .goal-title {
+          font-weight: 500;
+          color: #2d3748;
+        }
+      }
+
+      .goal-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: #4a5568;
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        .mat-form-field {
+          width: 120px;
+          
+          .mat-select-value {
+            text-transform: uppercase;
+            font-weight: 500;
+          }
+          
+          &[status="NON_COMMENCE"] .mat-select-value { color: #a0aec0; }
+          &[status="EN_COURS"] .mat-select-value { color: #4299e1; }
+          &[status="COMPLETE"] .mat-select-value { color: #48bb78; }
+        }
+
+        .mat-form-field-infix {
+          border-top: 0;
+          padding: 0.5em 0;
+        }
+
+        .mat-select-arrow {
+          color: currentColor;
+        }
+      }
+
+      .priority-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+
+        &.haute { background: #fff5f5; color: #c53030; }
+        &.moyenne { background: #fffaf0; color: #c05621; }
+        &.basse { background: #f0fff4; color: #2f855a; }
+      }
+
+      .measurable-outcome {
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #4a5568;
+      }
+    }
+
+    .no-data {
+      text-align: center;
+      color: #718096;
+      padding: 2rem;
+    }
+
+    .status-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    .current-status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+
+      &.non_commence { background: #f0f4ff; color: #4a5568; }
+      &.en_cours { background: #ebf8ff; color: #2b6cb0; }
+      &.complete { background: #f0fff4; color: #2f855a; }
+    }
+
+    .status-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.start-button {
+        background: #4299e1;
+        color: white;
+        
+        &:hover {
+          background: #3182ce;
+        }
+      }
+
+      &.complete-button {
+        background: #48bb78;
+        color: white;
+        
+        &:hover {
+          background: #38a169;
+        }
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .completed-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #48bb78;
+      font-weight: 500;
+
+      mat-icon {
+        color: #48bb78;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .status-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      .status-button {
+        justify-content: center;
+      }
+    }
+  }
+  }
+
+  .status-select {
+    .mat-option {
+      text-transform: uppercase;
+      font-weight: 500;
+      
+      &[value="NON_COMMENCE"] { color: #a0aec0; }
+      &[value="EN_COURS"] { color: #4299e1; }
+      &[value="COMPLETE"] { color: #48bb78; }
+    }
+  }
+
+  .loading-state, .error-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    
-    span {
-      margin-top: 16px;
-      color: rgba(0, 0, 0, 0.6);
-    }
-  }
+    padding: 2rem;
+    text-align: center;
 
-  .error-message {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    background-color: #ffebee;
-    border-radius: 4px;
-    margin-bottom: 24px;
-    
     mat-icon {
-      color: #f44336;
-      margin-right: 8px;
+      margin-bottom: 1rem;
     }
   }
 
-  .dashboard-content {
-    .info-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-      
-      .latest-evaluation-card, .next-evaluation-card {
-        .score-display {
-          display: flex;
-          align-items: center;
-          margin-bottom: 16px;
-          
-          .score-value {
-            font-size: 32px;
-            font-weight: 500;
-            margin-right: 16px;
-            min-width: 80px;
-          }
-          
-          mat-progress-bar {
-            flex: 1;
-            height: 8px;
-          }
-        }
-        
-        .evaluation-meta {
-          .meta-item {
-            margin-bottom: 8px;
-            
-            .meta-label {
-              font-weight: 500;
-              margin-right: 8px;
-            }
-            
-            .status-badge {
-              padding: 4px 8px;
-              border-radius: 16px;
-              font-size: 12px;
-              font-weight: 500;
-              
-              &.status-pending {
-                background-color: #fff8e1;
-                color: #ffa000;
-              }
-              
-              &.status-in-progress {
-                background-color: #e3f2fd;
-                color: #1976d2;
-              }
-              
-              &.status-completed {
-                background-color: #e8f5e9;
-                color: #388e3c;
-              }
-              
-              &.status-cancelled {
-                background-color: #f5f5f5;
-                color: #757575;
-              }
-            }
-          }
-        }
-      }
-      
-      .next-evaluation-card {
-        background-color: #e8f5e9;
-        
-        mat-icon {
-          color: #388e3c;
-        }
-      }
-    }
-
-    .charts-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-      
-      .chart-card {
-        height: 350px;
-        
-        mat-card-content {
-          height: calc(100% - 56px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          
-          .no-data {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: rgba(0, 0, 0, 0.38);
-            
-            mat-icon {
-              font-size: 48px;
-              height: 48px;
-              width: 48px;
-              margin-bottom: 16px;
-              opacity: 0.5;
-            }
-          }
-        }
-      }
-    }
-
-    .goals-card {
-      margin-bottom: 24px;
-      
-      mat-list-item {
-        .goal-not-started {
-          color: rgba(0, 0, 0, 0.38);
-        }
-        
-        .goal-in-progress {
-          color: #1976d2;
-        }
-        
-        .goal-completed {
-          color: #388e3c;
-        }
-        
-        .priority-badge {
-          padding: 4px 8px;
-          border-radius: 16px;
-          font-size: 12px;
-          font-weight: 500;
-          
-          &.priority-high {
-            background-color: #ffebee;
-            color: #d32f2f;
-          }
-          
-          &.priority-medium {
-            background-color: #fff8e1;
-            color: #ffa000;
-          }
-          
-          &.priority-low {
-            background-color: #e8f5e9;
-            color: #388e3c;
-          }
-        }
-      }
-    }
-
-    .no-evaluations {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      color: rgba(0, 0, 0, 0.6);
-      
-      mat-icon {
-        font-size: 48px;
-        height: 48px;
-        width: 48px;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-      
-      h3 {
-        margin-bottom: 8px;
-        font-weight: 500;
-      }
-    }
+  .error-state {
+    color: #f44336;
   }
 }
-
-.latest-evaluation-card {
-  .performance-section {
-    margin-bottom: 16px;
-    
-    .performance-title {
-      font-size: 18px;
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-    
-    .performance-subtitle {
-      color: rgba(0, 0, 0, 0.6);
-      margin-bottom: 16px;
-    }
-    
-    .score-display {
-      margin-bottom: 16px;
-      
-      .score-value {
-        font-size: 42px;
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-      
-      .score-evolution {
-        display: flex;
-        flex-direction: column;
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 14px;
-        margin-bottom: 8px;
-        
-        .evolution-badge {
-          color: #4caf50;
-          font-weight: 500;
-          margin-top: 4px;
-        }
-      }
-    }
-    
-    .performance-progress {
-      height: 10px;
-      border-radius: 5px;
-    }
-  }
-}
-
-
 
 @media (max-width: 768px) {
-  .my-performance-dashboard {
-    padding: 16px;
-    
-    .dashboard-content {
-      .charts-container {
+  .performance-dashboard {
+    padding: 1rem;
+
+    .main-score-card .score-container {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .section-nav {
+      flex-direction: column;
+    }
+
+    .section-content {
+      .evolution-section, .skills-section {
         grid-template-columns: 1fr;
+      }
+
+      .skills-section {
+        .strengths-improvement {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    .goals-section {
+      .goal-card {
+        .goal-details {
+          flex-direction: column;
+          
+          .mat-form-field {
+            width: 100%;
+          }
+        }
       }
     }
   }
