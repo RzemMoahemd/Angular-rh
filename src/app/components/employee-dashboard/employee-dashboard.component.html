@@ -1,110 +1,189 @@
 <div class="profile-container">
   <div class="profile-header">
-    <h1><mat-icon>person</mat-icon> Mon Profil</h1>
-    <p>Consultez vos informations personnelles</p>
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>Mon Profil</h1>
+        <p>Consultez vos informations personnelles</p>
+      </div>
+    </div>
   </div>
 
-  <mat-card class="profile-section employee-info">
+  <mat-card class="mat-elevation-z3 profile-section employee-info modern-profile-card">
     <div class="employee-main">
-      <div class="employee-identity">
-        <h2>{{ employee?.firstName }} {{ employee?.lastName }}</h2>
-        <h3>{{ employee?.position }}</h3>
-        <span class="status-badge" [class.active]="employee?.status === 'ACTIF'">
-          {{ employee?.status }}
-        </span>
+      <div class="employee-identity-section">
+        <div class="employee-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <div class="employee-identity">
+          <h2 class="employee-name">{{ employee?.firstName }} {{ employee?.lastName }}</h2>
+          <h3 class="employee-position">{{ employee?.position }}</h3>
+          <div class="status-badge" [class.active]="employee?.status === 'ACTIF'">
+            <mat-icon>{{ employee?.status === 'ACTIF' ? 'check_circle' : 'pause_circle_filled' }}</mat-icon>
+            <span>{{ employee?.status }}</span>
+          </div>
+        </div>
       </div>
 
       <div class="employee-contacts">
         <div class="contact-line">
-          <mat-icon class="contact-icon">mail</mat-icon>
-          <a href="mailto:{{ employee?.email }}" class="contact-link">{{ employee?.email }}</a>
+          <div class="contact-icon-wrapper email">
+            <mat-icon class="contact-icon">mail</mat-icon>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <a href="mailto:{{ employee?.email }}" class="contact-link">{{ employee?.email }}</a>
+          </div>
         </div>
         <div class="contact-line">
-          <mat-icon class="contact-icon">phone</mat-icon>
-          <span>{{ employee?.phoneNumber }}</span>
+          <div class="contact-icon-wrapper phone">
+            <mat-icon class="contact-icon">phone</mat-icon>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Téléphone</span>
+            <span class="contact-value">{{ employee?.phoneNumber }}</span>
+          </div>
         </div>
         <div class="contact-line">
-          <mat-icon class="contact-icon">event</mat-icon>
-          <span>Embauché le: {{ employee?.hireDate | date:'dd/MM/yyyy' }}</span>
+          <div class="contact-icon-wrapper date">
+            <mat-icon class="contact-icon">event</mat-icon>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Date d'embauche</span>
+            <span class="contact-value">{{ employee?.hireDate | date:'dd/MM/yyyy' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="modern-divider"></mat-divider>
 
     <div class="employee-details">
-      <h3>Informations détaillées</h3>
+      <h3 class="details-title">
+        <mat-icon>info</mat-icon>
+        Informations détaillées
+      </h3>
       <div class="details-grid">
-        <div class="detail-card">
-          <h4>Solde de congés</h4>
+        <!-- Solde de congés -->
+        <div class="detail-card leave-balance-card">
+          <div class="card-header">
+            <mat-icon class="card-icon">beach_access</mat-icon>
+            <h4>Solde de congés</h4>
+          </div>
           <div class="detail-content">
-  <div *ngFor="let balance of leaveBalances" class="balance-item">
-    <span class="balance-type">{{ balance.type }}</span>
-    <span class="balance-days">
-      <!-- Modification conditionnelle ici -->
-      {{ 
-        (balance.type === 'Maladie' || balance.type === 'Congés sans solde') 
-        ? balance.used 
-        : balance.used + '/' + balance.total 
-      }} jours
-    </span>
-  </div>
-</div>
-        </div>
-
-        <div class="detail-card">
-          <h4>Compétences</h4>
-          <div class="skills-list">
-            <div *ngFor="let skill of skills" class="skill-item">
-              <span>{{ skill.name }}</span>
-              <mat-progress-bar mode="determinate" [value]="skill.score" color="primary"></mat-progress-bar>
+            <div *ngFor="let balance of leaveBalances" class="balance-item">
+              <div class="balance-info">
+                <div class="balance-type-wrapper">
+                  <mat-icon class="balance-icon">{{ balance.icon }}</mat-icon>
+                  <span class="balance-type">{{ balance.type }}</span>
+                </div>
+                <div class="balance-days">
+                  <span class="days-number">
+                    {{ 
+                      (balance.type === 'Maladie' || balance.type === 'Congés sans solde') 
+                      ? balance.used 
+                      : balance.used + '/' + balance.total 
+                    }}
+                  </span>
+                  <span class="days-label">jours</span>
+                </div>
+              </div>
+              <div class="balance-progress" *ngIf="balance.type !== 'Maladie' && balance.type !== 'Congés sans solde'">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="(balance.used / balance.total) * 100"
+                  [color]="balance.used / balance.total > 0.8 ? 'warn' : 'primary'">
+                </mat-progress-bar>
+              </div>
             </div>
           </div>
         </div>
 
-         <div class="detail-card">
-  <h4>Calendrier des événements</h4>
-  <div class="calendar-events">
-    <div *ngFor="let event of calendarEvents" class="event-item info-card">
-      <div class="event-content">
-        <mat-icon class="event-icon">
-          {{ event.type === 'evaluation' ? 'assignment' : 'event_available' }}
-        </mat-icon>
-        
-        <div *ngIf="event.type === 'evaluation'" class="event-details">
-          <h3>Prochaine évaluation</h3>
-          <div class="evaluation-info">
-            <div class="evaluation-period">{{ event.period }}</div>
-            <div class="evaluation-date">{{ event.formattedDate }}</div>
+        <!-- Compétences -->
+        <div class="detail-card skills-card">
+          <div class="card-header">
+            <mat-icon class="card-icon">psychology</mat-icon>
+            <h4>Compétences</h4>
+          </div>
+          <div class="skills-list">
+            <div *ngFor="let skill of skills" class="skill-item">
+              <div class="skill-header">
+                <span class="skill-name">{{ skill.name }}</span>
+                <span class="skill-score">{{ skill.score }}%</span>
+              </div>
+              <div class="skill-progress">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="skill.score" 
+                  [color]="skill.score >= 80 ? 'primary' : skill.score >= 60 ? 'accent' : 'warn'">
+                </mat-progress-bar>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div *ngIf="event.type === 'leave'" class="event-details">
-          <h3>{{ event.title }}</h3>
-          <div class="leave-date">
-            {{ event.date | date:'dd MMM yyyy' }}
+        <!-- Calendrier des événements -->
+        <div class="detail-card calendar-card">
+          <div class="card-header">
+            <mat-icon class="card-icon">calendar_month</mat-icon>
+            <h4>Calendrier des événements</h4>
+          </div>
+          <div class="calendar-events">
+            <div *ngFor="let event of calendarEvents" class="event-item">
+              <div class="event-content">
+                <div class="event-icon-wrapper" [class]="event.type">
+                  <mat-icon class="event-icon">
+                    {{ event.type === 'evaluation' ? 'assignment' : 'event_available' }}
+                  </mat-icon>
+                </div>
+                
+                <div *ngIf="event.type === 'evaluation'" class="event-details">
+                  <h5 class="event-title">Prochaine évaluation</h5>
+                  <div class="evaluation-info">
+                    <div class="evaluation-period">{{ event.period }}</div>
+                    <div class="evaluation-date">{{ event.formattedDate }}</div>
+                  </div>
+                </div>
+
+                <div *ngIf="event.type === 'leave'" class="event-details">
+                  <h5 class="event-title">{{ event.title }}</h5>
+                  <div class="leave-date">
+                    {{ event.date | date:'dd MMM yyyy' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="calendarEvents.length === 0" class="no-events">
+              <mat-icon>event_note</mat-icon>
+              <span>Aucun événement à venir</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-        <div class="detail-card">
-          <h4>Commentaires récents</h4>
+        <!-- Commentaires récents -->
+        <div class="detail-card comments-card">
+          <div class="card-header">
+            <mat-icon class="card-icon">forum</mat-icon>
+            <h4>Commentaires récents</h4>
+          </div>
           <div class="comments-list">
             <div *ngFor="let comment of recentComments" class="comment-item">
-              <mat-icon class="comment-icon">forum</mat-icon>
+              <div class="comment-avatar">
+                <mat-icon>account_circle</mat-icon>
+              </div>
               <div class="comment-content">
-                <div class="comment-meta">
+                <div class="comment-header">
                   <span class="evaluator">{{ comment.evaluator }}</span>
-                  <span class="date">{{ comment.date | date:'dd/MM/yyyy' }}</span>
+                  <span class="comment-date">{{ comment.date | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>
               </div>
             </div>
             <div *ngIf="recentComments.length === 0" class="no-comments">
-              Aucun commentaire récent
+              <mat-icon>chat_bubble_outline</mat-icon>
+              <span>Aucun commentaire récent</span>
             </div>
           </div>
         </div>

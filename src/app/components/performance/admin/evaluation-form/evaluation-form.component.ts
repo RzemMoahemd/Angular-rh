@@ -5,6 +5,8 @@ import { Employee } from "app/models/employee";
 import { Evaluation } from "app/models/Evaluation";
 import { PerformanceService } from "app/services/performance.service";
 import { take } from "rxjs/operators";
+import { EmployeeService } from "app/services/employee.service";
+
 
 @Component({
   selector: "app-evaluation-form",
@@ -48,7 +50,8 @@ export class EvaluationFormComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<EvaluationFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { evaluation?: Evaluation; employees: Employee[] },
-    private performanceService: PerformanceService
+    private performanceService: PerformanceService,
+    private employeeService: EmployeeService
   ) {
     this.initializeForm();
   }
@@ -236,9 +239,27 @@ export class EvaluationFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.evaluationForm.invalid) return;
+  // onSubmit(): void {
+  //   if (this.evaluationForm.invalid) return;
 
+  //   const formValue = this.evaluationForm.value;
+  //   const [quarter, year] = formValue.period.replace('Q', '').split(' ');
+
+  //   const evaluation: Evaluation = {
+  //     ...this.data.evaluation,
+  //     ...formValue,
+  //     employee: this.employees.find(e => e.id === formValue.employee)!,
+  //     startDate: new Date(parseInt(year), (parseInt(quarter) - 1) * 3, 1),
+  //     endDate: new Date(parseInt(year), parseInt(quarter) * 3, 0)
+  //   };
+
+  //   this.dialogRef.close(evaluation);
+  // }
+
+  onSubmit(): void {
+  if (this.evaluationForm.invalid) return;
+
+  this.employeeService.getCurrentEmployee().pipe(take(1)).subscribe(currentEmployee => {
     const formValue = this.evaluationForm.value;
     const [quarter, year] = formValue.period.replace('Q', '').split(' ');
 
@@ -246,12 +267,14 @@ export class EvaluationFormComponent implements OnInit {
       ...this.data.evaluation,
       ...formValue,
       employee: this.employees.find(e => e.id === formValue.employee)!,
+      evaluatorId: currentEmployee.id, // ID de l'évaluateur
       startDate: new Date(parseInt(year), (parseInt(quarter) - 1) * 3, 1),
       endDate: new Date(parseInt(year), parseInt(quarter) * 3, 0)
     };
 
     this.dialogRef.close(evaluation);
-  }
+  });
+}
 
   cancel(): void { this.dialogRef.close(); }
 

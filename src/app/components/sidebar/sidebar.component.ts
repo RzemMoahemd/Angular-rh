@@ -11,16 +11,16 @@ declare interface RouteInfo {
 }
 
 export const ALL_ROUTES: RouteInfo[] = [
-  { path: 'dahsboard', title: 'dashboard', icon: 'event', class: '' },
-  { path: 'employees', title: 'Gestion Employés', icon: 'group', class: '' },
-  { path: 'leaves', title: 'Gestion Congés', icon: 'event', class: '' },
-  { path: 'performance', title: 'Gestion performances', icon: 'event', class: '' },
+  { path: 'dahsboard', title: 'Tableau de bord', icon: 'dashboard', class: '' },
+  { path: 'employees', title: 'Employés', icon: 'group', class: '' },
+  { path: 'leaves', title: 'Congés', icon: 'date_range', class: '' },
+  { path: 'performance', title: 'Performances', icon: 'assessment', class: '' },
 
   
   //{ path: 'request-leave', title: 'request-leave', icon: 'event', class: '' },
-  { path: 'dashboardemp', title: 'dashboard', icon: 'event', class: '' },
-  { path: 'my-leaves', title: 'my-leaves', icon: 'event', class: '' },  
-  { path: 'my-performance', title: 'my-performance', icon: 'event', class: '' },
+  { path: 'dashboardemp', title: 'Mon Profil', icon: 'person', class: '' },
+  { path: 'my-leaves', title: 'Mes Congés', icon: 'date_range', class: '' },  
+  { path: 'my-performance', title: 'Mes Performances', icon: 'assessment', class: '' },
   
 
   

@@ -6,6 +6,7 @@ export interface Evaluation {
   id?: number
   employee: Employee
   evaluator?: string
+  evaluatorId?: number;
   period: string
   startDate: Date | string
   endDate: Date | string

@@ -59,36 +59,74 @@ export class MyPerformanceDashboardComponent implements OnInit {
     });
   }
 
-  private loadDashboardData(employeeId: number): void {
-    forkJoin({
-      trends: this.performanceService.getMyPerformanceEvolution(employeeId),
-      skills: this.performanceService.getMySkillScores(employeeId),
-      evaluations: this.performanceService.getMyEvaluations(employeeId),
-      nextEvaluation: this.performanceService.getNextEvaluation(employeeId)
-    }).pipe(finalize(() => this.loading = false))
-    .subscribe({
-      next: (results) => this.handleDataResults(results),
-      error: (err) => this.handleError(err, "Erreur de chargement des données")
-    });
-  }
+  // private loadDashboardData(employeeId: number): void {
+  //   forkJoin({
+  //     trends: this.performanceService.getMyPerformanceEvolution(employeeId),
+  //     skills: this.performanceService.getMySkillScores(employeeId),
+  //     evaluations: this.performanceService.getMyEvaluations(employeeId),
+  //     nextEvaluation: this.performanceService.getNextEvaluation(employeeId)
+  //   }).pipe(finalize(() => this.loading = false))
+  //   .subscribe({
+  //     next: (results) => this.handleDataResults(results),
+  //     error: (err) => this.handleError(err, "Erreur de chargement des données")
+  //   });
+  // }
 
-  private handleDataResults(results: any): void {
+  private loadDashboardData(employeeId: number): void {
+  forkJoin({
+    trends: this.performanceService.getMyPerformanceEvolution(employeeId),
+    evaluations: this.performanceService.getMyEvaluations(employeeId), // Supprimer 'skills'
+    nextEvaluation: this.performanceService.getNextEvaluation(employeeId)
+  }).pipe(finalize(() => this.loading = false))
+  .subscribe({
+    next: (results) => this.handleDataResults(results),
+    error: (err) => this.handleError(err, "Erreur de chargement des données")
+  });
+}
+
+//   private handleDataResults(results: any): void {
+//   this.performanceTrends = results.trends;
+//   this.skillScores = results.skills;
+//   this.nextEvaluation = results.nextEvaluation;
+  
+//   // Ajoutez cette conversion de date
+//   this.evaluationsHistory = this.sortEvaluations(results.evaluations).map(evaluation => ({
+//     ...evaluation,
+//     evaluationDate: this.parseDate(evaluation.evaluationDate) // Conversion ici
+//   }));
+  
+//   this.latestEvaluation = this.evaluationsHistory[0] || null;
+  
+//   if (this.latestEvaluation) {
+//     console.log('Dernière évaluation:', this.latestEvaluation);
+//   }
+  
+//   this.updateCharts();
+//   this.calculateNextEvaluation();
+//   this.updateTrendChart();
+// }
+
+private handleDataResults(results: any): void {
   this.performanceTrends = results.trends;
-  this.skillScores = results.skills;
   this.nextEvaluation = results.nextEvaluation;
   
-  // Ajoutez cette conversion de date
   this.evaluationsHistory = this.sortEvaluations(results.evaluations).map(evaluation => ({
     ...evaluation,
-    evaluationDate: this.parseDate(evaluation.evaluationDate) // Conversion ici
+    evaluationDate: this.parseDate(evaluation.evaluationDate)
   }));
   
   this.latestEvaluation = this.evaluationsHistory[0] || null;
-  
+
+  // Nouveau: Récupérer les compétences de la dernière évaluation
   if (this.latestEvaluation) {
-    console.log('Dernière évaluation:', this.latestEvaluation);
+    this.skillScores = this.latestEvaluation.criteria.map(criterion => ({
+      name: criterion.name,
+      score: criterion.score
+    }));
+  } else {
+    this.skillScores = [];
   }
-  
+
   this.updateCharts();
   this.calculateNextEvaluation();
   this.updateTrendChart();
