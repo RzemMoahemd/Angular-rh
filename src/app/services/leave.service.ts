@@ -8,7 +8,7 @@ import type { Leave } from "../models/leave";
   providedIn: "root",
 })
 export class LeaveService {
-  private apiUrl = "http://localhost:8222/api/conge";
+  private apiUrl = "http://10.112.62.182:8222/api/conge";
 
   constructor(private http: HttpClient) {}
 

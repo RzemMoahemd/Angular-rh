@@ -12,7 +12,7 @@ import { Goal } from "app/models/Goal"
   providedIn: "root",
 })
 export class PerformanceService {
-  private apiUrl = "http://localhost:8222/api/performances"
+  private apiUrl = "http://10.112.62.182:8222/api/performances"
 
   constructor(
     private http: HttpClient,

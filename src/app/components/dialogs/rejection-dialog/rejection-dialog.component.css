@@ -1,71 +1,315 @@
-/* Rejection Dialog spécifique */
+/* Dialog de Refus avec Motif */
 .dialog-container {
-  padding: 20px;
-  max-width: 500px;
+  width: 580px;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+.dialog-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);
+  background-size: 300% 100%;
+  animation: rejectionGradient 3s ease infinite;
+}
+
+@keyframes rejectionGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  padding: 32px 32px 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.dialog-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: headerFloat 6s ease-in-out infinite;
 }
 
 .dialog-header h2 {
   margin: 0;
-  font-size: 1.3rem;
-  color: #c62828;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-header h2::before {
+  content: '❌';
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: shake 2s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.close-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: white;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
 .dialog-content {
-  margin-bottom: 20px;
-  color: #666;
+  padding: 40px 32px 32px;
+  background: white;
+  position: relative;
+}
+
+.dialog-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
 }
 
 .dialog-content p {
-  margin-bottom: 20px;
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+}
+
+.dialog-content p::before {
+  content: '📝';
+  display: block;
+  font-size: 40px;
+  margin-bottom: 16px;
+  animation: writeFloat 3s ease-in-out infinite;
+}
+
+@keyframes writeFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
 }
 
 .full-width {
   width: 100%;
+  margin-bottom: 24px;
 }
 
-mat-form-field {
+.full-width ::ng-deep mat-form-field {
   width: 100%;
-  margin-bottom: 16px;
 }
 
-textarea {
-  min-height: 100px;
+.full-width ::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.full-width ::ng-deep .mat-form-field-outline {
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.full-width ::ng-deep .mat-form-field-outline-thick {
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.full-width ::ng-deep .mat-form-field-label {
+  color: #64748b !important;
+  font-weight: 500;
+}
+
+.full-width ::ng-deep .mat-focused .mat-form-field-label {
+  color: #ef4444 !important;
+}
+
+.full-width ::ng-deep textarea {
+  min-height: 120px;
   resize: vertical;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.full-width ::ng-deep textarea::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.full-width ::ng-deep .mat-form-field:hover .mat-form-field-outline {
+  border-color: #cbd5e1;
 }
 
 .dialog-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 16px;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  position: relative;
+}
+
+.dialog-actions::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
 }
 
 .reject-button {
-  border: 1px solid #ddd !important;
-  background-color: white !important;
-  color: #333 !important;
-  padding: 8px 24px !important;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+  border: none !important;
+  color: white !important;
+  padding: 14px 28px !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 120px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(100, 116, 139, 0.3);
+}
+
+.reject-button:hover {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(100, 116, 139, 0.4);
 }
 
 .approve-button {
-  background-color: #c62828 !important; /* Rouge pour rejet */
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
   color: white !important;
-  padding: 8px 24px !important;
+  border: none !important;
+  padding: 14px 32px !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.approve-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+
+.approve-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.approve-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(239, 68, 68, 0.5);
 }
 
 .approve-button:disabled {
-  background-color: #ef9a9a !important;
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%) !important;
+  color: #6b7280 !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(209, 213, 219, 0.3);
+}
+
+.approve-button:disabled::before {
+  display: none;
+}
+
+/* Animation d'entrée */
+.dialog-content {
+  animation: slideInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dialog-container {
+    width: 95vw;
+    max-width: 450px;
+  }
+  
+  .dialog-header {
+    padding: 24px 20px 20px;
+  }
+  
+  .dialog-content {
+    padding: 32px 20px 24px;
+  }
+  
+  .dialog-actions {
+    padding: 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .reject-button,
+  .approve-button {
+    width: 100%;
+  }
 }

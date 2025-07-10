@@ -9,7 +9,7 @@ import { switchMap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class LeaveBalanceService {
-  private apiUrl = "http://localhost:8222/api/conge/soldeConge";
+  private apiUrl = "http://10.112.62.182:8222/api/conge/soldeConge";
 
   constructor(private http: HttpClient) {}
 

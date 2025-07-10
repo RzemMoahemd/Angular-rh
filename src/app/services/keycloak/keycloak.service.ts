@@ -17,7 +17,7 @@ export class KeycloakService {
   get keycloak(): Keycloak {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-        url: 'http://localhost:8061',
+        url: 'http://keycloak-service:8061',
         realm: 'gestion-rh',
         clientId: 'rh'
       });
@@ -45,7 +45,7 @@ export class KeycloakService {
   }
 
   logout(): void {
-    this.keycloak.logout({ redirectUri: 'http://localhost:4200' });
+    this.keycloak.logout({ redirectUri: 'http://10.112.62.168' });
   }
 
   getUserRole(): 'admin' | 'user' | null {

@@ -175,8 +175,8 @@ export class EmployeeMyLeavesComponent implements OnInit {
 
   openLeaveRequestDialog(): void {
     const dialogRef = this.dialog.open(EmployeeRequestLeaveComponent, {
-      width: '600px',
-      disableClose: true
+      //width: '600px',
+     // disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {

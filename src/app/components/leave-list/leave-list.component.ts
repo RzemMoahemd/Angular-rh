@@ -130,7 +130,7 @@ export class LeaveListComponent implements OnInit, AfterViewInit {
   updateStatus(leave: Leave, status: string): void {
   if (status === 'approuvé') {
     const dialogRef = this.dialog.open(ApprovalDialogComponent, {
-      width: '500px',
+      //width: '500px',
       data: { leave }
     });
 
@@ -152,7 +152,7 @@ export class LeaveListComponent implements OnInit, AfterViewInit {
 
   } else if (status === 'rejeté') {
   const dialogRef = this.dialog.open(RejectionDialogComponent, {
-    width: '500px',
+    //width: '500px',
     data: { leave }
   });
 

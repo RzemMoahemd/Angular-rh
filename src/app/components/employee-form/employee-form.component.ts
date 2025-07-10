@@ -39,7 +39,7 @@ export class EmployeeFormComponent {
       hireDate: ["", Validators.required],
       position: ["", Validators.required],
       departmentId: ["", Validators.required],
-      status: ["", Validators.required]
+      status: [this.statuses[0], Validators.required]
     });
 
     if (this.data?.employee) {

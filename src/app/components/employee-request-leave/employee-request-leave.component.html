@@ -1,77 +1,87 @@
 <div class="form-content">
-  <h2 class="form-title">Nouvelle demande de congé</h2>
-  <p class="form-subtitle">Remplissez le formulaire pour soumettre une demande de congé</p>
-
-  <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
-    <!-- Type de congé -->
-    <div class="form-group">
-      <label class="input-label">Type de congé*</label>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Sélectionner un type de congé</mat-label>
-        <mat-select formControlName="motif" required>
-          <mat-option value="PAYÉ">PAYÉ</mat-option>
-          <mat-option value="RTT">RTT</mat-option>
-          <mat-option value="MALADIE">MALADIE</mat-option>
-          <mat-option value="SANS SOLDE">SANS SOLDE</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <div class="form-inner">
+    <div class="form-header">
+      <mat-icon class="form-icon">event_available</mat-icon>
+      <div>
+        <h2 class="form-title">Nouvelle demande</h2>
+        <p class="form-subtitle">Remplissez les informations ci-dessous</p>
+      </div>
     </div>
 
-    <!-- Dates -->
-    <!-- Modifier les champs de date comme suit -->
-<div class="form-row">
-  <div class="form-group">
-    <label class="input-label">Date de début*</label>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>jj/mm/aaaa</mat-label>
-      <input matInput
-             [matDatepicker]="pickerDebut"
-             formControlName="dateDebut"
-             [matDatepickerFilter]="dateFilter"
-             placeholder="jj/mm/aaaa">
-      <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDebut></mat-datepicker>
-      <mat-error *ngIf="leaveForm.get('dateDebut')?.hasError('weekend')">
-        ❌ Les week-ends ne sont pas autorisés
-      </mat-error>
-    </mat-form-field>
+    <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="compact-form">
+      <!-- Type de congé -->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width compact-field">
+          <mat-label>Type de congé*</mat-label>
+          <mat-select formControlName="motif" required>
+            <mat-option value="PAYÉ">
+              <span class="option-text">🏖️ Congés payés</span>
+            </mat-option>
+            <mat-option value="RTT">
+              <span class="option-text">⏰ RTT</span>
+            </mat-option>
+            <mat-option value="MALADIE">
+              <span class="option-text">🏥 Maladie</span>
+            </mat-option>
+            <mat-option value="SANS SOLDE">
+              <span class="option-text">💼 Sans solde</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Dates en ligne -->
+      <div class="dates-row">
+        <mat-form-field appearance="outline" class="date-field compact-field">
+          <mat-label>Date début*</mat-label>
+          <input matInput
+                 [matDatepicker]="pickerDebut"
+                 formControlName="dateDebut"
+                 [matDatepickerFilter]="dateFilter"
+                 placeholder="jj/mm/aaaa">
+          <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDebut></mat-datepicker>
+          <mat-error *ngIf="leaveForm.get('dateDebut')?.hasError('weekend')">
+            Week-ends non autorisés
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="date-field compact-field">
+          <mat-label>Date fin*</mat-label>
+          <input matInput
+                 [matDatepicker]="pickerFin"
+                 formControlName="dateFin"
+                 [matDatepickerFilter]="dateFilter"
+                 placeholder="jj/mm/aaaa">
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+          <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('weekend')">
+            Week-ends non autorisés
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Motif compact -->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width compact-field">
+          <mat-label>Motif*</mat-label>
+          <textarea matInput
+                    formControlName="motifPrecision"
+                    rows="2"
+                    placeholder="Précisez le motif..."></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Actions compactes -->
+      <div class="action-buttons">
+        <button mat-button type="button" (click)="onCancel()" class="cancel-btn">
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading" class="submit-btn">
+          <mat-spinner *ngIf="loading" diameter="16"></mat-spinner>
+          {{ loading ? 'Envoi...' : 'Envoyer' }}
+        </button>
+      </div>
+    </form>
   </div>
-
-  <div class="form-group">
-    <label class="input-label">Date de fin*</label>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>jj/mm/aaaa</mat-label>
-      <input matInput
-             [matDatepicker]="pickerFin"
-             formControlName="dateFin"
-             [matDatepickerFilter]="dateFilter"
-             placeholder="jj/mm/aaaa">
-      <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFin></mat-datepicker>
-      <mat-error *ngIf="leaveForm.get('dateFin')?.hasError('weekend')">
-        ❌ Les week-ends ne sont pas autorisés
-      </mat-error>
-    </mat-form-field>
-  </div>
-</div>
-    <!-- Motif de précision -->
-    <div class="form-group">
-      <label class="input-label">Motif*</label>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Précisez le motif de votre demande de congé…</mat-label>
-        <textarea matInput
-                  formControlName="motifPrecision"
-                  rows="3"
-                  placeholder="Précisez le motif de votre demande de congé…"></textarea>
-      </mat-form-field>
-    </div>
-
-    <!-- Actions -->
-    <div class="action-buttons">
-      <button mat-stroked-button type="button" (click)="onCancel()">Annuler</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="loading">
-        {{ loading ? 'Envoi…' : 'Soumettre la demande' }}
-      </button>
-    </div>
-  </form>
 </div>

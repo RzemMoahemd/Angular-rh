@@ -1,71 +1,186 @@
+/* Dialog container - complètement transparent */
 :host ::ng-deep .mat-dialog-container {
-  background-color: #ffffff !important;
-  padding: 20px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.04) !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  max-width: none !important;
+  width: auto !important;
+  margin: 0 !important;
 }
 
+/* Suppression de l'overlay blanc/gris */
+:host ::ng-deep .cdk-overlay-pane {
+  background: transparent !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+:host ::ng-deep .mat-dialog-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-height: none !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .mat-dialog-actions {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+/* Contenu principal - formulaire blanc simple */
 .form-content {
-  background: transparent;
-  padding: 8px;
-  max-width: 520px;
+  background: white;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  max-width: 480px;
+  width: 90vw;
+  position: relative;
   margin: 0 auto;
 }
 
-.mat-form-field-appearance-outline .mat-form-field-outline {
-  background: transparent;
-  box-shadow: none;
-  border-radius: 8px; /* Arrondi des champs augmenté */
+/* Container interne - maintenant directement le contenu */
+.form-inner {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
 }
 
-.mat-form-field-appearance-outline .mat-form-field-outline-thick {
-  background: transparent;
+/* En-tête compact */
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-  box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
-  border-radius: 8px; /* Cohérence sur le focus */
+.form-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .form-title {
-  font-size: 1.6rem;
-  margin: 24px 0 4px 0;
-  color: #1f2937;
+  font-size: 1.4rem;
+  margin: 0;
+  color: #2d3748;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .form-subtitle {
-  font-size: 0.9rem;
-  color: #4b5563;
-  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 2px 0 0 0;
+  font-weight: 500;
+}
+
+/* Formulaire compact */
+.compact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  margin: 0;
 }
 
 .input-label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .full-width {
   width: 100%;
 }
 
-.form-group {
-  margin-bottom: 12px;
-}
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 20px;
 }
 
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
+/* Champs compacts */
+.compact-field {
+  font-size: 14px;
+}
+
+.compact-field ::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0.75em;
+}
+
+.compact-field ::ng-deep .mat-form-field-infix {
+  padding: 0.6em 0;
+  border-top: none;
+}
+
+.compact-field ::ng-deep .mat-form-field-outline {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  border: 1.5px solid rgba(102, 126, 234, 0.2);
+  transition: all 0.3s ease;
+}
+
+.compact-field ::ng-deep .mat-form-field-outline-thick {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  border: 1.5px solid #667eea;
+}
+
+.compact-field ::ng-deep .mat-focused .mat-form-field-outline-thick {
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
+}
+
+.compact-field ::ng-deep .mat-form-field-label {
+  color: #718096 !important;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.compact-field ::ng-deep .mat-focused .mat-form-field-label {
+  color: #667eea !important;
+}
+
+/* Styles des champs de formulaire */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  transition: all 0.3s ease;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  border: 2px solid #667eea;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  border-radius: 15px;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-wrapper {
@@ -73,50 +188,116 @@
 }
 
 .mat-form-field-appearance-outline .mat-form-field-infix {
-  padding: 0.6em 0;
+  padding: 0.8em 0;
+  border-top: none;
 }
 
-/* Arrondi des boutons */
-.action-buttons button {
-  padding: 6px 16px;
-  font-size: 0.875rem;
-  border-radius: 6px; /* Nouvel arrondi ajouté */
+.mat-form-field-label {
+  color: #718096 !important;
+  font-weight: 500;
 }
 
-.highlight {
-  background: #3b82f6;
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(59,130,246,0.4);
-  transition: background .2s, transform .1s;
-  border-radius: 6px; /* Cohérence pour le bouton principal */
+.mat-focused .mat-form-field-label {
+  color: #667eea !important;
 }
 
-.highlight:hover:not([disabled]) {
-  background: #2563eb;
+/* Ligne de dates */
+.dates-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.date-field {
+  flex: 1;
+}
+
+/* Options avec emojis */
+.option-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* Boutons d'action compacts */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.cancel-btn {
+  color: #718096;
+  border: 1.5px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.cancel-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
   transform: translateY(-1px);
 }
 
-.highlight:active:not([disabled]) {
-  transform: translateY(0);
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.submit-btn:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn mat-spinner {
+  margin-right: 4px;
+}
+
+/* Erreurs compactes */
 mat-error {
-  font-size: 0.75rem;
-  color: #ef4444;
+  font-size: 0.7rem;
+  color: #e53e3e;
   margin-top: 4px;
+  font-weight: 500;
 }
 
-
+/* Styles du calendrier */
 .mat-calendar-body-disabled {
-  background-color: #f8f9fa;
-  color: #d1d5db !important;
+  background-color: #f7fafc !important;
+  color: #cbd5e0 !important;
   text-decoration: line-through;
+  opacity: 0.5;
 }
 
 .weekend-error {
   font-size: 0.75rem;
-  color: #ef4444;
-  margin-top: 4px;
+  color: #e53e3e;
+  margin-top: 8px;
+  font-weight: 600;
 }
 
 .mat-datepicker-content .mat-calendar-body-cell-content.mat-calendar-body-disabled {
@@ -124,25 +305,173 @@ mat-error {
   opacity: 0.6;
 }
 
-/* Surbrillance au survol */
 .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
-  background-color: #e0f2fe !important;
+  background-color: rgba(102, 126, 234, 0.1) !important;
+  border-radius: 8px;
 }
 
-/* Style du jour sélectionné */
 .mat-calendar-body-selected {
-  background-color: #3b82f6 !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
+  border-radius: 8px;
 }
 
-@media (max-width: 640px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border: 2px solid #667eea;
+  border-radius: 8px;
+}
+
+/* Calendrier optimisé */
+:host ::ng-deep .mat-datepicker-content {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+:host ::ng-deep .mat-calendar-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px;
+}
+
+:host ::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
+  background-color: rgba(102, 126, 234, 0.1) !important;
+  border-radius: 6px;
+}
+
+:host ::ng-deep .mat-calendar-body-selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border-radius: 6px;
+}
+
+:host ::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border: 1.5px solid #667eea;
+  border-radius: 6px;
+}
+
+:host ::ng-deep .mat-calendar-body-disabled {
+  background-color: #f7fafc !important;
+  color: #cbd5e0 !important;
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Responsive optimisé */
+@media (max-width: 600px) {
   .form-content {
-    padding: 12px;
+    max-width: 95vw;
+    margin: 10px auto;
   }
+
+  .form-inner {
+    padding: 20px;
+  }
+
+  .form-header {
+    margin-bottom: 16px;
+  }
+
   .form-title {
-    margin-top: 16px;
+    font-size: 1.2rem;
   }
+
+  .dates-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-content {
+    padding: 8px;
+  }
+
+  .form-inner {
+    padding: 16px;
+  }
+
+  .form-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .compact-field ::ng-deep .mat-form-field-infix {
+    padding: 0.5em 0;
+  }
+}
+
+/* Animations subtiles */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-content {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.form-group {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.form-group:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.form-group:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.form-group:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.action-buttons {
+  animation: slideInUp 0.4s ease-out 0.4s both;
+}
+
+/* Amélioration des focus states */
+.compact-field ::ng-deep .mat-form-field-ripple {
+  background-color: #667eea;
+}
+
+.compact-field ::ng-deep .mat-select-arrow {
+  color: #718096;
+}
+
+.compact-field ::ng-deep .mat-focused .mat-select-arrow {
+  color: #667eea;
+}
+
+/* Optimisation des transitions */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Amélioration de la lisibilité */
+.compact-field ::ng-deep .mat-select-value,
+.compact-field ::ng-deep .mat-input-element {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.compact-field ::ng-deep .mat-select-placeholder {
+  color: #a0aec0;
 }

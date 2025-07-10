@@ -9,7 +9,7 @@ import { KeycloakService } from "./keycloak/keycloak.service";
   providedIn: "root",
 })
 export class EmployeeService {
-  private apiUrl = "http://localhost:8222/api/employee";
+  private apiUrl = "http://10.112.62.182:8222/api/employee";
   private Keyclaok
 
   constructor(
