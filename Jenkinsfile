@@ -91,32 +91,29 @@
 
 pipeline {
     agent {
-        kubernetes {
-            yaml """
+    kubernetes {
+      yaml """
 apiVersion: v1
 kind: Pod
-metadata:
-  labels:
-    some-label: frontend-pod
 spec:
   containers:
   - name: node
     image: node:18
-    command:
-    - cat
+    command: ['cat']
     tty: true
-    volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+    env:
+    - name: http_proxy
+      value: http://10.112.62.168:8888
+    - name: https_proxy
+      value: http://10.112.62.168:8888
+    - name: no_proxy
+      value: localhost,127.0.0.1,.svc,.cluster.local,192.168.0.0/16,10.0.0.0/8
 """
-            defaultContainer 'node'
-        }
+      defaultContainer 'node'
     }
+  }
 
+ 
     environment {
         SERVICE_NAME = "frontend-angular"
         IMAGE_NAME = "rzem/frontend-angular"
