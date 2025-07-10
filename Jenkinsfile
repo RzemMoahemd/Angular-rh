@@ -89,19 +89,38 @@
 
 
 
-
 pipeline {
     agent {
-    docker {
-        image 'node:18'
-        args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock'
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: frontend-pod
+spec:
+  containers:
+  - name: node
+    image: node:18
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-sock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+            defaultContainer 'node'
+        }
     }
-}
 
     environment {
         SERVICE_NAME = "frontend-angular"
         IMAGE_NAME = "rzem/frontend-angular"
-        PROJECT_PATH = "."  // si le Jenkinsfile est à la racine du projet
+        PROJECT_PATH = "."
         DOCKERHUB_CREDS = credentials('dockerhub-cred')
         KUBECONFIG = credentials('kubeconfig')
         NO_PROXY = "192.16.0.233,localhost,127.0.0.1,.svc.cluster.local"
@@ -109,12 +128,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 dir(PROJECT_PATH) {
@@ -134,9 +147,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir(PROJECT_PATH) {
-                    sh '''
-                        docker build -t ${IMAGE_NAME}:latest .
-                    '''
+                    sh 'docker build -t ${IMAGE_NAME}:latest .'
                 }
             }
         }
