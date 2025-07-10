@@ -92,11 +92,11 @@
 
 pipeline {
     agent {
-        docker {
-            image 'node:18' // Image avec Node.js & npm préinstallés
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // nécessaire pour que le build Docker fonctionne
-        }
+    docker {
+        image 'node:18'
+        args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock'
     }
+}
 
     environment {
         SERVICE_NAME = "frontend-angular"
