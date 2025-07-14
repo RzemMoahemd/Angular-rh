@@ -96,6 +96,8 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
+  nodeSelector:
+    jenkins: "worker"
   containers:
   - name: node
     image: node:18
