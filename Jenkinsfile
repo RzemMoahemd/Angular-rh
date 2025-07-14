@@ -105,10 +105,10 @@ spec:
     tty: true
     resources:
       requests:
-        memory: "256Mi"
+        memory: "350Mi"
         cpu: "250m"
       limits:
-        memory: "600Mi"
+        memory: "900Mi"
         cpu: "500m"
     env:
     - name: http_proxy
