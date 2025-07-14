@@ -101,6 +101,13 @@ spec:
     image: node:18
     command: ['cat']
     tty: true
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "600Mi"
+        cpu: "500m"
     env:
     - name: http_proxy
       value: http://10.112.62.168:8888
