@@ -1,0 +1,308 @@
+/* General container and card styling */
+.main-content {
+  padding: 0px;
+  font-family: "Inter", "Roboto", sans-serif;
+  background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+  min-height: calc(100vh - 64px); /* Adjust for header/footer if any */
+}
+
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 40px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Header styling (kept as per previous request) */
+.card-header {
+  padding: 50px 32px 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0; /* Match card border-radius for top corners */
+}
+
+.card-header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: headerFloat 8s ease-in-out infinite;
+}
+
+@keyframes headerFloat {
+  0%,
+  100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateX(20px) translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateX(-15px) translateY(15px) rotate(240deg);
+  }
+}
+
+.card-title {
+  margin: 0;
+  color: white;
+  font-weight: 700;
+  font-size: 26px; /* Slightly larger for prominence */
+  letter-spacing: -0.5px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.3;
+}
+
+.card-category {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1em; /* Slightly larger */
+  margin: 0;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+  line-height: 1.3;
+}
+
+.card-body {
+  padding: 32px;
+  background: white;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+.col-md-6,
+.col-md-4,
+.col-md-12 {
+  padding: 0 15px;
+  flex: 0 0 auto; /* Allow flex to determine size */
+  max-width: 100%; /* Default to full width */
+}
+
+@media (min-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Mat Form Field Overrides */
+.full-width {
+  width: 100%;
+  margin-bottom: 20px; /* Add some space between fields */
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+::ng-deep .mat-form-field-outline {
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+::ng-deep .mat-form-field-outline-thick {
+  border: 2px solid #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+::ng-deep .mat-form-field-label {
+  color: #64748b !important;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+  color: #667eea !important;
+}
+
+::ng-deep .mat-form-field:hover .mat-form-field-outline {
+  border-color: #cbd5e1;
+}
+
+::ng-deep .mat-input-element {
+  font-size: 16px;
+  color: #1e293b;
+}
+
+::ng-deep .mat-select-value-text {
+  color: #1e293b;
+  font-size: 16px;
+}
+
+::ng-deep .mat-select-arrow {
+  color: #64748b;
+}
+
+/* Error messages */
+mat-error {
+  color: #ef4444; /* Red color for errors */
+  font-size: 13px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Buttons container */
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 15px; /* Space between buttons */
+  margin-top: 30px; /* Space above buttons */
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9; /* Subtle separator */
+}
+
+/* Primary Button */
+button.mat-raised-button.mat-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button.mat-raised-button.mat-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+}
+
+button.mat-raised-button.mat-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Secondary Button (Annuler) */
+button.mat-button {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  background-color: #f1f5f9; /* Light background for secondary */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+button.mat-button:hover {
+  background-color: #e2e8f0;
+  color: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Spinner */
+.mat-spinner {
+  margin: 40px auto; /* Centered and more vertical space */
+  display: block;
+  color: #667eea;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 30px;
+  }
+  .card-header {
+    padding: 80px 28px 70px;
+  }
+  .card-title {
+    font-size: 28px;
+  }
+  .card-category {
+    font-size: 1.1em;
+  }
+  .card-body {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px;
+  }
+  .card-header {
+    padding: 70px 20px 60px;
+  }
+  .card-title {
+    font-size: 24px;
+  }
+  .card-category {
+    font-size: 1em;
+  }
+  .card-body {
+    padding: 24px 20px;
+  }
+  .row > div {
+    margin-bottom: 15px; /* Add space between stacked fields */
+  }
+  .row > div:last-child {
+    margin-bottom: 0; /* No margin for the last item in a row */
+  }
+  .form-actions {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between stacked buttons */
+    align-items: stretch; /* Make buttons full width */
+  }
+  button.mat-raised-button.mat-primary,
+  button.mat-button {
+    width: 100%;
+    margin-left: 0; /* Remove left margin when stacked */
+  }
+}
+
+/* Scrollbar personnalisée */
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8, #667eea);
+}

@@ -61,6 +61,15 @@ import { EvaluationFormComponent } from './performance/admin/evaluation-form/eva
 import { EvaluationDetailsComponent } from './performance/admin/evaluation-details/evaluation-details.component';
 
 import { NgChartsModule } from 'ng2-charts';
+import { JobListComponent } from './job-requests/job-list/job-list.component';
+import { JobDetailComponent } from './job-requests/job-detail/job-detail.component';
+import { ApplicationDialogComponent } from './job-requests/application-dialog/application-dialog.component';
+import { MyApplicationsComponent } from './job-requests/my-applications/my-applications.component';
+import { AIAnalysisDialogComponent } from './admin/job-applications/ai-analysis-dialog/ai-analysis-dialog.component';
+import { AdminApplicationsComponent } from './admin/job-applications/admin-applications/admin-applications.component';
+import { ApplicationDetailDialogComponent } from './admin/job-applications/application-detail-dialog/application-detail-dialog.component';
+import { AdminJobFormComponent } from './admin/job-requests/admin-job-form/admin-job-form.component';
+import { AdminJobListComponent } from './admin/job-requests/admin-job-list/admin-job-list.component';
 
 @NgModule({
   imports: [
@@ -121,7 +130,16 @@ import { NgChartsModule } from 'ng2-charts';
     EvaluationDetailsComponent,
     EvaluationFormComponent,
     PerformanceDashboardComponent,
-    EvaluationListComponent
+    EvaluationListComponent,
+    JobListComponent,
+    JobDetailComponent,
+    ApplicationDialogComponent,
+    MyApplicationsComponent,
+    AIAnalysisDialogComponent,
+    AdminApplicationsComponent,
+    ApplicationDetailDialogComponent,
+    AdminJobFormComponent,
+    AdminJobListComponent,
     
 
 

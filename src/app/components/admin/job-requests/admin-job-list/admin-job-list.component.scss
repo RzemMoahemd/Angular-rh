@@ -1,0 +1,37 @@
+.main-content {
+  padding-top: 10px !important; /* Réduis le padding supérieur */
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.mat-spinner {
+  margin: 20px auto;
+  display: block;
+}
+
+.status-active {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.status-closed {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.status-draft {
+  color: #ff9800; 
+  font-weight: bold;
+}
+
+.mat-chip-listbox .mat-chip {
+  background-color: #9c27b0; 
+  color: white;
+  font-weight: bold;
+}

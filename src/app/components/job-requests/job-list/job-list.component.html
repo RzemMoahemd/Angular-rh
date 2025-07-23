@@ -1,0 +1,108 @@
+<div class="job-list-container">
+  <div class="header-section">
+    <h2>Offres d'emploi internes</h2>
+    <p class="subtitle">Découvrez les opportunités de carrière au sein de notre entreprise</p>
+  </div>
+
+  <!-- Filtres -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Rechercher une offre</mat-label>
+          <input matInput 
+                 [(ngModel)]="searchTerm" 
+                 (input)="onSearchChange()"
+                 placeholder="Titre, description...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="department-field">
+          <mat-label>Département</mat-label>
+          <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentChange()">
+            <mat-option value="">Tous les départements</mat-option>
+            <mat-option *ngFor="let dept of departments" [value]="dept">
+              {{ dept }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Liste des offres -->
+  <div class="jobs-grid" *ngIf="!loading">
+    <mat-card *ngFor="let job of filteredJobs" class="job-card" (click)="viewJobDetail(job.id!)">
+      <mat-card-header>
+        <div mat-card-avatar class="job-avatar">
+          <mat-icon>work</mat-icon>
+        </div>
+        <mat-card-title>{{ job.title }}</mat-card-title>
+        <mat-card-subtitle>{{ job.department }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="job-info">
+          <div class="info-item">
+            <mat-icon>business_center</mat-icon>
+            <span>{{ getExperienceLevelLabel(job.experienceLevel) }}</span>
+          </div>
+          
+          <div class="info-item">
+            <mat-icon>people</mat-icon>
+            <span>{{ job.applicationsCount }} candidature(s)</span>
+          </div>
+          
+          <div class="info-item" [class.deadline-warning]="isDeadlineSoon(job.deadline)" 
+               [class.deadline-passed]="isDeadlinePassed(job.deadline)">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ job.deadline | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <div class="skills-section" *ngIf="job.requiredSkills?.length">
+          <h4>Compétences requises :</h4>
+          <div class="skills-chips">
+            <mat-chip-listbox>
+              <mat-chip *ngFor="let skill of job.requiredSkills.slice(0, 3)">
+                {{ skill }}
+              </mat-chip>
+              <mat-chip *ngIf="job.requiredSkills.length > 3" class="more-chip">
+                +{{ job.requiredSkills.length - 3 }}
+              </mat-chip>
+            </mat-chip-listbox>
+          </div>
+        </div>
+
+        <p class="job-description">
+          {{ job.description | slice:0:150 }}
+          <span *ngIf="job.description.length > 150">...</span>
+        </p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="viewJobDetail(job.id!); $event.stopPropagation()">
+          <mat-icon>visibility</mat-icon>
+          Voir les détails
+        </button>
+        
+        <mat-chip [color]="getStatusColor(job.status)" selected>
+          {{ job.status }}
+        </mat-chip>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- État de chargement -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des offres...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="no-results" *ngIf="!loading && filteredJobs.length === 0">
+    <mat-icon>work_off</mat-icon>
+    <h3>Aucune offre trouvée</h3>
+    <p>Essayez de modifier vos critères de recherche</p>
+  </div>
+</div>

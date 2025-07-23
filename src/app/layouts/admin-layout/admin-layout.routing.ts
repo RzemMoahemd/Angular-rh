@@ -13,6 +13,9 @@ import { DashboardComponent } from 'app/components/dashboard/dashboard.component
 import { PerformanceDashboardComponent } from 'app/components/performance/admin/performance-dashboard/performance-dashboard.component';
 import { EvaluationListComponent } from 'app/components/performance/admin/evaluation-list/evaluation-list.component';
 
+import { AdminJobListComponent } from "../../components/admin/job-requests/admin-job-list/admin-job-list.component"
+import { AdminJobFormComponent } from "../../components/admin/job-requests/admin-job-form/admin-job-form.component"
+import { AdminApplicationsComponent } from "../../components/admin/job-applications/admin-applications/admin-applications.component"
 
 export const AdminLayoutRoutes: Routes = [
   { path: 'employees', component: EmployeeListComponent, canActivate: [authGuard, adminGuard] },
@@ -21,9 +24,9 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'leaves', component: LeaveListComponent, canActivate: [authGuard] },
   { path: 'leave/new', component: LeaveFormComponent, canActivate: [authGuard] },
   { path: 'leave/:id/edit', component: LeaveFormComponent, canActivate: [authGuard] },
-  { path: 'dahsboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'dahsboard', pathMatch: 'full', canActivate: [authGuard] },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [authGuard] },
   // { path: '', component: LeaveListComponent, canActivate: [authGuard] }
 
 
@@ -32,9 +35,14 @@ export const AdminLayoutRoutes: Routes = [
     path: "performance",
     component: PerformanceDashboardComponent,
     // canActivate: [AdminGuard],
-  }
+  },
  
 
+  { path: "job-requests", component: AdminJobListComponent },
+  { path: "job-requests/new", component: AdminJobFormComponent },
+  { path: "job-requests/edit/:id", component: AdminJobFormComponent },
+  { path: "applications", component: AdminApplicationsComponent }, // All applications
+  { path: "job-requests/:jobRequestId/applications", component: AdminApplicationsComponent }
 
 ];
 

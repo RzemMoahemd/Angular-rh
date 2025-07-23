@@ -1,0 +1,495 @@
+/* Global styles for Material Dialogs to ensure premium look */
+::ng-deep .mat-mdc-dialog-container {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .mat-mdc-dialog-surface {
+  overflow: hidden !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  font-family: "Inter", "Roboto", sans-serif;
+  max-width: 750px; /* Adjusted max-width for the dialog */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: 95vh; /* Ensure it fits on smaller screens */
+}
+
+/* Dialog Title */
+h2.mat-dialog-title {
+  padding: 40px 32px 30px; /* Increased padding for height */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 700;
+  font-size: 32px; /* Larger font size */
+  letter-spacing: -0.5px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-radius: 16px 16px 0 0; /* Match dialog surface border-radius */
+}
+
+h2.mat-dialog-title::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: headerFloat 8s ease-in-out infinite;
+}
+
+@keyframes headerFloat {
+  0%,
+  100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateX(20px) translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateX(-15px) translateY(15px) rotate(240deg);
+  }
+}
+
+/* Dialog Content */
+.dialog-content {
+  padding: 32px;
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: #1e293b; /* Darker color for prominence */
+  border-bottom: 2px solid #e2e8f0; /* Subtle underline */
+  padding-bottom: 10px;
+}
+
+.section-header:first-of-type {
+  margin-top: 0; /* No top margin for the first header */
+}
+
+.section-header mat-icon {
+  margin-right: 12px;
+  font-size: 30px; /* Larger icons */
+  width: 30px;
+  height: 30px;
+  color: #667eea; /* Primary color for icons */
+}
+
+.section-header h3 {
+  margin: 0;
+  font-weight: 700; /* Bolder font */
+  font-size: 22px; /* Larger font size */
+  letter-spacing: -0.5px;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px; /* Increased gap */
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Increased gap */
+  background-color: #f8fafc; /* Light background for each item */
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+}
+
+.info-item strong {
+  color: #475569; /* Darker grey for labels */
+  font-size: 0.95em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span {
+  color: #1e293b; /* Darker text for values */
+  font-weight: 500;
+  font-size: 1.1em;
+}
+
+/* Motivation Text */
+.motivation-text {
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 10px;
+  line-height: 1.7;
+  color: #475569;
+  white-space: pre-wrap;
+  font-size: 15px;
+  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+/* CV Section */
+.cv-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 15px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.cv-section span {
+  flex-grow: 1;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 1.05em;
+}
+
+.cv-section .no-cv-text {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.download-cv-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 25px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-cv-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.download-cv-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* AI Analysis Section */
+.ai-analysis-section {
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #fefefe 0%, #fdfdfd 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.ai-analysis-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.ai-analysis-section p {
+  margin-bottom: 10px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.ai-analysis-section strong {
+  color: #1e293b;
+}
+
+.ai-score-display {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ai-score-display mat-progress-bar {
+  height: 10px; /* Thicker progress bar */
+  border-radius: 5px;
+  background-color: #e2e8f0; /* Track color */
+}
+
+/* Custom fill colors for progress bar */
+mat-progress-bar.score-high ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #22c55e; /* Green */
+}
+mat-progress-bar.score-medium ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #f59e0b; /* Orange */
+}
+mat-progress-bar.score-low ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #ef4444; /* Red */
+}
+
+.score-text {
+  font-weight: 700;
+  font-size: 1.2em; /* Larger score text */
+}
+
+/* Custom text colors for score */
+.score-high {
+  color: #22c55e;
+}
+.score-medium {
+  color: #f59e0b;
+}
+.score-low {
+  color: #ef4444;
+}
+
+.no-ai-analysis {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.run-analysis-button,
+.view-analysis-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 25px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.run-analysis-button:hover,
+.view-analysis-button:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Dividers */
+mat-divider {
+  margin: 30px 0; /* More space around dividers */
+  border-top-color: #e2e8f0;
+  border-top-width: 2px;
+}
+
+/* Status Chip */
+mat-chip {
+  font-weight: 700;
+  padding: 8px 15px;
+  border-radius: 20px; /* More rounded */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+mat-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%); /* Yellow */
+  color: #d97706;
+}
+.status-under_review {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); /* Blue */
+  color: #4338ca;
+}
+.status-accepted {
+  background: linear-gradient(135deg, #dcfce7 0%, #a7f3d0 100%); /* Green */
+  color: #16a34a;
+}
+.status-rejected {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Red */
+  color: #dc2626;
+}
+.status-archived {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); /* Gray */
+  color: #475569;
+}
+
+/* Dialog Actions */
+mat-dialog-actions {
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 20px;
+  position: relative;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 16px 16px; /* Match dialog surface border-radius */
+}
+
+mat-dialog-actions::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.change-status-button,
+.close-button {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  background-color: #f1f5f9; /* Light background for secondary */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.change-status-button:hover,
+.close-button:hover {
+  background-color: #e2e8f0;
+  color: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Mat Menu Styling */
+::ng-deep .mat-menu-panel {
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+::ng-deep .mat-menu-item {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .mat-menu-item mat-icon {
+  margin-right: 10px;
+  color: #64748b;
+}
+
+::ng-deep .mat-menu-item:hover {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+::ng-deep .mat-menu-item:hover mat-icon {
+  color: #4338ca;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  ::ng-deep .mat-mdc-dialog-surface {
+    max-width: 95vw;
+    margin: 10px;
+  }
+  h2.mat-dialog-title {
+    padding: 30px 20px 25px;
+    font-size: 28px;
+  }
+  .dialog-content {
+    padding: 24px 20px;
+  }
+  .section-header {
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+  .section-header mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+  .section-header h3 {
+    font-size: 20px;
+  }
+  .info-grid {
+    grid-template-columns: 1fr; /* Stack items on small screens */
+    gap: 15px;
+  }
+  .info-item {
+    padding: 15px;
+  }
+  .motivation-text {
+    padding: 15px;
+    font-size: 14px;
+  }
+  .cv-section {
+    flex-direction: column; /* Stack CV text and button */
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .download-cv-button {
+    width: 100%;
+    justify-content: center;
+  }
+  .ai-analysis-section {
+    padding: 20px;
+  }
+  .run-analysis-button,
+  .view-analysis-button {
+    width: 100%;
+    justify-content: center;
+  }
+  mat-divider {
+    margin: 20px 0;
+  }
+  mat-dialog-actions {
+    padding: 20px;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px;
+    align-items: stretch; /* Make buttons full width */
+  }
+  .change-status-button,
+  .close-button {
+    width: 100%;
+  }
+}
+
+/* Scrollbar personnalisée */
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8, #667eea);
+}

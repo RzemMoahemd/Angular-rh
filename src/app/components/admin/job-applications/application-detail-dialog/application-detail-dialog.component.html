@@ -1,0 +1,116 @@
+<h2 mat-dialog-title>Détails de la Candidature</h2>
+
+<mat-dialog-content class="mat-typography dialog-content">
+  <div class="section-header">
+    <mat-icon>person</mat-icon>
+    <h3>Informations du Candidat</h3>
+  </div>
+  <div class="info-grid">
+    <div class="info-item">
+      <strong>Nom Complet:</strong>
+      <span>{{ data.employeeFirstName }} {{ data.employeeLastName }}</span>
+    </div>
+    <div class="info-item">
+      <strong>Email:</strong>
+      <span>{{ data.employeeEmail }}</span>
+    </div>
+    <div class="info-item">
+      <strong>Poste Actuel:</strong>
+      <span>{{ data.employeePosition }}</span>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section-header">
+    <mat-icon>work</mat-icon>
+    <h3>Détails de l'Offre</h3>
+  </div>
+  <div class="info-grid">
+    <div class="info-item">
+      <strong>ID de l'Offre:</strong>
+      <span>{{ data.jobRequestId }}</span>
+    </div>
+    <div class="info-item">
+      <strong>Date de Candidature:</strong>
+      <span>{{ data.appliedAt | date : "short" }}</span>
+    </div>
+    <div class="info-item">
+      <strong>Statut:</strong>
+      <mat-chip [ngClass]="'status-' + data.status.toLowerCase()">
+        {{ data.status }}
+      </mat-chip>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section-header">
+    <mat-icon>description</mat-icon>
+    <h3>Lettre de Motivation</h3>
+  </div>
+  <p class="motivation-text">{{ data.motivationText || "Non fournie" }}</p>
+
+  <mat-divider></mat-divider>
+
+  <div class="section-header">
+    <mat-icon>attach_file</mat-icon>
+    <h3>CV</h3>
+  </div>
+  <div class="cv-section">
+    <span *ngIf="data.cvFileName">{{ data.cvFileName }}</span>
+    <span *ngIf="!data.cvFileName">Aucun CV fourni</span>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="downloadCv()"
+      [disabled]="!data.cvFileName"
+    >
+      <mat-icon>download</mat-icon> Télécharger CV
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section-header">
+    <mat-icon>analytics</mat-icon>
+    <h3>Analyse IA</h3>
+  </div>
+  <div class="ai-analysis-section">
+    <div *ngIf="data.aiMatchPercentage !== undefined && data.aiMatchPercentage !== null">
+      <p>
+        <strong>Score de Correspondance:</strong>
+        <span [ngClass]="getScoreColor(data.aiMatchPercentage)">
+          {{ data.aiMatchPercentage }}%
+        </span>
+      </p>
+      <p>
+        <strong>Analysé le:</strong>
+        <span>{{ data.aiAnalyzedAt | date : "short" }}</span>
+      </p>
+      <button mat-raised-button color="primary" (click)="viewAIAnalysis()">
+        <mat-icon>insights</mat-icon> Voir l'Analyse Détaillée
+      </button>
+    </div>
+    <div *ngIf="data.aiMatchPercentage === undefined || data.aiMatchPercentage === null">
+      <p>Aucune analyse IA disponible.</p>
+      <button mat-raised-button color="primary" (click)="runAIAnalysis()">
+        <mat-icon>play_arrow</mat-icon> Lancer l'Analyse IA
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [matMenuTriggerFor]="statusMenu">Changer Statut</button>
+  <mat-menu #statusMenu="matMenu">
+    <button
+      mat-menu-item
+      *ngFor="let status of applicationStatuses"
+      (click)="updateStatus(status)"
+    >
+      {{ status }}
+    </button>
+  </mat-menu>
+  <button mat-button mat-dialog-close (click)="onClose()">Fermer</button>
+</mat-dialog-actions>

@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Analyse IA du CV</h2>
+<mat-dialog-content class="mat-typography dialog-content">
+  <div class="score-section">
+    <!-- New wrapper for spinner and percentage text -->
+    <div class="score-value-wrapper">
+      <mat-progress-spinner
+        mode="determinate"
+        [value]="data.matchPercentage"
+        [ngClass]="getScoreColor(data.matchPercentage)"
+        diameter="100"
+        strokeWidth="10"
+      ></mat-progress-spinner>
+      <!-- Percentage text positioned over the spinner -->
+      <span class="percentage-text-overlay" [ngClass]="getScoreColor(data.matchPercentage)">
+        {{ data.matchPercentage }}%
+      </span>
+    </div>
+    <!-- Description text below the spinner -->
+    <p class="score-description">Correspondance avec le poste</p>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="analysis-details">
+    <div class="detail-item">
+      <h3><mat-icon>thumb_up</mat-icon> Points Forts</h3>
+      <p>{{ data.strengths || "Non spécifié." }}</p>
+    </div>
+    <div class="detail-item">
+      <h3><mat-icon>thumb_down</mat-icon> Points Faibles</h3>
+      <p>{{ data.weaknesses || "Non spécifié." }}</p>
+    </div>
+    <div class="detail-item">
+      <h3><mat-icon>lightbulb</mat-icon> Recommandations</h3>
+      <p>{{ data.recommendations || "Non spécifié." }}</p>
+    </div>
+  </div>
+  <div *ngIf="data.errorMessage" class="error-message">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p><strong>Erreur d'analyse:</strong> {{ data.errorMessage }}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Fermer</button>
+</mat-dialog-actions>

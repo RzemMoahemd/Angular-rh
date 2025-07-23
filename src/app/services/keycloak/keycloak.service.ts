@@ -45,7 +45,7 @@ export class KeycloakService {
   }
 
   logout(): void {
-    this.keycloak.logout({ redirectUri: 'http://10.112.62.168' });
+    this.keycloak.logout({ redirectUri: 'http://10.112.63.190:30083' });
   }
 
   getUserRole(): 'admin' | 'user' | null {

@@ -1,0 +1,67 @@
+.main-content {
+  padding-top: 10px !important; 
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.mat-spinner {
+  margin: 20px auto;
+  display: block;
+}
+
+.status-pending {
+  color: #2196f3; 
+  font-weight: bold;
+}
+
+.status-under-review {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.status-accepted {
+  color: #4caf50; 
+  font-weight: bold;
+}
+
+.status-rejected {
+  color: #f44336; 
+  font-weight: bold;
+}
+
+.score-high {
+  color: #4caf50; 
+  font-weight: bold;
+}
+
+.score-medium {
+  color: #ffc107; 
+  font-weight: bold;
+}
+
+.score-low {
+  color: #f44336; 
+  font-weight: bold;
+}
+
+mat-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+mat-progress-bar.score-high ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #4caf50;
+}
+mat-progress-bar.score-medium ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #ffc107;
+}
+mat-progress-bar.score-low ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #f44336;
+}

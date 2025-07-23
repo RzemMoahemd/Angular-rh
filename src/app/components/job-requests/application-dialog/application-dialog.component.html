@@ -1,0 +1,136 @@
+<div class="application-dialog">
+  <div mat-dialog-title class="dialog-header">
+    <mat-icon>send</mat-icon>
+    <h2>Postuler pour : {{ data.jobRequest.title }}</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Informations sur l'offre -->
+      <div class="job-summary">
+        <h3>Résumé de l'offre</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <strong>Département :</strong>
+            <span>{{ data.jobRequest.department }}</span>
+          </div>
+          <div class="summary-item">
+            <strong>Niveau :</strong>
+            <span>{{ data.jobRequest.experienceLevel }}</span>
+          </div>
+          <div class="summary-item">
+            <strong>Date limite :</strong>
+            <span>{{ data.jobRequest.deadline | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lettre de motivation -->
+      <div class="form-section">
+        <h3>
+          <mat-icon>edit</mat-icon>
+          Lettre de motivation *
+        </h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Expliquez pourquoi vous êtes le candidat idéal</mat-label>
+          <textarea matInput 
+                    formControlName="motivationText"
+                    rows="8"
+                    placeholder="Décrivez votre motivation, vos compétences pertinentes et ce que vous pouvez apporter à ce poste..."></textarea>
+          <mat-hint align="end" [ngClass]="getCharacterCountColor()">
+  {{ getCharacterCount() }}/1000 caractères (minimum 50)
+</mat-hint>
+          <mat-error *ngIf="motivationText?.hasError('required')">
+            La lettre de motivation est obligatoire
+          </mat-error>
+          <mat-error *ngIf="motivationText?.hasError('minlength')">
+            La lettre de motivation doit contenir au moins 50 caractères
+          </mat-error>
+          <mat-error *ngIf="motivationText?.hasError('maxlength')">
+            La lettre de motivation ne peut pas dépasser 1000 caractères
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Upload CV -->
+      <div class="form-section">
+        <h3>
+          <mat-icon>attach_file</mat-icon>
+          Curriculum Vitae (optionnel)
+        </h3>
+        
+        <div class="file-upload-section">
+          <div class="upload-area" *ngIf="!selectedFile">
+            <input type="file" 
+                   #fileInput 
+                   (change)="onFileSelected($event)"
+                   accept=".pdf"
+                   style="display: none;">
+            
+            <div class="upload-placeholder" (click)="fileInput.click()">
+              <mat-icon>cloud_upload</mat-icon>
+              <p>Cliquez pour sélectionner votre CV</p>
+              <small>Format PDF uniquement, taille max: 5MB</small>
+            </div>
+          </div>
+
+          <div class="file-preview" *ngIf="selectedFile">
+            <div class="file-info">
+              <mat-icon>picture_as_pdf</mat-icon>
+              <div class="file-details">
+                <strong>{{ selectedFile.name }}</strong>
+                <small>{{ getFileSize(selectedFile.size) }}</small>
+              </div>
+              <button type="button" 
+                      mat-icon-button 
+                      color="warn" 
+                      (click)="removeFile()"
+                      matTooltip="Supprimer le fichier">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <mat-hint class="upload-hint">
+            <mat-icon>info</mat-icon>
+            Le CV sera analysé automatiquement par notre IA pour évaluer la correspondance avec le poste
+          </mat-hint>
+        </div>
+      </div>
+
+      <!-- Informations importantes -->
+      <div class="important-info">
+        <mat-icon>info</mat-icon>
+        <div>
+          <strong>Important :</strong>
+          <ul>
+            <li>Votre candidature sera examinée par l'équipe RH</li>
+            <li>Vous recevrez une notification du statut de votre candidature</li>
+            <li>Les candidatures sont traitées dans l'ordre de réception</li>
+          </ul>
+        </div>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button 
+            type="button" 
+            (click)="onCancel()"
+            [disabled]="isSubmitting">
+      Annuler
+    </button>
+    
+    <button mat-raised-button 
+            color="primary"
+            (click)="onSubmit()"
+            [disabled]="applicationForm.invalid || !selectedFile || isSubmitting"
+            class="submit-button">
+      <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+      <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+      {{ isSubmitting ? 'Envoi en cours...' : 'Envoyer ma candidature' }}
+    </button>
+  </mat-dialog-actions>
+</div>

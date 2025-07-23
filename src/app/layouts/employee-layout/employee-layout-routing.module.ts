@@ -10,6 +10,12 @@ import { EmployeeDashboardComponent } from 'app/components/employee-dashboard/em
 import { MyEvaluationsComponent } from 'app/components/performance/employee/my-evaluation/my-evaluation.component';
 import { MyPerformanceDashboardComponent } from 'app/components/performance/employee/my-performance/my-performance.component';
 
+
+import { JobListComponent } from "../../components/job-requests/job-list/job-list.component"
+import { JobDetailComponent } from "../../components/job-requests/job-detail/job-detail.component"
+import { MyApplicationsComponent } from "../../components/job-requests/my-applications/my-applications.component"
+
+
 // const routes: Routes = [
 //     { path: 'my-leaves', component: EmployeeMyLeavesComponent, canActivate: [authGuard] },
 //     { path: 'request-leave', component: EmployeeRequestLeaveComponent, canActivate: [authGuard] },  
@@ -26,6 +32,9 @@ const routes: Routes = [
   { path: '', redirectTo: 'dashboardemp', pathMatch: 'full', canActivate: [authGuard] },
 
 
+    { path: "jobs", component: JobListComponent },
+  { path: "jobs/:id", component: JobDetailComponent },
+  { path: "my-applications", component: MyApplicationsComponent },
 
    // Routes Employé
   {

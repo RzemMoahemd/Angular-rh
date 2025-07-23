@@ -1,0 +1,152 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Gestion des Offres d'Emploi</h4>
+            <p class="card-category">Liste des offres d'emploi internes</p>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    (keyup)="applyFilter($event)"
+                    placeholder="Rechercher une offre..."
+                    #input
+                  />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6 text-right">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [routerLink]="['/admin/job-requests/new']"
+                >
+                  <mat-icon>add</mat-icon> Nouvelle Offre
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+              <table
+                mat-table
+                [dataSource]="dataSource"
+                matSort
+                *ngIf="!isLoading"
+              >
+                <!-- Title Column -->
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Titre
+                  </th>
+                  <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+                </ng-container>
+
+                <!-- Department Column -->
+                <ng-container matColumnDef="department">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Département
+                  </th>
+                  <td mat-cell *matCellDef="let row">{{ row.department }}</td>
+                </ng-container>
+
+                <!-- Experience Level Column -->
+                <ng-container matColumnDef="experienceLevel">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Niveau Exp.
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    {{ row.experienceLevel }}
+                  </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Statut
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    <span [ngClass]="getJobStatusClass(row.status)">
+                      {{ row.status }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <!-- Applications Count Column -->
+                <ng-container matColumnDef="applicationsCount">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Candidatures
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    <mat-chip-listbox>
+                      <mat-chip color="primary" selected>
+                        {{ row.applicationsCount || 0 }}
+                      </mat-chip>
+                    </mat-chip-listbox>
+                  </td>
+                </ng-container>
+
+                <!-- Deadline Column -->
+                <ng-container matColumnDef="deadline">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Date Limite
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    {{ row.deadline | date : "dd/MM/yyyy" }}
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let row">
+                    <button
+                      mat-icon-button
+                      matTooltip="Modifier l'offre"
+                      (click)="editJobRequest(row.id!)"
+                    >
+                      <mat-icon class="text-primary">edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      matTooltip="Supprimer l'offre"
+                      (click)="deleteJobRequest(row.id!)"
+                    >
+                      <mat-icon class="text-danger">delete</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      matTooltip="Voir les candidatures"
+                      (click)="viewApplications(row.id!)"
+                    >
+                      <mat-icon class="text-info">visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell" colspan="7">
+                    Aucune offre d'emploi trouvée correspondant à "{{ input.value }}"
+                  </td>
+                </tr>
+              </table>
+
+              <mat-paginator
+                [pageSizeOptions]="[5, 10, 20]"
+                showFirstLastButtons
+              ></mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

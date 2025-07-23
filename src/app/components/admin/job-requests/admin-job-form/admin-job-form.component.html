@@ -1,0 +1,110 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header"> <!-- Removed card-header-danger class -->
+            <h4 class="card-title">
+              {{ isEditMode ? "Modifier l'Offre d'Emploi" : "Créer une Nouvelle Offre d'Emploi" }}
+            </h4>
+            <p class="card-category">
+              {{ isEditMode ? "Mettez à jour les détails de l'offre." : "Remplissez les informations de la nouvelle offre." }}
+            </p>
+          </div>
+          <div class="card-body">
+            <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+            <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="full-width">
+                    <mat-label>Titre du Poste</mat-label>
+                    <input matInput formControlName="title" placeholder="Ex: Développeur Full-Stack" />
+                    <mat-error *ngIf="jobForm.get('title')?.hasError('required') && jobForm.get('title')?.touched">
+                      Le titre est requis.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="full-width">
+                    <mat-label>Département</mat-label>
+                    <input matInput formControlName="department" placeholder="Ex: IT, Marketing, RH" />
+                    <mat-error *ngIf="jobForm.get('department')?.hasError('required') && jobForm.get('department')?.touched">
+                      Le département est requis.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <mat-form-field class="full-width">
+                    <mat-label>Description du Poste</mat-label>
+                    <textarea matInput formControlName="description" rows="5" placeholder="Description détaillée du poste, responsabilités..."></textarea>
+                    <mat-error *ngIf="jobForm.get('description')?.hasError('required') && jobForm.get('description')?.touched">
+                      La description est requise.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <mat-form-field class="full-width">
+                    <mat-label>Niveau d'Expérience</mat-label>
+                    <mat-select formControlName="experienceLevel">
+                      <mat-option *ngFor="let level of experienceLevels" [value]="level">
+                        {{ level }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="jobForm.get('experienceLevel')?.hasError('required') && jobForm.get('experienceLevel')?.touched">
+                      Le niveau d'expérience est requis.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field class="full-width">
+                    <mat-label>Compétences Requises (séparées par des virgules)</mat-label>
+                    <input matInput formControlName="requiredSkills" placeholder="Ex: Angular, Spring Boot, Java" />
+                    <mat-error *ngIf="jobForm.get('requiredSkills')?.hasError('required') && jobForm.get('requiredSkills')?.touched">
+                      Les compétences sont requises.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field class="full-width">
+                    <mat-label>Date Limite de Candidature</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="deadline" />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="jobForm.get('deadline')?.hasError('required') && jobForm.get('deadline')?.touched">
+                      La date limite est requise.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <mat-form-field class="full-width">
+                    <mat-label>Statut de l'Offre</mat-label>
+                    <mat-select formControlName="status">
+                      <mat-option *ngFor="let status of jobStatuses" [value]="status">
+                        {{ status }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="jobForm.get('status')?.hasError('required') && jobForm.get('status')?.touched">
+                      Le statut est requis.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="form-actions"> <!-- New wrapper for buttons -->
+                <button mat-raised-button type="submit" color="primary" [disabled]="jobForm.invalid || isLoading">
+                  {{ isEditMode ? "Mettre à jour l'Offre" : "Créer l'Offre" }}
+                </button>
+                <button mat-button type="button" (click)="onCancel()">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

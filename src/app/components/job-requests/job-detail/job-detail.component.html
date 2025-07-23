@@ -1,0 +1,173 @@
+<div class="job-detail-container" *ngIf="!loading && jobRequest">
+  <!-- Header avec bouton retour -->
+  <div class="header-actions">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>{{ jobRequest.title }}</h1>
+  </div>
+
+  <!-- Layout en une seule colonne -->
+  <div class="content-layout single-col">
+    <!-- Contenu principal -->
+    <div class="main-content">
+      <mat-card class="job-info-card">
+        <mat-card-header>
+          <div mat-card-avatar class="job-avatar">
+            <mat-icon>work</mat-icon>
+          </div>
+          <mat-card-title>{{ jobRequest.title }}</mat-card-title>
+          <mat-card-subtitle>{{ jobRequest.department }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Informations clés -->
+          <div class="key-info">
+            <div class="info-grid">
+              <div class="info-item">
+                <mat-icon>business_center</mat-icon>
+                <div>
+                  <strong>Niveau d'expérience</strong>
+                  <span>{{ getExperienceLevelLabel(jobRequest.experienceLevel) }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <mat-icon>people</mat-icon>
+                <div>
+                  <strong>Candidatures</strong>
+                  <span>{{ jobRequest.applicationsCount }} reçue(s)</span>
+                </div>
+              </div>
+
+              <div
+                class="info-item"
+                [class.deadline-warning]="isDeadlineSoon()"
+                [class.deadline-passed]="isDeadlinePassed()"
+              >
+                <mat-icon>schedule</mat-icon>
+                <div>
+                  <strong>Date limite</strong>
+                  <span>{{ jobRequest.deadline | date:'dd/MM/yyyy à HH:mm' }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <mat-icon>location_city</mat-icon>
+                <div>
+                  <strong>Département</strong>
+                  <span>{{ jobRequest.department }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description du poste -->
+          <div class="description-section">
+            <h3><mat-icon>description</mat-icon> Description du poste</h3>
+            <div class="description-content" [innerHTML]="jobRequest.description"></div>
+          </div>
+
+          <!-- Compétences requises -->
+          <div class="skills-section" *ngIf="jobRequest.requiredSkills?.length">
+            <h3><mat-icon>star</mat-icon> Compétences requises</h3>
+            <div class="skills-list">
+              <mat-chip-listbox>
+                <mat-chip *ngFor="let skill of jobRequest.requiredSkills" selected>
+                  {{ skill }}
+                </mat-chip>
+              </mat-chip-listbox>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ======= Bloc "Actions" déplacé depuis la sidebar ======= -->
+      <mat-card class="action-card main-actions-card">
+        <mat-card-header>
+          <mat-card-title>Actions</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Statut de candidature -->
+          <div class="application-status" *ngIf="hasApplied">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>Vous avez déjà postulé à cette offre</span>
+          </div>
+
+          <!-- Alertes -->
+          <div class="alert-section">
+            <div class="alert warning" *ngIf="isDeadlineSoon() && !isDeadlinePassed()">
+              <mat-icon>warning</mat-icon>
+              <span>Date limite proche !</span>
+            </div>
+
+            <div class="alert error" *ngIf="isDeadlinePassed()">
+              <mat-icon>error</mat-icon>
+              <span>Date limite dépassée</span>
+            </div>
+
+            <div class="alert info" *ngIf="jobRequest.status !== 'ACTIVE'">
+              <mat-icon>info</mat-icon>
+              <span>Cette offre n'est plus active</span>
+            </div>
+          </div>
+
+          <!-- Boutons -->
+          <div class="action-buttons">
+            <button
+              mat-raised-button
+              color="primary"
+              class="apply-button"
+              [disabled]="!canApply()"
+              (click)="openApplicationDialog()"
+              *ngIf="!hasApplied"
+            >
+              <mat-icon>send</mat-icon>
+              Postuler maintenant
+            </button>
+
+            <button mat-stroked-button color="primary" (click)="goBack()">
+              <mat-icon>list</mat-icon>
+              Retour à la liste
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ======= Bloc "Informations" déplacé depuis la sidebar ======= -->
+      <mat-card class="info-card main-info-card">
+        <mat-card-header>
+          <mat-card-title>Informations</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="additional-info">
+            <div class="info-row">
+              <strong>Publié le :</strong>
+              <span>{{ jobRequest.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="info-row" *ngIf="jobRequest.updatedAt !== jobRequest.createdAt">
+              <strong>Mis à jour le :</strong>
+              <span>{{ jobRequest.updatedAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="info-row">
+              <strong>Statut :</strong>
+              <mat-chip [color]="jobRequest.status === 'ACTIVE' ? 'primary' : 'warn'" selected>
+                {{ jobRequest.status }}
+              </mat-chip>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- État de chargement -->
+<div class="loading-container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+  <p>Chargement des détails de l'offre...</p>
+</div>
